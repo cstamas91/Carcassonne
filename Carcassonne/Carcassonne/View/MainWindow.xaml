@@ -1,0 +1,10 @@
+﻿<Window x:Class="Carcassonne.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:carcassonne_view="clr-namespace:Carcassonne"
+        xmlns:controls="clr-namespace:Carcassonne.View.Controls"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <controls:TileControl />
+    </Grid>
+</Window>
