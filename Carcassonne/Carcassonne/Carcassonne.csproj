@@ -65,6 +65,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\GameLogic\ModelEventArgs.cs" />
+    <Compile Include="Model\GameLogic\ScoreHandler.cs" />
+    <Compile Include="Model\GameLogic\TurnHandler.cs" />
+    <Compile Include="Model\Representation\GameTable.cs" />
+    <Compile Include="Model\Representation\Meeple.cs" />
+    <Compile Include="Model\Representation\Player.cs" />
+    <Compile Include="Model\Representation\RepresentationClasses.cs" />
     <Compile Include="Model\Representation\Tile.cs" />
     <Compile Include="View\Controls\TileControl.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
