@@ -21,24 +21,23 @@ namespace Carcassonne.Model.Representation
         }
 
         public Tile() { }
-        #endregion Declarations
-    }
-    public struct TileSideDescriptor
-    {
-        public TileSideDescriptor(TileSideType up, TileSideType down, TileSideType left, TileSideType right)
-        {
-            Up = up;
-            Down = down;
-            Left = left;
-            Right = right;
-        }
-        public TileSideType Up, Down, Left, Right;
-    }
 
-    public enum TileSideType
-    {
-        Field,
-        Road,
-        Castle
+        private Dictionary<TileFieldType, Meeple> meeples;
+
+        public Dictionary<TileFieldType, Meeple> Meeples
+        {
+            get { return meeples; }
+            set { meeples = value; }
+        }
+
+        private bool isMonastery;
+
+        public bool IsMonastery
+        {
+            get { return isMonastery; }
+            set { isMonastery = value; }
+        }
+
+        #endregion Declarations
     }
 }
