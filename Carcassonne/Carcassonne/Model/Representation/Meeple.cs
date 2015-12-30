@@ -25,12 +25,13 @@ namespace Carcassonne.Model.Representation
         }
 
         /// <summary>
-        /// Meeple ktor. Létrejötterkor megkapja, hogy melyik játékos birtokolja.
+        /// Meeple ktor. Létrejötterkor megkapja, hogy melyik játékos birtokolja. Alapból egyik meeple sincs használatban.
         /// </summary>
         /// <param name="owner">Birtokló játékos</param>
         public Meeple(Player owner)
         {
             this.owner = owner;
+            this.inUse = false;
         }
         #endregion Declaration
     }
