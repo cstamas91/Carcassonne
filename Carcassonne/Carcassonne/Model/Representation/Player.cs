@@ -48,11 +48,11 @@ namespace Carcassonne.Model.Representation
         /// <param name="ownedMeeples">A játékos figurái.</param>
         /// <param name="playerNumber">A játékos száma</param>
         /// <param name="name">A játékos neve</param>
-        public Player(ICollection<Meeple> ownedMeeples, int playerNumber, string name)
+        public Player(int playerNumber, string name)
         {
             this.name = name;
             this.number = playerNumber;
-            this.ownedMeeples = new List<Meeple> (ownedMeeples);
+            this.ownedMeeples = GenerateMeeples().ToList();
         }
         #endregion Declaration
 
@@ -67,7 +67,14 @@ namespace Carcassonne.Model.Representation
         }
         #endregion Public methods
         #region Private methods
+        private ICollection<Meeple> GenerateMeeples()
+        {
+            List<Meeple> meeples = new List<Meeple>();
+            for (int i = 0; i < 15; i++)
+                meeples.Add(new Meeple(this));
 
+            return meeples;
+        }
         #endregion Private methods
     }
 }
