@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carcassonne.Model.Tools;
+using System.IO;
 
 namespace Carcassonne.Model.Representation
 {
-    public class Meeple
+    public class Meeple : IPayloadContent<Meeple>
     {
         #region Declaration
         private Player owner;
@@ -24,6 +26,13 @@ namespace Carcassonne.Model.Representation
             set { inUse = value; }
         }
 
+        private Position position;
+        public Position Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
+
         /// <summary>
         /// Meeple ktor. Létrejötterkor megkapja, hogy melyik játékos birtokolja. Alapból egyik meeple sincs használatban.
         /// </summary>
@@ -34,5 +43,34 @@ namespace Carcassonne.Model.Representation
             this.inUse = false;
         }
         #endregion Declaration
+
+        #region IPayloadContent
+        public Meeple ReadContent()
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] WriteContent()
+        {
+            if (!inUse)
+                throw new InvalidOperationException("Meeple is not in use.");
+
+            using (var ms = new MemoryStream())
+            {
+                using (var sw = new StreamWriter(ms))
+                {
+                    sw.Write(owner.WriteContent());
+                    sw.Write(position.WriteContent());
+
+                    var content = new byte[ms.Length];
+
+                    using (var contentStream = new MemoryStream(content))
+                        ms.WriteTo(contentStream);
+
+                    return content;
+                }
+            }
+        }
+        #endregion IPayloadContent
     }
 }

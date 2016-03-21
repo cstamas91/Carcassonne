@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carcassonne.Model.Tools;
+using System.IO;
 
 namespace Carcassonne.Model.Representation
 {
-    public class Player
+    public class Player : IPayloadContent<Player>
     {
         #region Declaration
         private int points;
@@ -25,9 +27,9 @@ namespace Carcassonne.Model.Representation
             set { name = value; }
         }
 
-        private int number;
+        private short number;
 
-        public int Number
+        public short Number
         {
             get { return number; }
             set { number = value; }
@@ -41,14 +43,14 @@ namespace Carcassonne.Model.Representation
         //    get { return ownedMeeples; }
         //    set { ownedMeeples = value; }
         //}
-        
+
         /// <summary>
         /// Player konstruktor. Egy játékos létrejöttekor megkapja a rendelkezésére álló figurákat, hányas számú játékos, a játékos nevét.
         /// </summary>
         /// <param name="ownedMeeples">A játékos figurái.</param>
         /// <param name="playerNumber">A játékos száma</param>
         /// <param name="name">A játékos neve</param>
-        public Player(int playerNumber, string name)
+        public Player(short playerNumber, string name)
         {
             this.name = name;
             this.number = playerNumber;
@@ -76,5 +78,28 @@ namespace Carcassonne.Model.Representation
             return meeples;
         }
         #endregion Private methods
+        #region IPayloadContent
+        public Player ReadContent()
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] WriteContent()
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var sw = new StreamWriter(ms))
+                {
+                    sw.Write(number);
+
+                    var content = new byte[ms.Length];
+                    using (var contentStream = new MemoryStream(content))
+                        ms.WriteTo(contentStream);
+
+                    return content;
+                }
+            }
+        }
+        #endregion IPayloadContent
     }
 }

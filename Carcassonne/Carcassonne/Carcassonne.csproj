@@ -68,9 +68,17 @@
     <Compile Include="Model\GameLogic\ModelEventArgs.cs" />
     <Compile Include="Model\GameLogic\ScoreHandler.cs" />
     <Compile Include="Model\GameLogic\TurnHandler.cs" />
+    <Compile Include="Model\Tools\IPayloadContent.cs" />
+    <Compile Include="Model\Network\NetworkHandler.cs" />
+    <Compile Include="Model\Network\NetworkHandlerEventArgs.cs" />
+    <Compile Include="Model\Network\PayloadAttribute.cs" />
+    <Compile Include="Model\Tools\PayloadWriter.cs" />
+    <Compile Include="Model\Representation\Game.cs" />
+    <Compile Include="Model\Representation\GameServer.cs" />
     <Compile Include="Model\Representation\GameTable.cs" />
     <Compile Include="Model\Representation\Meeple.cs" />
     <Compile Include="Model\Representation\Player.cs" />
+    <Compile Include="Model\Representation\Position.cs" />
     <Compile Include="Model\Representation\RepresentationClasses.cs" />
     <Compile Include="Model\Representation\Tile.cs" />
     <Compile Include="View\Controls\TileControl.cs" />

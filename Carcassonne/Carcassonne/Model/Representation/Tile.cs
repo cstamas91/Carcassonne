@@ -3,15 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carcassonne.Model.Tools;
+using System.IO;
 
 namespace Carcassonne.Model.Representation
 {
     /// <summary>
     /// Egy játékmező logikai reprezentációja, tartalmazza az absztrakt interakciós logikát.
     /// </summary>
-    public class Tile
+    public class Tile : IPayloadContent<Tile>
     {
         #region Declarations
+        private Position position;
+
+        public Position Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
+
         private TileSideDescriptor sideDescriptor;
 
         public TileSideDescriptor SideDescriptor
@@ -39,5 +49,29 @@ namespace Carcassonne.Model.Representation
         }
 
         #endregion Declarations
+        #region IPayloadContent
+        public Tile ReadContent()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public byte[] WriteContent()
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var sw = new StreamWriter(ms))
+                {
+                    sw.Write(position.WriteContent());
+                    sw.Write(sideDescriptor.WriteContent());
+
+                    var content = new byte[ms.Length];
+                    using (var contentStream = new MemoryStream(content))
+                        ms.WriteTo(contentStream);
+
+                    return content;
+                }
+            }
+        }
+        #endregion IPayloadContent
     }
 }
