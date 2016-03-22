@@ -30,7 +30,6 @@ namespace Carcassonne.Model.Network
 
         public event NewGameRequestReceivedHandler NewGameRequestReceived;
         public delegate void NewGameRequestReceivedHandler(object sender, NewGameRequestReceivedEventArgs e);
-        public 
 
         #endregion Events
     }
