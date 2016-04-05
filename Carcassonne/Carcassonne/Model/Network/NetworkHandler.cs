@@ -15,14 +15,16 @@ namespace Carcassonne.Model.Network
     {
 
         #region Declarations
-        private List<TcpClient> clients;
+        private const int BASE_CONNECTION_PORT = 1500;
+        private List<GameClient> clients;
         private List<TcpListener> listeners;
+        private UdpClient connectionListener;
         /// <summary>
         /// Hálózati kommunikáció kezelőjének a konstruktora.
         /// </summary>
         public NetworkHandler() 
         {
-            
+            connectionListener = new UdpClient(BASE_CONNECTION_PORT);
         }
         #endregion Declarations
 
@@ -32,5 +34,31 @@ namespace Carcassonne.Model.Network
         public delegate void NewGameRequestReceivedHandler(object sender, NewGameRequestReceivedEventArgs e);
 
         #endregion Events
+
+        #region Methods
+        public void Send(byte[] message, MessageType type, string recipient = null)
+        {
+            switch (type)
+            {
+                case MessageType.Broadcast:
+                    foreach (var client in clients)
+                        client.SendMessage(message);
+                    break;
+
+                case MessageType.Single:
+                    clients
+                        .FirstOrDefault(client => client.PlayerName == recipient)
+                        .SendMessage(message);
+                    break;
+            }
+        }
+
+        #endregion Methods
+    }
+
+    public enum MessageType : short
+    {
+        Single = 0,
+        Broadcast = 1
     }
 }
