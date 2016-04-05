@@ -8,33 +8,33 @@ using System.IO;
 
 namespace Carcassonne.Model.Representation
 {
-    public class Position : IPayloadContent<Position>
+    public class Position : IPayloadContent
     {
         public short X { get; set; }
         public short Y { get; set; }
+
+
+        public Position() { }
+
         #region IPayloadContent
-        public Position ReadContent()
+        public void ReadContent(byte[] payloadContent)
         {
-            throw new NotImplementedException();
-        }
-
-        public byte[] WriteContent()
-        {
-            using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream(payloadContent))
             {
-                using (var sw = new StreamWriter(ms))
-                {
-                    sw.Write(X);
-                    sw.Write(Y);
-
-                    var content = new byte[ms.Length];
-                    using (var contentStream = new MemoryStream(content))
-                        ms.WriteTo(contentStream);
-
-                    return content;
-                }
+                var content = new byte[sizeof(short)];
+                var offset = ms.Read(content, 0, sizeof(short));
+                X = BitConverter.ToInt16(content, 0);
+                offset += ms.Read(content, offset, sizeof(short));
+                Y = BitConverter.ToInt16(content, 0);
             }
         }
+
+        public void WriteContent(Stream contentStream)
+        {
+            contentStream.WriteShort(X);
+            contentStream.WriteShort(Y);
+        }
+        
         #endregion IPayloadContent
     }
 }

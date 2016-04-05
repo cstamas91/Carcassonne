@@ -11,7 +11,7 @@ namespace Carcassonne.Model.Representation
     /// <summary>
     /// Egy játékmező logikai reprezentációja, tartalmazza az absztrakt interakciós logikát.
     /// </summary>
-    public class Tile : IPayloadContent<Tile>
+    public class Tile : IPayloadContent
     {
         #region Declarations
         private Position position;
@@ -50,28 +50,27 @@ namespace Carcassonne.Model.Representation
 
         #endregion Declarations
         #region IPayloadContent
-        public Tile ReadContent()
+        public void ReadContent(byte[] payloadContent)
         {
-            throw new NotImplementedException();
-        }
-        
-        public byte[] WriteContent()
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (var sw = new StreamWriter(ms))
-                {
-                    sw.Write(position.WriteContent());
-                    sw.Write(sideDescriptor.WriteContent());
+            using (var ms = new MemoryStream(payloadContent)){
+                var content = new byte[sizeof(short) * 2];
+                var offset = ms.Read(content, 0, sizeof(short) * 2);
+                this.Position = PayloadContentFactory<Position>.Create(content);
 
-                    var content = new byte[ms.Length];
-                    using (var contentStream = new MemoryStream(content))
-                        ms.WriteTo(contentStream);
-
-                    return content;
-                }
+                var sideContent = new byte[sizeof(short) * 4];
+                offset += ms.Read(sideContent, 0, sizeof(short) * 4);
+                this.SideDescriptor = PayloadContentFactory<TileSideDescriptor>.Create(sideContent);
             }
         }
+
+
+        public void WriteContent(Stream contentStream)
+        {
+            Position.WriteContent(contentStream);
+            SideDescriptor.WriteContent(contentStream);
+        }
         #endregion IPayloadContent
+
+
     }
 }

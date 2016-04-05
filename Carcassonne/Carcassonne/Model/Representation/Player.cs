@@ -5,26 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Carcassonne.Model.Tools;
 using System.IO;
+using System.ComponentModel;
 
 namespace Carcassonne.Model.Representation
 {
-    public class Player : IPayloadContent<Player>
+    public class Player : IPayloadContent
     {
         #region Declaration
-        private int points;
-
-        public int Points
-        {
-            get { return points; }
-            set { points = value; }
-        }
-
         private string name;
 
         public string Name
         {
             get { return name; }
-            set { name = value; }
+            private set { name = value; }
         }
 
         private short number;
@@ -32,18 +25,12 @@ namespace Carcassonne.Model.Representation
         public short Number
         {
             get { return number; }
-            set { number = value; }
+            private set { number = value; }
         }
 
         private List<Meeple> ownedMeeples;
 
-        //TODO: nem biztos hogy a saját figuráknak kifelé láthatónak kell lenni.
-        //public List<Meeple> OwnedMeeples
-        //{
-        //    get { return ownedMeeples; }
-        //    set { ownedMeeples = value; }
-        //}
-
+        public Player() { }
         /// <summary>
         /// Player konstruktor. Egy játékos létrejöttekor megkapja a rendelkezésére álló figurákat, hányas számú játékos, a játékos nevét.
         /// </summary>
@@ -68,38 +55,50 @@ namespace Carcassonne.Model.Representation
             return ownedMeeples.First(meeple => !meeple.InUse);
         }
         #endregion Public methods
+
         #region Private methods
         private ICollection<Meeple> GenerateMeeples()
         {
             List<Meeple> meeples = new List<Meeple>();
             for (int i = 0; i < 15; i++)
-                meeples.Add(new Meeple(this));
+                meeples.Add(new Meeple(Number));
 
             return meeples;
         }
         #endregion Private methods
+
         #region IPayloadContent
-        public Player ReadContent()
-        {
-            throw new NotImplementedException();
-        }
 
-        public byte[] WriteContent()
+        public void ReadContent(byte[] payloadContent)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream(payloadContent))
             {
-                using (var sw = new StreamWriter(ms))
+                var arr = new byte[sizeof(short)];
+                ms.Read(arr, 0, sizeof(short));
+                this.Number = BitConverter.ToInt16(arr, 0);
+
+                using (var sr = new StreamReader(ms, Encoding.Default, false, 4, true))
                 {
-                    sw.Write(number);
-
-                    var content = new byte[ms.Length];
-                    using (var contentStream = new MemoryStream(content))
-                        ms.WriteTo(contentStream);
-
-                    return content;
+                    Name = sr.ReadToEnd();
                 }
             }
+            if (Name.EndsWith("\n"))
+                Name = Name.Trim();
+        }
+
+        public void WriteContent(Stream contentStream)
+        {
+            contentStream.WriteShort((short)Number);
+            contentStream.WriteString(Name);
         }
         #endregion IPayloadContent
+
+        #region public methods
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", Number, Name);
+        }
+        #endregion public methods
+
     }
 }

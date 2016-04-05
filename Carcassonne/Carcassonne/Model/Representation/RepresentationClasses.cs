@@ -9,7 +9,7 @@ using System.IO;
 namespace Carcassonne.Model.Representation
 {
     #region Tile
-    public struct TileSideDescriptor : IPayloadContent<TileSideDescriptor>
+    public struct TileSideDescriptor : IPayloadContent
     {
         public TileSideDescriptor(TileSideType up, TileSideType down, TileSideType left, TileSideType right)
         {
@@ -20,29 +20,32 @@ namespace Carcassonne.Model.Representation
         }
         public TileSideType Up, Down, Left, Right;
         #region IPayloadContent
-        public TileSideDescriptor ReadContent()
+        public void ReadContent(byte[] payloadContent)
         {
-            throw new NotImplementedException();
+            using (var ms = new MemoryStream(payloadContent))
+            {
+                var content = new byte[sizeof(short)];
+                ms.Read(content, 0, sizeof(short));
+                this.Up = (TileSideType)BitConverter.ToInt16(content, 0);
+
+                ms.Read(content, 0, sizeof(short));
+                this.Right = (TileSideType)BitConverter.ToInt16(content, 0);
+
+                ms.Read(content, 0, sizeof(short));
+                this.Down = (TileSideType)BitConverter.ToInt16(content, 0);
+
+                ms.Read(content, 0, sizeof(short));
+                this.Left = (TileSideType)BitConverter.ToInt16(content, 0);
+            }
+            
         }
 
-        public byte[] WriteContent()
+        public void WriteContent(Stream contentStream)
         {
-            using (var ms = new MemoryStream())
-            {
-                using (var sw = new StreamWriter(ms))
-                {
-                    sw.Write(Up);
-                    sw.Write(Down);
-                    sw.Write(Left);
-                    sw.Write(Right);
-
-                    var content = new byte[ms.Length];
-                    using (var contentStream = new MemoryStream(content))
-                        ms.WriteTo(contentStream);
-
-                    return content;
-                }
-            }
+            contentStream.WriteShort((short)Up);
+            contentStream.WriteShort((short)Down);
+            contentStream.WriteShort((short)Left);
+            contentStream.WriteShort((short)Right);
         }
         #endregion IPayloadContent
     }

@@ -8,14 +8,13 @@ using System.IO;
 
 namespace Carcassonne.Model.Representation
 {
-    public class Meeple : IPayloadContent<Meeple>
+    public class Meeple : IPayloadContent
     {
         #region Declaration
-        private Player owner;
-
-        public Player Owner
+        public short OwnerId
         {
-            get { return owner; }
+            get;
+            private set;
         }
 
         private bool inUse;
@@ -30,47 +29,49 @@ namespace Carcassonne.Model.Representation
         public Position Position
         {
             get { return position; }
-            set { position = value; }
+            private set { position = value; }
         }
+
+        /// <summary>
+        /// Üres ktor a PayloadContentFactoryhez.
+        /// </summary>
+        public Meeple() { }
 
         /// <summary>
         /// Meeple ktor. Létrejötterkor megkapja, hogy melyik játékos birtokolja. Alapból egyik meeple sincs használatban.
         /// </summary>
         /// <param name="owner">Birtokló játékos</param>
-        public Meeple(Player owner)
+        public Meeple(short id)
         {
-            this.owner = owner;
-            this.inUse = false;
+            this.OwnerId = id;
+            this.InUse = false;
         }
         #endregion Declaration
 
         #region IPayloadContent
-        public Meeple ReadContent()
+        public void ReadContent(byte[] payloadContent)
         {
-            throw new NotImplementedException();
+            using (var ms = new MemoryStream(payloadContent))
+            {
+                var playerContent = new byte[sizeof(short)];
+                ms.Read(playerContent, 0, sizeof(short));
+                this.OwnerId = BitConverter.ToInt16(playerContent, 0);
+
+                var positionContent = new byte[sizeof(short) * 2];
+                ms.Read(positionContent, 0, sizeof(short) * 2);
+                this.Position = PayloadContentFactory<Position>.Create(positionContent);
+            }
         }
 
-        public byte[] WriteContent()
+        public void WriteContent(Stream contentStream)
         {
             if (!inUse)
                 throw new InvalidOperationException("Meeple is not in use.");
 
-            using (var ms = new MemoryStream())
-            {
-                using (var sw = new StreamWriter(ms))
-                {
-                    sw.Write(owner.WriteContent());
-                    sw.Write(position.WriteContent());
-
-                    var content = new byte[ms.Length];
-
-                    using (var contentStream = new MemoryStream(content))
-                        ms.WriteTo(contentStream);
-
-                    return content;
-                }
-            }
+            contentStream.WriteShort(OwnerId);
+            Position.WriteContent(contentStream);
         }
         #endregion IPayloadContent
+
     }
 }
