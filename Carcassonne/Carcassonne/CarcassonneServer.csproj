@@ -7,7 +7,7 @@
     <ProjectGuid>{D8377051-0C91-45D2-9740-D1BFC827D298}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Carcassonne</RootNamespace>
+    <RootNamespace>CarcassonneServer</RootNamespace>
     <AssemblyName>Carcassonne</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -66,27 +66,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\GameLogic\Model.cs" />
-    <Compile Include="Model\GameLogic\ModelEventArgs.cs" />
-    <Compile Include="Model\GameLogic\ScoreHandler.cs" />
-    <Compile Include="Model\GameLogic\TurnHandler.cs" />
-    <Compile Include="Model\Tools\Extensions.cs" />
-    <Compile Include="Model\Tools\GameClient.cs" />
-    <Compile Include="Model\Tools\GameStateDescriptor.cs" />
-    <Compile Include="Model\Tools\InitContent.cs" />
-    <Compile Include="Model\Tools\IPayloadContent.cs" />
-    <Compile Include="Model\Network\NetworkHandler.cs" />
-    <Compile Include="Model\Network\NetworkHandlerEventArgs.cs" />
-    <Compile Include="Model\Network\PayloadAttribute.cs" />
-    <Compile Include="Model\Representation\Game.cs" />
-    <Compile Include="Model\Representation\GameServer.cs" />
-    <Compile Include="Model\Representation\GameTable.cs" />
-    <Compile Include="Model\Representation\Meeple.cs" />
-    <Compile Include="Model\Representation\Player.cs" />
-    <Compile Include="Model\Representation\Position.cs" />
-    <Compile Include="Model\Representation\RepresentationClasses.cs" />
-    <Compile Include="Model\Representation\Tile.cs" />
-    <Compile Include="Model\Tools\PayloadContentFactory.cs" />
-    <Compile Include="Model\Tools\PayloadContentHandler.cs" />
     <Compile Include="View\Controls\TileControl.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -120,7 +99,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CarcassonneSharedModules\CarcassonneSharedModules.csproj">
+      <Project>{c4d75499-1d22-440d-baf7-a1872476b7c2}</Project>
+      <Name>CarcassonneSharedModules</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

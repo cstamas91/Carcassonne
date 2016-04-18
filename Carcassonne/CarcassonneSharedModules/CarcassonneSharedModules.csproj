@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{54760C64-0EBD-4A0E-9194-4E8531EB421E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{C4D75499-1D22-440D-BAF7-A1872476B7C2}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CarcassonneTester</RootNamespace>
-    <AssemblyName>CarcassonneTester</AssemblyName>
+    <RootNamespace>CarcassonneSharedModules</RootNamespace>
+    <AssemblyName>CarcassonneSharedModules</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,17 +39,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Network\GameClient.cs" />
+    <Compile Include="Network\GameServer.cs" />
+    <Compile Include="Network\NetworkHandler.cs" />
+    <Compile Include="Network\NetworkHandlerEventArgs.cs" />
+    <Compile Include="Network\PayloadAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CarcassonneSharedModules\CarcassonneSharedModules.csproj">
-      <Project>{c4d75499-1d22-440d-baf7-a1872476b7c2}</Project>
-      <Name>CarcassonneSharedModules</Name>
-    </ProjectReference>
+    <Compile Include="Representation\Game.cs" />
+    <Compile Include="Representation\GameTable.cs" />
+    <Compile Include="Representation\IGameModel.cs" />
+    <Compile Include="Representation\Meeple.cs" />
+    <Compile Include="Representation\Player.cs" />
+    <Compile Include="Representation\Position.cs" />
+    <Compile Include="Representation\RepresentationClasses.cs" />
+    <Compile Include="Representation\Tile.cs" />
+    <Compile Include="Tools\Extensions.cs" />
+    <Compile Include="Tools\GameStateDescriptor.cs" />
+    <Compile Include="Tools\InitContent.cs" />
+    <Compile Include="Tools\IPayloadContent.cs" />
+    <Compile Include="Tools\ModelEventArgs.cs" />
+    <Compile Include="Tools\PayloadContentFactory.cs" />
+    <Compile Include="Tools\PayloadContentHandler.cs" />
+    <Compile Include="Tools\ScoreHandler.cs" />
+    <Compile Include="Tools\TurnHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

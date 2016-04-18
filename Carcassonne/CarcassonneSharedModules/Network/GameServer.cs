@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Carcassonne.Model.Network;
+using CarcassonneSharedModules.Network;
+using CarcassonneSharedModules.Representation;
 
-namespace Carcassonne.Model.Representation
+namespace CarcassonneSharedModules.Network
 {
     public class GameServer
     {

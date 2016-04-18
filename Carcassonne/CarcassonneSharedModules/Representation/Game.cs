@@ -1,11 +1,11 @@
-﻿using Carcassonne.Model.GameLogic;
+﻿using CarcassonneSharedModules.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.Representation
+namespace CarcassonneSharedModules.Representation
 {
     public class Game
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.Tools
+namespace CarcassonneSharedModules.Tools
 {
     /// <summary>
     /// Ez az interfész byte tömbbe, és abból való konverzióra szolgáló eljárásokat szab meg.

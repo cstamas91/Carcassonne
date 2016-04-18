@@ -1,8 +1,8 @@
-﻿<Window x:Class="Carcassonne.View.MainWindow"
+﻿<Window x:Class="CarcassonneServer.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:carcassonne_view="clr-namespace:Carcassonne"
-        xmlns:controls="clr-namespace:Carcassonne.View.Controls"
+        xmlns:carcassonne_view="clr-namespace:CarcassonneServer"
+        xmlns:controls="clr-namespace:CarcassonneServer.View.Controls"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <controls:TileControl />

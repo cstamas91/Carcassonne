@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CarcassonneServer.View
+namespace CarcassonneClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Carcassonne.Model.Tools;
+using CarcassonneSharedModules.Tools;
 using System.IO;
 
-namespace Carcassonne.Model.Representation
+namespace CarcassonneSharedModules.Representation
 {
     public class Position : IPayloadContent
     {

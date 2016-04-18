@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Carcassonne.Model.Tools;
+using CarcassonneSharedModules.Representation;
 
-namespace Carcassonne.Model.Network
+namespace CarcassonneSharedModules.Network
 {
     /// <summary>
     /// Hálózati kommunikációért felelős osztály.
@@ -36,21 +36,36 @@ namespace Carcassonne.Model.Network
         #endregion Events
 
         #region Methods
-        public void Send(byte[] message, MessageType type, string recipient = null)
+        /// <summary>
+        /// A kapott byte[] típusú üzenetet elküldi a címzetteknek.
+        /// </summary>
+        /// <param name="message">Küldendő üzenet</param>
+        /// <param name="type">A küldés típusa, broadcast vagy single.</param>
+        /// <param name="recipientGUID">Ha a küldés nem broadcast, akkor a címzett GUIDja.</param>
+        public void Send(byte[] message, MessageType type, string recipientGUID = null)
         {
             switch (type)
             {
                 case MessageType.Broadcast:
-                    foreach (var client in clients)
-                        client.SendMessage(message);
+                    SendBroadcast(message);
                     break;
-
                 case MessageType.Single:
-                    clients
-                        .FirstOrDefault(client => client.PlayerName == recipient)
-                        .SendMessage(message);
+                    SendSingle(message, recipientGUID);
                     break;
             }
+        }
+
+        private void SendSingle(byte[] message, string recipientGUID)
+        {
+            clients
+                .FirstOrDefault(client => client.Player.GUID== recipientGUID)
+                .SendMessage(message);
+        }
+
+        private void SendBroadcast(byte[] message)
+        {
+            foreach (var client in clients)
+                client.SendMessage(message);
         }
 
         #endregion Methods

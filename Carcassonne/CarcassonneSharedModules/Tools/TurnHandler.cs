@@ -1,4 +1,4 @@
-﻿using Carcassonne.Model.Representation;
+﻿using CarcassonneSharedModules.Representation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.GameLogic
+namespace CarcassonneSharedModules.Tools
+
 {
     /// <summary>
     /// A játék köreit kezelő osztály. Számon tartja az eltelt körök számát, a jelenlegi játékost, és a jelenlegi kör belső állapotát.

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.Network
+namespace CarcassonneSharedModules.Network
 {
     public class NewGameRequestReceivedEventArgs : EventArgs 
     {

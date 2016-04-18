@@ -1,11 +1,11 @@
-﻿using Carcassonne.Model.Representation;
+﻿using CarcassonneSharedModules.Representation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.GameLogic
+namespace CarcassonneSharedModules.Tools
 {
 
     public class TilePlayedEventArgs : EventArgs

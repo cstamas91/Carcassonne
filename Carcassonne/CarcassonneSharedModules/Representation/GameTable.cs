@@ -1,4 +1,5 @@
-﻿using Carcassonne.Model.Tools;
+﻿using CarcassonneSharedModules.Representation;
+using CarcassonneSharedModules.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carcassonne.Model.Representation
+namespace CarcassonneSharedModules.Representation
 {
     public class GameTable : INotifyPropertyChanged, IPayloadContent
     {

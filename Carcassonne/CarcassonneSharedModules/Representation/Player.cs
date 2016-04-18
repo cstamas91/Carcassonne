@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Carcassonne.Model.Tools;
+using CarcassonneSharedModules.Tools;
 using System.IO;
 using System.ComponentModel;
 
-namespace Carcassonne.Model.Representation
+namespace CarcassonneSharedModules.Representation
 {
     public class Player : IPayloadContent
     {
@@ -28,6 +28,15 @@ namespace Carcassonne.Model.Representation
             private set { number = value; }
         }
 
+        private string guid;
+
+        public string GUID
+        {
+            get { return guid; }
+            private set { guid = value; }
+        }
+
+
         private List<Meeple> ownedMeeples;
 
         public Player() { }
@@ -41,6 +50,7 @@ namespace Carcassonne.Model.Representation
         {
             this.name = name;
             this.number = playerNumber;
+            this.GUID = Guid.NewGuid().ToString();
             this.ownedMeeples = GenerateMeeples().ToList();
         }
         #endregion Declaration
@@ -79,7 +89,8 @@ namespace Carcassonne.Model.Representation
 
                 using (var sr = new StreamReader(ms, Encoding.Default, false, 4, true))
                 {
-                    Name = sr.ReadToEnd();
+                    Name = sr.ReadLine();
+                    GUID = sr.ReadLine();
                 }
             }
             if (Name.EndsWith("\n"))
@@ -90,6 +101,7 @@ namespace Carcassonne.Model.Representation
         {
             contentStream.WriteShort((short)Number);
             contentStream.WriteString(Name);
+            contentStream.WriteString(GUID);
         }
         #endregion IPayloadContent
 
