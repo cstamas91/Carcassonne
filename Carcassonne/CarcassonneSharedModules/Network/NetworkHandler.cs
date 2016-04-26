@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using CarcassonneSharedModules.Representation;
 
 namespace CarcassonneSharedModules.Network
 {
@@ -16,8 +12,8 @@ namespace CarcassonneSharedModules.Network
 
         #region Declarations
         private const int BASE_CONNECTION_PORT = 1500;
-        private List<GameClient> clients;
-        private List<TcpListener> listeners;
+        //private List<GameClient> clients;
+        //private List<TcpListener> listeners;
         private UdpClient connectionListener;
         /// <summary>
         /// Hálózati kommunikáció kezelőjének a konstruktora.
@@ -57,15 +53,10 @@ namespace CarcassonneSharedModules.Network
 
         private void SendSingle(byte[] message, string recipientGUID)
         {
-            clients
-                .FirstOrDefault(client => client.Player.GUID== recipientGUID)
-                .SendMessage(message);
         }
 
         private void SendBroadcast(byte[] message)
         {
-            foreach (var client in clients)
-                client.SendMessage(message);
         }
 
         #endregion Methods

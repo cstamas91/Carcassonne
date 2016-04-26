@@ -40,29 +40,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logger\Logger.cs" />
-    <Compile Include="Network\GameClient.cs" />
-    <Compile Include="Network\GameServer.cs" />
     <Compile Include="Network\NetworkHandler.cs" />
     <Compile Include="Network\NetworkHandlerEventArgs.cs" />
     <Compile Include="Network\PayloadAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Representation\Game.cs" />
-    <Compile Include="Representation\GameTable.cs" />
-    <Compile Include="Representation\IGameModel.cs" />
-    <Compile Include="Representation\Meeple.cs" />
-    <Compile Include="Representation\Player.cs" />
-    <Compile Include="Representation\Position.cs" />
-    <Compile Include="Representation\RepresentationClasses.cs" />
-    <Compile Include="Representation\Tile.cs" />
     <Compile Include="Tools\Extensions.cs" />
     <Compile Include="Tools\GameStateDescriptor.cs" />
-    <Compile Include="Tools\InitContent.cs" />
     <Compile Include="Tools\IPayloadContent.cs" />
-    <Compile Include="Tools\ModelEventArgs.cs" />
     <Compile Include="Tools\PayloadContentFactory.cs" />
-    <Compile Include="Tools\PayloadContentHandler.cs" />
-    <Compile Include="Tools\ScoreHandler.cs" />
-    <Compile Include="Tools\TurnHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
