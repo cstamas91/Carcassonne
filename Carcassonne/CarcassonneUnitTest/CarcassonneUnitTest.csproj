@@ -45,7 +45,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -53,8 +55,13 @@
     <Compile Include="NetworkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PayloadTest.cs" />
+    <Compile Include="TileTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CarcassonneServer\CarcassonneServer.csproj">
+      <Project>{d8377051-0c91-45d2-9740-d1bfc827d298}</Project>
+      <Name>CarcassonneServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CarcassonneSharedModules\CarcassonneSharedModules.csproj">
       <Project>{c4d75499-1d22-440d-baf7-a1872476b7c2}</Project>
       <Name>CarcassonneSharedModules</Name>

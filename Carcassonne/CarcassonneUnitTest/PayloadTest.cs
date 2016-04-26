@@ -2,8 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using System.IO;
-using CarcassonneSharedModules.Representation;
 using CarcassonneSharedModules.Tools;
+using CarcassonneServer.Model.Representation;
 
 namespace CarcassonneUnitTest
 {
