@@ -11,8 +11,6 @@
     <AssemblyName>Carcassonne</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,9 +50,26 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\GameLogic\Game.cs" />
     <Compile Include="Model\GameLogic\Model.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\GameLogic\ScoreHandler.cs" />
+    <Compile Include="Model\GameLogic\TurnHandler.cs" />
+    <Compile Include="Model\Representation\Construction\BaseConstruction.cs" />
+    <Compile Include="Model\Representation\BaseElement.cs" />
+    <Compile Include="Model\Representation\Construction\CastleConstruction.cs" />
+    <Compile Include="Model\Representation\Construction\FieldConstruction.cs" />
+    <Compile Include="Model\Representation\Construction\MonasteryConstruction.cs" />
+    <Compile Include="Model\Representation\Construction\RoadConstruction.cs" />
+    <Compile Include="Model\Representation\GameTable.cs" />
+    <Compile Include="Model\Representation\IConstruction.cs" />
+    <Compile Include="Model\Representation\Meeple.cs" />
+    <Compile Include="Model\Representation\Player.cs" />
+    <Compile Include="Model\Representation\Position.cs" />
+    <Compile Include="Model\Representation\RepresentationClasses.cs" />
+    <Compile Include="Model\Representation\Tile.cs" />
+    <Compile Include="Model\Representation\TileCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -88,6 +103,7 @@
       <Name>CarcassonneSharedModules</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

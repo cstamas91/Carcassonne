@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneServer", "Carcassonne\CarcassonneServer.csproj", "{D8377051-0C91-45D2-9740-D1BFC827D298}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneTester", "CarcassonneTester\CarcassonneTester.csproj", "{54760C64-0EBD-4A0E-9194-4E8531EB421E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneUnitTest", "CarcassonneUnitTest\CarcassonneUnitTest.csproj", "{04925F7F-FC62-40BA-8C64-5C21E9DCC0AE}"
@@ -13,16 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneClient", "Carcas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneSharedModules", "CarcassonneSharedModules\CarcassonneSharedModules.csproj", "{C4D75499-1D22-440D-BAF7-A1872476B7C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneServer", "CarcassonneServer\CarcassonneServer.csproj", "{D8377051-0C91-45D2-9740-D1BFC827D298}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D8377051-0C91-45D2-9740-D1BFC827D298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8377051-0C91-45D2-9740-D1BFC827D298}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8377051-0C91-45D2-9740-D1BFC827D298}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8377051-0C91-45D2-9740-D1BFC827D298}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{C4D75499-1D22-440D-BAF7-A1872476B7C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4D75499-1D22-440D-BAF7-A1872476B7C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4D75499-1D22-440D-BAF7-A1872476B7C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8377051-0C91-45D2-9740-D1BFC827D298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8377051-0C91-45D2-9740-D1BFC827D298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8377051-0C91-45D2-9740-D1BFC827D298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8377051-0C91-45D2-9740-D1BFC827D298}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
