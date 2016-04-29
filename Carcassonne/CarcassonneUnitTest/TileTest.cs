@@ -22,10 +22,8 @@ namespace CarcassonneUnitTest
         [TestMethod]
         public void NeighbourTest()
         {
-            Tile road1 = new Tile(TileDescriptor.CurvyRoad);
-            Tile road2 = new Tile(TileDescriptor.CurvyRoad);
-            road1.Position = new Position(0, 0);
-            road2.Position = new Position(1, 0);
+            Tile road1 = new Tile(TileDescriptor.CurvyRoad, new Position(0, 0));
+            Tile road2 = new Tile(TileDescriptor.CurvyRoad, new Position(1, 0));
             RoadConstruction construction = new RoadConstruction(road1);
 
             Assert.IsTrue(road1 | road2);

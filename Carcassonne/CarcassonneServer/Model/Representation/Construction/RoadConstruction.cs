@@ -13,7 +13,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         private Tile start = null;
         private Tile end = null;
 
-        public override List<Tile> EdgeTiles { get { return new List<Tile>() { start, end }; } }
+        public override IEnumerable<Tile> EdgeTiles { get { return new List<Tile>() { start, end }.AsEnumerable(); } }
 
         public RoadConstruction()
         {
@@ -54,8 +54,15 @@ namespace CarcassonneServer.Model.Representation.Construction
                 throw new InvalidOperationException();
             }
         }
+        public override void AddMeeple(Meeple meeple)
+        {
+            if (meeples.Count > 0)
+                throw new InvalidOperationException();
 
-        protected override bool NeighbourTo(Tile element)
+            meeples.Add(meeple);
+        }
+
+        protected override bool NeighbourTo(Position element)
         {
             return start | element || end | element;
         }
@@ -76,15 +83,17 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// </summary>
         /// <param name="other"></param>
         /// <returns>Hamissal, ha a két út nem szomszédos, egyébként igazzal, ha az összeolvasztás sikeres.</returns>
-        public bool Merge(RoadConstruction other)
+        public override BaseConstruction Merge(BaseConstruction other)
         {
-            if (!NeighbourTo(other))
-                return false;
+            RoadConstruction otherRoad = other as RoadConstruction;
 
-            foreach (var item in other.elements)
+            if (otherRoad == null || !(this | otherRoad))
+                throw new InvalidOperationException();
+
+            foreach (var item in otherRoad.elements)
                 AddElement(item);
 
-            return true;
+            return this;
         }
     }
 }

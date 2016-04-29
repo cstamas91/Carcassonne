@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CarcassonneServer.Model.Representation
 {
-    public class Meeple : IPayloadContent
+    public class Meeple : Position, IPayloadContent
     {
         #region Declaration
         public short OwnerId
@@ -21,12 +21,13 @@ namespace CarcassonneServer.Model.Representation
             set { inUse = value; }
         }
 
-        private Position position;
-        public Position Position
+        private string constructionGuid;
+        public string ConstructionGuid
         {
-            get { return position; }
-            private set { position = value; }
+            get { return constructionGuid;} 
+            private set { this.constructionGuid = value; }
         }
+
 
         /// <summary>
         /// Üres ktor a PayloadContentFactoryhez.
@@ -45,27 +46,14 @@ namespace CarcassonneServer.Model.Representation
         #endregion Declaration
 
         #region IPayloadContent
-        public void ReadContent(byte[] payloadContent)
+        public override void ReadContent(byte[] payloadContent)
         {
-            using (var ms = new MemoryStream(payloadContent))
-            {
-                var playerContent = new byte[sizeof(short)];
-                ms.Read(playerContent, 0, sizeof(short));
-                this.OwnerId = BitConverter.ToInt16(playerContent, 0);
-
-                var positionContent = new byte[sizeof(short) * 2];
-                ms.Read(positionContent, 0, sizeof(short) * 2);
-                this.Position = PayloadContentFactory<Position>.Create(positionContent);
-            }
+            base.ReadContent(payloadContent);
         }
 
-        public void WriteContent(Stream contentStream)
+        public override void WriteContent(Stream contentStream)
         {
-            if (!inUse)
-                throw new InvalidOperationException("Meeple is not in use.");
-
-            contentStream.WriteShort(OwnerId);
-            Position.WriteContent(contentStream);
+            base.WriteContent(contentStream);
         }
         #endregion IPayloadContent
 

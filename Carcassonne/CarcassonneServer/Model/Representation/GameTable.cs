@@ -1,63 +1,47 @@
 ﻿using CarcassonneSharedModules.Tools;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using CarcassonneServer.Model.Representation.Construction;
+using System.Linq;
 
 namespace CarcassonneServer.Model.Representation
 {
-    public class GameTable : INotifyPropertyChanged, IPayloadContent
+    public class GameTable : IPayloadContent
     {
-        public short Dimension { get; set; }
-        public ICollection<Tile> Tiles { get; set; }
-        public ICollection<Meeple> Meeples { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        private List<BaseConstruction> constructions = new List<BaseConstruction>();
+        public IEnumerable<BaseConstruction> Constructions { get { return constructions.AsEnumerable(); } }
+        private Tile lastAddedTile;
+        private Meeple lastAddedMeeple;
         public GameTable() { }
 
+        public void SetTile(Tile tile)
+        {
+            var neighboringConstructions = from construction in constructions
+                                           where construction | tile
+                                           select construction;
+
+            if (neighboringConstructions.Count() != 0)
+            {
+                foreach (var item in neighboringConstructions)
+                    item.AddElement(tile);
+            }
+            else
+                constructions.AddRange(BaseConstructionFactory.Factory(tile));
+        }
+
+        public void SetMeeple(Meeple meeple)
+        {
+            constructions.SetMeeple(meeple, (c, m) => c.GUID == m.ConstructionGuid);
+        }
         #region IPayloadContent
         public void ReadContent(byte[] payloadContent)
         {
-            using (var ms = new MemoryStream(payloadContent))
-            {
-                var content = new byte[sizeof(short)];
-                ms.Read(content, 0, sizeof(short));
-                Dimension = BitConverter.ToInt16(content, 0);
 
-                ms.Read(content, 0, sizeof(short));
-                var tileCount = BitConverter.ToInt16(content, 0);
-                Tiles = new List<Tile>();
-                var tileContent = new byte[sizeof(short) * 10];
-                for (int i = 0; i < tileCount; i++)
-                {
-                    ms.Read(tileContent, 0, sizeof(short) * 10);
-                    Tiles.Add(PayloadContentFactory<Tile>.Create(tileContent));
-                }
-
-                ms.Read(content, 0, sizeof(short));
-                var meepleCount = BitConverter.ToInt16(content, 0);
-                Meeples = new List<Meeple>();
-                var meepleContent = new byte[sizeof(short) * 3];
-                for(int i = 0; i < meepleCount; i++)
-                {
-                    ms.Read(meepleContent, 0, sizeof(short) * 3);
-                    Meeples.Add(PayloadContentFactory<Meeple>.Create(meepleContent));
-                }
-            }
         }
 
         public void WriteContent(Stream contentStream)
         {
-            contentStream.WriteShort(Dimension);
 
-            contentStream.WriteShort((short)Tiles.Count);
-            foreach (var tile in Tiles)
-                tile.WriteContent(contentStream);
-
-            contentStream.WriteShort((short)Meeples.Count);
-            foreach (var meeple in Meeples)
-                meeple.WriteContent(contentStream);
         }
         #endregion IPayloadContent
 

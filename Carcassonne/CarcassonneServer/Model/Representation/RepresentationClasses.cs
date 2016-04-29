@@ -47,23 +47,38 @@ namespace CarcassonneServer.Model.Representation
         }
         #endregion IPayloadContent
 
-        private static TileDescriptor castleInner = new TileDescriptor(TileSideDescriptor.OpenCastle, TileSideDescriptor.OpenCastle, TileSideDescriptor.OpenCastle, TileSideDescriptor.OpenCastle);
+        #region Singleton type instanes
+        private static TileDescriptor castleInner = new TileDescriptor(StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle);
         public static TileDescriptor CastleInner { get { return castleInner; } }
         
-        private static TileDescriptor monastery = new TileDescriptor(TileSideDescriptor.OpenField, TileSideDescriptor.OpenField, TileSideDescriptor.OpenField, TileSideDescriptor.OpenField, true);
+        private static TileDescriptor monastery = new TileDescriptor(StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.ClosedRoad, StaticTileSideDescriptor.OpenField, true);
         public static TileDescriptor Monastery { get { return monastery; } }
                   
-        private static readonly TileDescriptor curvyRoad = new TileDescriptor(TileSideDescriptor.OpenRoad, TileSideDescriptor.OpenRoad, TileSideDescriptor.ClosedField, TileSideDescriptor.ClosedField);
+        private static readonly TileDescriptor curvyRoad = new TileDescriptor(StaticTileSideDescriptor.OpenRoad, StaticTileSideDescriptor.OpenRoad, StaticTileSideDescriptor.ClosedField, StaticTileSideDescriptor.ClosedField);
         public static TileDescriptor CurvyRoad { get { return curvyRoad; } }
 
-        private static readonly TileDescriptor allField = new TileDescriptor(TileSideDescriptor.OpenField, TileSideDescriptor.OpenField, TileSideDescriptor.OpenField, TileSideDescriptor.OpenField);
+        private static readonly TileDescriptor allField = new TileDescriptor(StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField);
         public static TileDescriptor AllField { get { return allField; } }
+        #endregion Singleton type instanes
+    }
+
+    public class TileSideDescriptor
+    {
+        //TODO: TileDescriptort refaktorálni, hogy TileSideDescriptorDecort használja
+        public string ConstructionGuid { get; set; }
+        private StaticTileSideDescriptor descriptor;
+
+        public TileSideDescriptor(StaticTileSideDescriptor descriptor)
+        {
+            this.descriptor = descriptor;
+            ConstructionGuid = null;
+        }
     }
     /// <summary>
     /// A mező egy oldalát reprezentáló struktúra.
     /// Elérhetőek statikus példányok a különböző oldaltípusokhoz.
     /// </summary>
-    public struct TileSideDescriptor
+    public class StaticTileSideDescriptor
     {
         /// <summary>
         /// A terület típusa.
@@ -78,29 +93,31 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         /// <param name="type">Az oldal által definiált terület típusa.</param>
         /// <param name="closed">Az oldal területzárást deifniál-e.</param>
-        public TileSideDescriptor(TileSideType type, bool closed)
+        public StaticTileSideDescriptor(TileSideType type, bool closed)
         {
             Type = type;
             Closed = closed;
         }
 
-        private static TileSideDescriptor closedRoad = new TileSideDescriptor(TileSideType.Road, true);
-        public static TileSideDescriptor ClosedRoad { get { return closedRoad; } }
+        #region Singleton type instances
+        private static StaticTileSideDescriptor closedRoad = new StaticTileSideDescriptor(TileSideType.Road, true);
+        public static StaticTileSideDescriptor ClosedRoad { get { return closedRoad; } }
 
-        private static TileSideDescriptor openRoad = new TileSideDescriptor(TileSideType.Road, false);
-        public static TileSideDescriptor OpenRoad { get { return openRoad; } }
+        private static StaticTileSideDescriptor openRoad = new StaticTileSideDescriptor(TileSideType.Road, false);
+        public static StaticTileSideDescriptor OpenRoad { get { return openRoad; } }
 
-        private static TileSideDescriptor openField = new TileSideDescriptor(TileSideType.Field, false);
-        public static TileSideDescriptor OpenField { get { return openField; } }
+        private static StaticTileSideDescriptor openField = new StaticTileSideDescriptor(TileSideType.Field, false);
+        public static StaticTileSideDescriptor OpenField { get { return openField; } }
 
-        private static TileSideDescriptor closedField = new TileSideDescriptor(TileSideType.Field, true);
-        public static TileSideDescriptor ClosedField { get { return closedField; } }
+        private static StaticTileSideDescriptor closedField = new StaticTileSideDescriptor(TileSideType.Field, true);
+        public static StaticTileSideDescriptor ClosedField { get { return closedField; } }
 
-        private static TileSideDescriptor openCastle = new TileSideDescriptor(TileSideType.Castle, false);
-        public static TileSideDescriptor OpenCastle { get { return openCastle; } }
+        private static StaticTileSideDescriptor openCastle = new StaticTileSideDescriptor(TileSideType.Castle, false);
+        public static StaticTileSideDescriptor OpenCastle { get { return openCastle; } }
 
-        private static TileSideDescriptor closedCastle = new TileSideDescriptor(TileSideType.Castle, true);
-        public static TileSideDescriptor ClosedCastle { get { return closedCastle; } }
+        private static StaticTileSideDescriptor closedCastle = new StaticTileSideDescriptor(TileSideType.Castle, true);
+        public static StaticTileSideDescriptor ClosedCastle { get { return closedCastle; } }
+        #endregion Singleton type instances
     }
     /// <summary>
     /// Mező elforgatását reprezentáló felsoroló.

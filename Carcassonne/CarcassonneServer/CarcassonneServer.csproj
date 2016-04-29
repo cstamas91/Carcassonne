@@ -57,13 +57,13 @@
     <Compile Include="Model\GameLogic\ScoreHandler.cs" />
     <Compile Include="Model\GameLogic\TurnHandler.cs" />
     <Compile Include="Model\Representation\Construction\BaseConstruction.cs" />
-    <Compile Include="Model\Representation\BaseElement.cs" />
+    <Compile Include="Model\Representation\Construction\BaseConstructionFactory.cs" />
     <Compile Include="Model\Representation\Construction\CastleConstruction.cs" />
+    <Compile Include="Model\Representation\Extensions.cs" />
     <Compile Include="Model\Representation\Construction\FieldConstruction.cs" />
     <Compile Include="Model\Representation\Construction\MonasteryConstruction.cs" />
     <Compile Include="Model\Representation\Construction\RoadConstruction.cs" />
     <Compile Include="Model\Representation\GameTable.cs" />
-    <Compile Include="Model\Representation\IConstruction.cs" />
     <Compile Include="Model\Representation\Meeple.cs" />
     <Compile Include="Model\Representation\Player.cs" />
     <Compile Include="Model\Representation\Position.cs" />

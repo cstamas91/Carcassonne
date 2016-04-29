@@ -7,15 +7,21 @@ namespace CarcassonneServer.Model.Representation.Construction
     public abstract class BaseConstruction
     {
         protected List<Tile> elements = new List<Tile>();
+        protected List<Meeple> meeples = new List<Meeple>();
         public int Size { get { return elements.Count; } }
 
-        public BaseConstruction() { }
-        
+        public BaseConstruction()
+        {
+            this.GUID = Guid.NewGuid().ToString();
+        }
+
         virtual public TileSideType AreaType { get; }
         virtual public bool IsFinished { get; }
-        virtual public List<Tile> EdgeTiles { get; }
-        
+        virtual public IEnumerable<Tile> EdgeTiles { get; }
+        public string GUID { get; private set; }
+
         virtual public void AddElement(Tile element) { }
+        virtual public void AddMeeple(Meeple meeple) { }
 
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
@@ -33,11 +39,18 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <param name="lhs">Bal Construction</param>
         /// <param name="rhs">Jobb Tile</param>
         /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        public static bool operator |(BaseConstruction lhs, Tile rhs)
+        public static bool operator |(BaseConstruction lhs, Position rhs)
         {
             return lhs.NeighbourTo(rhs);
         }
-        virtual protected bool NeighbourTo(Tile element) { return false; }
+
+        public static bool operator |(Position lhs, BaseConstruction rhs)
+        {
+            return rhs.NeighbourTo(lhs);
+        }
+
+        virtual public BaseConstruction Merge(BaseConstruction other) { return null; }
+        virtual protected bool NeighbourTo(Position element) { return false; }
         virtual protected bool NeighbourTo(BaseConstruction construction) { return false; }
         virtual protected bool EvaluateIsFinished() { return false; }
     }

@@ -18,7 +18,7 @@ namespace CarcassonneServer.Model.Representation
         }
 
         #region IPayloadContent
-        public void ReadContent(byte[] payloadContent)
+        virtual public void ReadContent(byte[] payloadContent)
         {
             using (var ms = new MemoryStream(payloadContent))
             {
@@ -30,7 +30,7 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
-        public void WriteContent(Stream contentStream)
+        virtual public void WriteContent(Stream contentStream)
         {
             contentStream.WriteShort(X);
             contentStream.WriteShort(Y);
@@ -48,12 +48,25 @@ namespace CarcassonneServer.Model.Representation
             return lhs.NeighbourTo(rhs);
         }
 
-        private bool NeighbourTo(Position other)
+        virtual protected bool NeighbourTo(Position other)
         {
             if (Math.Abs(this.X - other.X) == 1 || Math.Abs(this.Y - other.Y) == 1)
                 return true;
 
             return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
+                return true;
+
+            Position other = obj as Position;
+
+            if (other == null)
+                return false;
+
+            return other.X == X && other.Y == Y;
         }
     }
 }
