@@ -37,13 +37,18 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
         /// </summary>
         /// <param name="lhs">Bal Construction</param>
-        /// <param name="rhs">Jobb Tile</param>
+        /// <param name="rhs">Jobb Position</param>
         /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
         public static bool operator |(BaseConstruction lhs, Position rhs)
         {
             return lhs.NeighbourTo(rhs);
         }
-
+        /// <summary>
+        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
+        /// </summary>
+        /// <param name="lhs">Jobb Position</param>
+        /// <param name="rhs">Bal Construction</param>
+        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
         public static bool operator |(Position lhs, BaseConstruction rhs)
         {
             return rhs.NeighbourTo(lhs);
