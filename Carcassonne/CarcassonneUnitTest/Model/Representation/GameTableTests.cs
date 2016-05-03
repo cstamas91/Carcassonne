@@ -9,11 +9,7 @@ namespace CarcassonneServer.Model.Representation.Tests
         [TestMethod()]
         public void SetTileTest()
         {
-            var table = new GameTable();
-            Tile t1 = new Tile(TileDescriptor.Monastery, new Position(0, 0));
-            table.SetTile(t1);
 
-            Assert.IsTrue(table.Constructions.Count() == 2);
         }
     }
 }

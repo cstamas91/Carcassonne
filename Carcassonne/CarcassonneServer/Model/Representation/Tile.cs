@@ -20,12 +20,12 @@ namespace CarcassonneServer.Model.Representation
         {
             return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
         }
-        public StaticTileSideDescriptor Up { get { return sideDescriptor[RotationAdjustedDirection(Direction.Up)]; } }
-        public StaticTileSideDescriptor Right { get { return sideDescriptor[RotationAdjustedDirection(Direction.Right)]; } }
-        public StaticTileSideDescriptor Down { get { return sideDescriptor[RotationAdjustedDirection(Direction.Down)]; } }
-        public StaticTileSideDescriptor Left { get { return sideDescriptor[RotationAdjustedDirection(Direction.Left)]; } }
+        public TileSideDescriptor Up { get { return sideDescriptor[RotationAdjustedDirection(Direction.Up)]; } }
+        public TileSideDescriptor Right { get { return sideDescriptor[RotationAdjustedDirection(Direction.Right)]; } }
+        public TileSideDescriptor Down { get { return sideDescriptor[RotationAdjustedDirection(Direction.Down)]; } }
+        public TileSideDescriptor Left { get { return sideDescriptor[RotationAdjustedDirection(Direction.Left)]; } }
 
-        public StaticTileSideDescriptor this[Direction direction] { get { return sideDescriptor[RotationAdjustedDirection(direction)]; } } 
+        public TileSideDescriptor this[Direction direction] { get { return sideDescriptor[RotationAdjustedDirection(direction)]; } } 
 
         public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }
 

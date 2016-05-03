@@ -54,7 +54,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
             //kigyűjtjük a hozzáadottal határos mezők szomszédait, melyek teljesen körbe vannak véve
             var surroundedEdgeTiles = from tile in tilesNeighboringToTileToAdd
-                                      where this.GetNeighboringElementCount(tile).Count() == 4
+                                      where this.GetNeighboringElementCount(tile) == 4
                                       select tile;
 
             //a teljesen körbevett mezőket eltávolítjuk az élmezők listájából

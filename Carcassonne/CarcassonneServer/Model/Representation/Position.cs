@@ -68,5 +68,10 @@ namespace CarcassonneServer.Model.Representation
 
             return other.X == X && other.Y == Y;
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

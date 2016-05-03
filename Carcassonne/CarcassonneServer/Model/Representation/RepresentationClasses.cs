@@ -48,17 +48,6 @@ namespace CarcassonneServer.Model.Representation
         #endregion IPayloadContent
 
         #region Singleton type instanes
-        private static TileDescriptor castleInner = new TileDescriptor(StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle, StaticTileSideDescriptor.OpenCastle);
-        public static TileDescriptor CastleInner { get { return castleInner; } }
-        
-        private static TileDescriptor monastery = new TileDescriptor(StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.ClosedRoad, StaticTileSideDescriptor.OpenField, true);
-        public static TileDescriptor Monastery { get { return monastery; } }
-                  
-        private static readonly TileDescriptor curvyRoad = new TileDescriptor(StaticTileSideDescriptor.OpenRoad, StaticTileSideDescriptor.OpenRoad, StaticTileSideDescriptor.ClosedField, StaticTileSideDescriptor.ClosedField);
-        public static TileDescriptor CurvyRoad { get { return curvyRoad; } }
-
-        private static readonly TileDescriptor allField = new TileDescriptor(StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField, StaticTileSideDescriptor.OpenField);
-        public static TileDescriptor AllField { get { return allField; } }
         #endregion Singleton type instanes
     }
 
@@ -66,6 +55,7 @@ namespace CarcassonneServer.Model.Representation
     {
         //TODO: TileDescriptort refaktorálni, hogy TileSideDescriptorDecort használja
         public string ConstructionGuid { get; set; }
+        public TileSideType Type { get { return descriptor.Type; } }
         private StaticTileSideDescriptor descriptor;
 
         public TileSideDescriptor(StaticTileSideDescriptor descriptor)
