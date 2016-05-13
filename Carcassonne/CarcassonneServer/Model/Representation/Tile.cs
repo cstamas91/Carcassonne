@@ -26,7 +26,6 @@ namespace CarcassonneServer.Model.Representation
         public TileSideDescriptor Left { get { return sideDescriptor[RotationAdjustedDirection(Direction.Left)]; } }
 
         public TileSideDescriptor this[Direction direction] { get { return sideDescriptor[RotationAdjustedDirection(direction)]; } } 
-
         public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }
 
         public Tile() { }

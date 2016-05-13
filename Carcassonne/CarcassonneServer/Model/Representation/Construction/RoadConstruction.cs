@@ -19,8 +19,11 @@ namespace CarcassonneServer.Model.Representation.Construction
         {
         }
 
-        public RoadConstruction(Tile tile)
+        public RoadConstruction(Tile tile, params Direction[] sideDirections)
         {
+            foreach(var param in sideDirections)
+                tile[param].ConstructionGuid = GUID;
+
             AddElement(tile);
 
             start = tile;
@@ -41,6 +44,7 @@ namespace CarcassonneServer.Model.Representation.Construction
             {
                 // Ez a második elem hozzáadásakor történik. Ekkor az út eleje és vége egyezik, ezért az újonnan hozzáadottat vesszük a végének.
                 end = element;
+                ManageGuids(element);
             }
             else
             {
@@ -54,6 +58,28 @@ namespace CarcassonneServer.Model.Representation.Construction
                 throw new InvalidOperationException();
             }
         }
+
+        /// <summary>
+        /// Beállítja a kapott mező megfelelő oldalak GUIDjainak a konstrukció guidját.
+        /// </summary>
+        /// <param name="element">A menedzselendő mező.</param>
+        private void ManageGuids(Tile element)
+        {
+            //kiválasztjuk a konstrukcióban lévő szomszédos mezőket, melyek meg tudják mondani, hogy tőlük melyik irányban van a kérdéses mező
+            //a kapott irányokkal ellenkező oldalakat kell beállítani a mezőben.
+            var neighboringSides = from tile in elements
+                                   where tile | element
+                                   select tile.NeighborDirection(element).Opposite();
+
+            foreach (var direction in neighboringSides)
+            {
+                if (element[direction].Type != AreaType)
+                    throw new InvalidOperationException();
+
+                element[direction].ConstructionGuid = GUID;
+            }
+        }
+
         public override void AddMeeple(Meeple meeple)
         {
             if (meeples.Count > 0)
@@ -78,6 +104,10 @@ namespace CarcassonneServer.Model.Representation.Construction
                     select true).Count() > 0;
         }
 
+        public override Direction NeighborDirection(Position other)
+        {
+            return start | other ? start.NeighborDirection(other) : end.NeighborDirection(other);
+        }
         /// <summary>
         /// Két út összeépítésére szolgáló eljárás.
         /// </summary>

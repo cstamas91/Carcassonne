@@ -55,6 +55,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         }
 
         virtual public BaseConstruction Merge(BaseConstruction other) { return null; }
+        virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
         virtual protected bool NeighbourTo(Position element) { return false; }
         virtual protected bool NeighbourTo(BaseConstruction construction) { return false; }
         virtual protected bool EvaluateIsFinished() { return false; }

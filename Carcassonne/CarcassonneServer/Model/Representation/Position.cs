@@ -73,5 +73,20 @@ namespace CarcassonneServer.Model.Representation
         {
             return base.GetHashCode();
         }
+
+        public Direction NeighborDirection(Position other)
+        {
+            if(!(this | other))
+                throw new InvalidOperationException();
+
+            if (X + 1 == other.X)
+                return Direction.Up;
+            else if (X - 1 == other.X)
+                return Direction.Down;
+            else if (Y + 1 == other.Y)
+                return Direction.Right;
+            else
+                return Direction.Left;
+        }
     }
 }

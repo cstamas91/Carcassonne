@@ -46,9 +46,6 @@ namespace CarcassonneServer.Model.Representation
         {
         }
         #endregion IPayloadContent
-
-        #region Singleton type instanes
-        #endregion Singleton type instanes
     }
 
     public class TileSideDescriptor
@@ -64,6 +61,15 @@ namespace CarcassonneServer.Model.Representation
             ConstructionGuid = null;
         }
     }
+
+    public static class TileSideDescriptorFactory
+    {
+        public static TileSideDescriptor Factory(StaticTileSideDescriptor singleton)
+        {
+            return new TileSideDescriptor(singleton);
+        }
+    }
+
     /// <summary>
     /// A mező egy oldalát reprezentáló struktúra.
     /// Elérhetőek statikus példányok a különböző oldaltípusokhoz.

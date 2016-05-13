@@ -18,5 +18,15 @@ namespace CarcassonneServer.Model.Representation
             if (construction != null)
                 construction.AddMeeple(meeple);
         }
+        public static Direction Opposite(this Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Down: return Direction.Up;
+                case Direction.Up: return Direction.Down;
+                case Direction.Left: return Direction.Right;
+                default: return Direction.Left;
+            }
+        }
     }
 }
