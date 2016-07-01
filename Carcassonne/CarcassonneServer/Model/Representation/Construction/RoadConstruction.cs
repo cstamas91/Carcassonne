@@ -21,7 +21,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public RoadConstruction(Tile tile, params Direction[] sideDirections)
         {
-            foreach(var param in sideDirections)
+            foreach (var param in sideDirections)
                 tile[param].ConstructionGuid = GUID;
 
             AddElement(tile);
@@ -42,7 +42,7 @@ namespace CarcassonneServer.Model.Representation.Construction
             }
             else if (elements.Count == 2)
             {
-                // Ez a második elem hozzáadásakor történik. Ekkor az út eleje és vége egyezik, ezért az újonnan hozzáadottat vesszük a végének.
+                // Ez a második elem hozzáadásakor történik. Ekkor az út eleje és vége egyezik, ezért az újonnan hozzáadottat vesszük a végének. (az út iránya irreleváns)
                 end = element;
                 ManageGuids(element);
             }
@@ -63,8 +63,9 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// Beállítja a kapott mező megfelelő oldalak GUIDjainak a konstrukció guidját.
         /// </summary>
         /// <param name="element">A menedzselendő mező.</param>
-        private void ManageGuids(Tile element)
+        private void ManageGuids(Tile element, params Direction[] sideDirections)
         {
+
             //kiválasztjuk a konstrukcióban lévő szomszédos mezőket, melyek meg tudják mondani, hogy tőlük melyik irányban van a kérdéses mező
             //a kapott irányokkal ellenkező oldalakat kell beállítani a mezőben.
             var neighboringSides = from tile in elements

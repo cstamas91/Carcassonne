@@ -9,6 +9,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         protected List<Tile> elements = new List<Tile>();
         protected List<Meeple> meeples = new List<Meeple>();
         public int Size { get { return elements.Count; } }
+        public short Score { get; protected set; }
 
         public BaseConstruction()
         {

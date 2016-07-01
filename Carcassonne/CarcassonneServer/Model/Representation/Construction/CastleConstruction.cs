@@ -12,7 +12,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public override IEnumerable<Tile> EdgeTiles { get { return edgeTiles; } }
 
-        public override bool IsFinished { get { return base.IsFinished; } }
+        public override bool IsFinished { get { return EvaluateIsFinished(); } }
 
         public CastleConstruction(Tile startTile = null)
         {
@@ -99,7 +99,31 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         protected override bool EvaluateIsFinished()
         {
-            return base.EvaluateIsFinished();
+            //kiválasztunk egy élmezőt. egyik irányba elindulva a szomszédok közül végigjárjuk az élmezőket. ha visszaérünk a kiinduló mezőhöz, be van fejezve a vár.
+
+            Tile startTile = (from tiles in EdgeTiles
+                             select tiles).First();
+            Tile curr = null;
+            Tile prev = startTile;
+
+            List<Tile> visited = new List<Tile>() { startTile };
+            while (true)
+            {
+                curr = (from tiles in EdgeTiles
+                        where tiles | prev &&
+                            (!visited.Contains(tiles) || tiles == startTile)
+                        select tiles).First();
+
+                if (curr == null)
+                    return false;
+
+                if (curr == startTile)
+                    return true;
+
+                visited.Add(curr);
+                prev = curr;
+                curr = null;
+            }
         }
 
         protected override bool NeighbourTo(BaseConstruction construction)

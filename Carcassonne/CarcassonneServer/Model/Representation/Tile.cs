@@ -14,7 +14,7 @@ namespace CarcassonneServer.Model.Representation
         private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
 
         private TileRotation rotation;
-        private readonly TileDescriptor sideDescriptor;
+        protected readonly TileDescriptor sideDescriptor;
 
         private Direction RotationAdjustedDirection(Direction direction)
         {

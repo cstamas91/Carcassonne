@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CarcassonneServer.Model.Representation;
 
 namespace CarcassonneTester
 {
@@ -24,24 +20,32 @@ namespace CarcassonneTester
             //    Console.ReadKey();
             //}
 
-            using (var stream = new MemoryStream())
-            {
-                using (var sw = new StreamWriter(stream, Encoding.Default, 4, true))
-                {
-                    sw.WriteLine("line1");
-                    sw.Write("line2\nline3");
-                }
-                stream.Position = 0;
-                using (var sr = new StreamReader(stream))
-                {
-                    while (sr.Peek() > -1)
-                    {
-                        var str = sr.ReadLine();
-                        Console.WriteLine(str);
-                    }
-                        
-                }
-            }
+            //using (var stream = new MemoryStream())
+            //{
+            //    using (var sw = new StreamWriter(stream, Encoding.Default, 4, true))
+            //    {
+            //        sw.WriteLine("line1");
+            //        sw.Write("line2\nline3");
+            //    }
+            //    stream.Position = 0;
+            //    using (var sr = new StreamReader(stream))
+            //    {
+            //        while (sr.Peek() > -1)
+            //        {
+            //            var str = sr.ReadLine();
+            //            Console.WriteLine(str);
+            //        }
+
+            //    }
+            //}
+
+
+            Tile t1 = new Tile(new TileDescriptor(new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
+                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
+                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
+                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField), true));
+
+            var dict = t1.GetDirectionsForAreaType();
 
             Console.ReadKey();
         }
