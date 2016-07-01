@@ -53,6 +53,7 @@ namespace CarcassonneServer.Model.Representation
         //TODO: TileDescriptort refaktorálni, hogy TileSideDescriptorDecort használja
         public string ConstructionGuid { get; set; }
         public TileSideType Type { get { return descriptor.Type; } }
+        public bool Closed { get { return descriptor.Closed; } }
         private StaticTileSideDescriptor descriptor;
 
         public TileSideDescriptor(StaticTileSideDescriptor descriptor)

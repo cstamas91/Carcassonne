@@ -8,7 +8,7 @@ namespace CarcassonneServer.Model.Representation.Construction
     {
         public override TileSideType AreaType { get { return TileSideType.Road; } }
 
-        public override bool IsFinished { get { throw new NotImplementedException(); } }
+        public override bool IsFinished { get { return EvaluateIsFinished(); } }
 
         private Tile start = null;
         private Tile end = null;
@@ -32,6 +32,9 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public override void AddElement(Tile element)
         {
+            if (IsFinished)
+                throw new InvalidOperationException();
+
             elements.Add(element);
 
             if (elements.Count == 1)
@@ -87,6 +90,16 @@ namespace CarcassonneServer.Model.Representation.Construction
                 throw new InvalidOperationException();
 
             meeples.Add(meeple);
+        }
+
+        protected override bool EvaluateIsFinished()
+        {
+            var connectedSides = from edgeTile in EdgeTiles
+                                 from direction in Enum.GetValues(typeof(Direction)) as IEnumerable<Direction>
+                                 where edgeTile[direction].ConstructionGuid == this.GUID
+                                 select edgeTile[direction];
+
+            return connectedSides.All(sideDescriptor => sideDescriptor.Closed);
         }
 
         protected override bool NeighbourTo(Position element)
