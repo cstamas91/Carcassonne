@@ -7,6 +7,7 @@ namespace CarcassonneServer.Model.Representation.Construction
     {
         public override TileSideType AreaType { get { return TileSideType.Castle; } }
 
+        private TileLinkedList borderTiles;
         private List<Tile> edgeTiles;
         private IEnumerable<Tile> InnerTiles { get { return elements.Except(edgeTiles); } }
 
@@ -16,6 +17,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public CastleConstruction(Tile startTile = null)
         {
+            borderTiles = new TileLinkedList();
             edgeTiles = new List<Tile>();
         }
         /// <summary>
@@ -24,9 +26,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <param name='element'>A hozzáadandó mező.</param>
         public override void AddElement(Tile element)
         {
-            var neighboringTiles = from tile in elements
-                                   where tile | element
-                                   select tile;
+            var neighboringTiles = elements.Where(e => e | element);
 
             if (neighboringTiles.Count() == 0)
                 throw new InvalidOperationException();
@@ -34,7 +34,15 @@ namespace CarcassonneServer.Model.Representation.Construction
             ManageEdgeTiles(element);
             elements.Add(element);
 
-            if (neighboringTiles.Count() == 4)
+            var connectedSide = (Enum.GetValues(typeof(Direction)) as IEnumerable<Direction>)
+                                    .Where(d => element[d].ConstructionGuid == GUID)
+                                    .Select(d => element[d])
+                                    .First();
+                
+            if (connectedSide != null && connectedSide.Closed)
+                borderTiles.Add(element);
+
+            if (neighboringTiles.Count() != 4)
                 edgeTiles.Add(element);
         }
 
@@ -49,8 +57,8 @@ namespace CarcassonneServer.Model.Representation.Construction
         {
             //kigyűjtjük a hozzáadandó mezővel határos mezőket
             var tilesNeighboringToTileToAdd = from tile in elements
-                                      where tile | tileToAdd
-                                      select tile;
+                                              where tile | tileToAdd
+                                              select tile;
 
             //kigyűjtjük a hozzáadottal határos mezők szomszédait, melyek teljesen körbe vannak véve
             var surroundedEdgeTiles = from tile in tilesNeighboringToTileToAdd
@@ -99,31 +107,8 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         protected override bool EvaluateIsFinished()
         {
-            //kiválasztunk egy élmezőt. egyik irányba elindulva a szomszédok közül végigjárjuk az élmezőket. ha visszaérünk a kiinduló mezőhöz, be van fejezve a vár.
-
-            Tile startTile = (from tiles in EdgeTiles
-                             select tiles).First();
-            Tile curr = null;
-            Tile prev = startTile;
-
-            List<Tile> visited = new List<Tile>() { startTile };
-            while (true)
-            {
-                curr = (from tiles in EdgeTiles
-                        where tiles | prev &&
-                            (!visited.Contains(tiles) || tiles == startTile)
-                        select tiles).First();
-
-                if (curr == null)
-                    return false;
-
-                if (curr == startTile)
-                    return true;
-
-                visited.Add(curr);
-                prev = curr;
-                curr = null;
-            }
+            return (borderTiles.Head | borderTiles.Current) &&  //elsődleges feltétel
+                    CheckMissingInnerField();
         }
 
         protected override bool NeighbourTo(BaseConstruction construction)
@@ -138,6 +123,45 @@ namespace CarcassonneServer.Model.Representation.Construction
             return (from tile in EdgeTiles
                     where tile | element
                     select tile).Count() > 0;
+        }
+
+        private bool CheckMissingInnerField()
+        {
+
+            return false;
+        }
+
+        private class TileLinkedList
+        {
+            private class Node
+            {
+                public Tile value;
+                public Node next;
+
+                public Node(Tile value)
+                {
+                    this.value = value;
+                }
+            }
+
+            public Tile Head { get { return headNode.value; } }
+            public Tile Current { get { return currentNode.value; } }
+            Node headNode;
+            Node currentNode;
+
+            public void Add(Tile tile)
+            {
+                if (headNode == null)
+                {
+                    headNode = new Node(tile);
+                    currentNode = headNode;
+                }
+                else
+                {
+                    currentNode.next = new Node(tile);
+                    currentNode = currentNode.next;
+                }
+            }
         }
     }
 }
