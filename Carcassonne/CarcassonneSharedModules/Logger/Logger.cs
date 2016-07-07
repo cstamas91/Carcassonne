@@ -99,7 +99,7 @@ namespace CarcassonneSharedModules.Logger
             }
             catch(Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
             finally
             {
