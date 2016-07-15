@@ -40,10 +40,5 @@ namespace CarcassonneServer.Model.Representation.Construction.Tests
         {
 
         }
-
-        private CastleConstruction ParseConstruction(string rawData)
-        {
-            
-        }
     }
 }
