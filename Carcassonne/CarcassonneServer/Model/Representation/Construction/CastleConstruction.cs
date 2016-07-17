@@ -7,43 +7,76 @@ namespace CarcassonneServer.Model.Representation.Construction
     {
         public override TileSideType AreaType { get { return TileSideType.Castle; } }
 
-        private TileLinkedList borderTiles;
-        private List<Tile> edgeTiles;
-        private IEnumerable<Tile> InnerTiles { get { return elements.Except(edgeTiles); } }
+        private bool? isFinished;
+        public override bool IsFinished
+        {
+            get
+            { 
+                if (!isFinished.HasValue)
+                    isFinished = EvaluateIsFinished();
 
-        public override IEnumerable<Tile> EdgeTiles { get { return edgeTiles; } }
-
-        public override bool IsFinished { get { return EvaluateIsFinished(); } }
+                return isFinished.Value;
+            }
+        }
 
         public CastleConstruction(Tile startTile = null)
         {
-            borderTiles = new TileLinkedList();
-            edgeTiles = new List<Tile>();
         }
         /// <summary>
         /// Hozzáad egy mezőt a konstrukcióhoz.
         /// </summary>
-        /// <param name='element'>A hozzáadandó mező.</param>
-        public override void AddElement(Tile element)
+        /// <param name='tileToAdd'>A hozzáadandó mező.</param>
+        public override void AddElement(Tile tileToAdd)
         {
-            var neighboringTiles = elements.Where(e => e | element);
+            /* 0. Ha a mező nem is szomszédos az építménnyel, kivételt kell dobni, valami gáz van.
+             * 1. Meg kell állapítani, hogy a hozzáadandó mező milyen cédulát kapjon.
+             * 2. A mező megfelelő oldalának leírójában be kell állítani az építmény GUIDját.
+             * 3. Ellenőrizni kell minden más mezőt, hogy címkeváltozás aktuális-e, ha igen, áthelyezni a megfelelő csoportba.
+             *      - Élmező bekerítődött => át kell helyezni a belső mezők közé
+             *      - Belső mező nem változhat
+             *      - Határmező nem változhat */
 
-            if (neighboringTiles.Count() == 0)
-                throw new InvalidOperationException();
+            #region 0.
+            foreach (var key in elements.Keys)
+                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAdd) == 0) == Enum.GetValues(typeof(TileTag)).Length)
+                    throw new ArgumentException("A mező nem szomszédos az építménnyel, így nem lehet hozzáadni.");
+            #endregion 0.
 
-            ManageEdgeTiles(element);
-            elements.Add(element);
+            #region 1.
+            IEnumerable<Tile> neighboringTiles = from ICollection<Tile> list in elements.Values
+                                                 from Tile tile in list
+                                                 where tile | tileToAdd
+                                                 select tile;
 
-            var connectedSide = (Enum.GetValues(typeof(Direction)) as IEnumerable<Direction>)
-                                    .Where(d => element[d].ConstructionGuid == GUID)
-                                    .Select(d => element[d])
-                                    .First();
-                
-            if (connectedSide != null && connectedSide.Closed)
-                borderTiles.Add(element);
+            IEnumerable<TileSideDescriptor> connectingSides = from tile in neighboringTiles
+                                                              select tileToAdd[tileToAdd.NeighborDirection(tile)];
 
-            if (neighboringTiles.Count() != 4)
-                edgeTiles.Add(element);
+            if (connectingSides.Any(side => side.Closed))
+                elements[TileTag.Border].Add(tileToAdd);
+
+            if (neighboringTiles.Count() < 4)
+                elements[TileTag.Edge].Add(tileToAdd);
+
+            if (neighboringTiles.Count() == 4)
+                elements[TileTag.Inner].Add(tileToAdd);
+            #endregion 1.
+
+            #region 2.
+            foreach (TileSideDescriptor side in connectingSides)
+                side.ConstructionGuid = this.GUID;
+            #endregion 2.
+
+            #region 3.
+            IEnumerable<Tile> falseEdgeTags = from tile in elements[TileTag.Inner]
+                                               where elements[TileTag.Inner].NumberOfNeighborsTo(tile) == 4
+                                               select tile;
+
+            foreach(Tile tile in falseEdgeTags)
+            {
+                elements[TileTag.Edge].Remove(tile);
+                elements[TileTag.Inner].Add(tile);
+            }
+            #endregion 3.
         }
 
         /// <summary>
@@ -55,19 +88,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <param name="tileToAdd">Az éppen hozzáadott mező, ennek a pozíciója változtathatja meg az élmezők halmazát.</param>
         private void ManageEdgeTiles(Tile tileToAdd)
         {
-            //kigyűjtjük a hozzáadandó mezővel határos mezőket
-            var tilesNeighboringToTileToAdd = from tile in elements
-                                              where tile | tileToAdd
-                                              select tile;
-
-            //kigyűjtjük a hozzáadottal határos mezők szomszédait, melyek teljesen körbe vannak véve
-            var surroundedEdgeTiles = from tile in tilesNeighboringToTileToAdd
-                                      where this.GetNeighboringElementCount(tile) == 4
-                                      select tile;
-
-            //a teljesen körbevett mezőket eltávolítjuk az élmezők listájából
-            foreach (var item in surroundedEdgeTiles)
-                edgeTiles.Remove(item);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -77,10 +98,9 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <returns>IEnumerable<Tile> ami a kapott mezővel szomszédos mezőket sorolja fel.</Tile></returns>
         private IEnumerable<Tile> GetNeighboringElementsFor(Tile tile)
         {
-            return from element in elements
-                   where element | tile
-                   select element;
+            throw new NotImplementedException();
         }
+        
         /// <summary> A kapott mezővel szomszédos mezők számát adja meg. </summary>
         /// <param name="tile"> A vizsgált mező. </param>
         /// <returns> A vizsgált mezővel szomszédos mezők száma.</returns>
@@ -88,6 +108,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         {
             return GetNeighboringElementsFor(tile).Count();
         }
+        
         /// <summary>Elhelyezi a kapott figurát a konstrukción.</summary>
         /// <param name="meeple">Elhelyezendő figura.</param>
         public override void AddMeeple(Meeple meeple)
@@ -97,6 +118,7 @@ namespace CarcassonneServer.Model.Representation.Construction
             else
                 throw new InvalidOperationException();
         }
+
         ///<summary>Összeolvasztja a példányt a kapott konstrukcióval.</summary>
         ///<param name="other">A másik konstrukció</param>
         ///<returns>Az összeolvasztás után kapott konstrukció</returns>
@@ -107,61 +129,21 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         protected override bool EvaluateIsFinished()
         {
-            return (borderTiles.Head | borderTiles.Current) &&  //elsődleges feltétel
-                    CheckMissingInnerField();
+            throw new NotImplementedException();
         }
 
-        protected override bool NeighbourTo(BaseConstruction construction)
+        protected override bool IsNeighbourTo(BaseConstruction construction)
         {
             return (from tile in EdgeTiles
                     where tile | construction
                     select tile).Count() > 0;
         }
 
-        protected override bool NeighbourTo(Position element)
+        protected override bool IsNeighbourTo(Position element)
         {
             return (from tile in EdgeTiles
                     where tile | element
                     select tile).Count() > 0;
-        }
-
-        private bool CheckMissingInnerField()
-        {
-
-            return false;
-        }
-
-        private class TileLinkedList
-        {
-            private class Node
-            {
-                public Tile value;
-                public Node next;
-
-                public Node(Tile value)
-                {
-                    this.value = value;
-                }
-            }
-
-            public Tile Head { get { return headNode.value; } }
-            public Tile Current { get { return currentNode.value; } }
-            Node headNode;
-            Node currentNode;
-
-            public void Add(Tile tile)
-            {
-                if (headNode == null)
-                {
-                    headNode = new Node(tile);
-                    currentNode = headNode;
-                }
-                else
-                {
-                    currentNode.next = new Node(tile);
-                    currentNode = currentNode.next;
-                }
-            }
-        }
+        }        
     }
 }

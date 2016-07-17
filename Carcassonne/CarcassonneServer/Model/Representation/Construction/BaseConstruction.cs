@@ -6,7 +6,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 {
     public abstract class BaseConstruction
     {
-        protected List<Tile> elements = new List<Tile>();
+        protected Dictionary<TileTag, ICollection<Tile>> elements = new Dictionary<TileTag, ICollection<Tile>>();
         protected List<Meeple> meeples = new List<Meeple>();
         public int Size { get { return elements.Count; } }
         public short Score { get; protected set; }
@@ -18,7 +18,16 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         virtual public TileSideType AreaType { get; }
         virtual public bool IsFinished { get; }
-        virtual public IEnumerable<Tile> EdgeTiles { get; }
+        public IEnumerable<Tile> EdgeTiles
+        {
+            get
+            {
+                if (!elements.ContainsKey(TileTag.Edge))
+                    elements.Add(TileTag.Edge, new List<Tile>());
+
+                return elements[TileTag.Edge];                    
+            }
+        }
         public string GUID { get; private set; }
 
         virtual public void AddElement(Tile element) { }
@@ -32,7 +41,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
         public static bool operator |(BaseConstruction lhs, BaseConstruction rhs)
         {
-            return lhs.NeighbourTo(rhs);
+            return lhs.IsNeighbourTo(rhs);
         }
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
@@ -42,7 +51,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
         public static bool operator |(BaseConstruction lhs, Position rhs)
         {
-            return lhs.NeighbourTo(rhs);
+            return lhs.IsNeighbourTo(rhs);
         }
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
@@ -52,13 +61,23 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
         public static bool operator |(Position lhs, BaseConstruction rhs)
         {
-            return rhs.NeighbourTo(lhs);
+            return rhs.IsNeighbourTo(lhs);
         }
 
         virtual public BaseConstruction Merge(BaseConstruction other) { return null; }
         virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
-        virtual protected bool NeighbourTo(Position element) { return false; }
-        virtual protected bool NeighbourTo(BaseConstruction construction) { return false; }
+        virtual protected bool IsNeighbourTo(Position element) { return false; }
+        virtual protected bool IsNeighbourTo(BaseConstruction construction) { return false; }
         virtual protected bool EvaluateIsFinished() { return false; }
+
+        /// <summary>
+        /// Mezők címkézésére szolgáló enum.
+        /// </summary>
+        public enum TileTag
+        {
+            Inner, //mind a 4 oldalán szomszédos egy azonos építménybeli mezővel
+            Edge, //van olyan oldala, ami nem szomszédos semmilyen mezővel
+            Border //azok az oldalai, amik az építménnyel szomszédosak, "lezáró" oldalak (várfal)
+        }
     }
 }

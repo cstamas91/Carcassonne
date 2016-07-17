@@ -30,7 +30,7 @@ namespace CarcassonneServer.Model.Representation
             }
         }
         /// <summary>
-        /// Visszaad egy asszociatív tömböt, amiben minden oldaltípushoz egy listában szerepel, hogy a vizsgált mező mely irányú oldal olyan típusú.
+        /// Visszaad egy asszociatív tömböt, amiben minden oldaltípushoz egy listában szerepel, hogy a vizsgált mező mely irányú oldala olyan típusú.
         /// </summary>
         /// <param name="tile">A kérdéses mező.</param>
         /// <returns>Egy dictionary ami oldaltípushoz irány listát rendel.</returns>
@@ -46,6 +46,11 @@ namespace CarcassonneServer.Model.Representation
                         select direction));
 
             return dict;
+        }
+
+        public static int NumberOfNeighborsTo(this IEnumerable<Tile> tiles, Tile other)
+        {
+            return tiles.Count(tile => tile | other);
         }
     }
 }

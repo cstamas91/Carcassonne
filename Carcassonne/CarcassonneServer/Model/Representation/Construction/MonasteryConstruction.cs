@@ -15,12 +15,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public override void AddElement(Tile element)
         {
-            if (elements.Count == 0)
-                monastery = element;
-            else if (!(this | element)) //így nem tudunk a monostorral nem szomszédos elemet hozzáadni.
-                throw new InvalidOperationException();
-
-            elements.Add(element);
+            throw new NotImplementedException();
         }
 
         public override void AddMeeple(Meeple meeple)
@@ -34,15 +29,14 @@ namespace CarcassonneServer.Model.Representation.Construction
         public override TileSideType AreaType { get { return TileSideType.Field; } }
 
         private List<Tile> edgeTiles = new List<Tile>();
-        public override IEnumerable<Tile> EdgeTiles { get { return edgeTiles.AsEnumerable(); } }
         public override bool IsFinished { get { return elements.Count == 9; } }
 
-        protected override bool NeighbourTo(BaseConstruction construction)
+        protected override bool IsNeighbourTo(BaseConstruction construction)
         {
-            return false;
+            throw new NotImplementedException();
         }
 
-        protected override bool NeighbourTo(Position element)
+        protected override bool IsNeighbourTo(Position element)
         {
             return monastery | element;
         }
