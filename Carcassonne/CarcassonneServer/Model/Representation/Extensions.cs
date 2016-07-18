@@ -52,5 +52,17 @@ namespace CarcassonneServer.Model.Representation
         {
             return tiles.Count(tile => tile | other);
         }
+        /// <summary>
+        /// Visszaad egy felsorolást azokból a "tiles"-ban szereplő mezőkből, melyek szomszédosak az "other" mezővel.
+        /// </summary>
+        /// <param name="tiles">Mezők kollekciója.</param>
+        /// <param name="other">A vizsgált mező.</param>
+        /// <returns></returns>
+        public static IEnumerable<Tile> GetNeighboringTiles(this ICollection<Tile> tiles, Tile other)
+        {
+            return from Tile tile in tiles
+                   where tile | other
+                   select tile;
+        }
     }
 }

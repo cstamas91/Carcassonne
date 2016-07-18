@@ -70,6 +70,7 @@
     <Compile Include="Model\Representation\RepresentationClasses.cs" />
     <Compile Include="Model\Representation\Tile.cs" />
     <Compile Include="Model\Representation\TileCollection.cs" />
+    <Compile Include="Model\Representation\RepresentationExceptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
