@@ -69,7 +69,7 @@ namespace CarcassonneServer.Model.Representation.Construction
             if (connectingSides.Any(side => side.Closed))
                 elements[TileTag.Border].Add(tileToAdd);
 
-            if (neighboringTiles.Count() < 4)
+            if (neighboringTiles.Count() < 4 && !elements[TileTag.Border].Contains(tileToAdd))
                 elements[TileTag.Edge].Add(tileToAdd);
 
             if (neighboringTiles.Count() == 4)
