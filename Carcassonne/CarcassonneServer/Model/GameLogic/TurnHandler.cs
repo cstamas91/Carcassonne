@@ -60,6 +60,7 @@ namespace CarcassonneServer.Model.GameLogic
     }
 
     #region Exceptions
+    [Serializable]
     public class InvalidTurnStateException : Exception 
     {
         public InvalidTurnStateException(string message) : base(message) { }

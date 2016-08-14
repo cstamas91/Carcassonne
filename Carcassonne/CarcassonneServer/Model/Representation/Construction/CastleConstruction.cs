@@ -26,7 +26,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// Hozzáad egy mezőt a konstrukcióhoz.
         /// </summary>
         /// <param name='tileToAdd'>A hozzáadandó mező.</param>
-        public override void AddElement(Tile tileToAdd)
+        public override void AddElement(ref Tile tileToAdd)
         {
             /* 0. Ha a mező nem is szomszédos az építménnyel, kivételt kell dobni, valami gáz van.
              * 1. Meg kell állapítani, hogy a hozzáadandó mező milyen cédulát kapjon.
@@ -35,37 +35,27 @@ namespace CarcassonneServer.Model.Representation.Construction
              *      - Élmező bekerítődött => át kell helyezni a belső mezők közé
              *      - Belső mező nem változhat
              *      - Határmező nem változhat */
-
+            Tile tileToAddNonref = tileToAdd;
 
             foreach (var key in elements.Keys)
-                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAdd) == 0) == Enum.GetValues(typeof(TileTag)).Length)
+                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAddNonref) == 0) == Enum.GetValues(typeof(TileTag)).Length)
                     throw new ArgumentException("A mező nem szomszédos az építménnyel, így nem lehet hozzáadni.");
 
-            
-            IEnumerable<Tile> neighboringTiles = elements.Values.
-                                     Select(item => item.GetNeighboringTiles(tileToAdd)).
-                                     Aggregate((fst, snd) => fst.Concat(snd));
+
+            IEnumerable<Tile> neighboringTiles = elements.Values
+                .Select(item => item.GetNeighboringTiles(tileToAddNonref))
+                .Aggregate((fst, snd) => fst.Concat(snd));
 
             IEnumerable<TileSideDescriptor> connectingSides = from tile in neighboringTiles
-                                                              select tileToAdd[tileToAdd.NeighborDirection(tile)];
+                                                              select tileToAddNonref[tileToAddNonref.NeighborDirection(tile)];
 
             ManageTagsForTileToAdd(tileToAdd, neighboringTiles, connectingSides);
 
-            
+
             foreach (TileSideDescriptor side in connectingSides)
                 side.ConstructionGuid = this.GUID;
 
-            
-            IEnumerable<Tile> falseEdgeTags = from tile in elements[TileTag.Inner]
-                                              where elements[TileTag.Inner].NumberOfNeighborsTo(tile) == 4
-                                              select tile;
-
-            foreach (Tile tile in falseEdgeTags)
-            {
-                elements[TileTag.Edge].Remove(tile);
-                elements[TileTag.Inner].Add(tile);
-            }
-
+            ManageFalseInnerTiles();
         }
         /// <summary>
         /// Elhelyezi a hozzáadandó mezőt a szótár megfelelő kollekcióiban.
@@ -101,7 +91,47 @@ namespace CarcassonneServer.Model.Representation.Construction
         ///<returns>Az összeolvasztás után kapott konstrukció</returns>
         public override BaseConstruction Merge(BaseConstruction other)
         {
-            throw new NotImplementedException();
+            /* Ha "other" nem megfelelő típusú, kivételt dobunk.
+             * A megfelelő cédulájú listákat konkatenáljuk.
+             * Megnézzük, hogy kell-e újracédulázni, ha igen, újracédulázunk */
+
+            if (other.GetType() != typeof(CastleConstruction))
+                throw new ArgumentException("Kastélyt csak kastéllyal lehet összeépíteni.");
+
+            CastleConstruction otherCastle = (CastleConstruction)other;
+
+
+            Dictionary<TileTag, ICollection<Tile>> newContainer = new Dictionary<TileTag, ICollection<Tile>>()
+            {
+                { TileTag.Border, this.elements[TileTag.Border].Concat(otherCastle.elements[TileTag.Border]).ToList() },
+                { TileTag.Edge, this.elements[TileTag.Edge].Concat(otherCastle.elements[TileTag.Edge]).ToList() },
+                { TileTag.Inner, this.elements[TileTag.Inner].Concat(otherCastle.elements[TileTag.Inner]).ToList() }
+            };
+
+            this.elements = newContainer;
+
+            ManageFalseInnerTiles();
+
+            return this;
+        }
+
+        private void ManageFalseInnerTiles()
+        {
+            /* A mozgatandó mezőket kigyűjtjük egy külön listába. 
+             * Felsorolás alatt az elemeket nem szabad eltávolítani a felsorolóból */
+            List<Tile> markedForMove = new List<Tile>();
+            foreach (Tile tile in elements[TileTag.Edge])
+                if (elements[TileTag.Edge].Count(item => item | tile) == 4)
+                    markedForMove.Add(tile);
+
+            foreach (Tile tile in markedForMove)
+                MoveFalseInnerTile(tile);
+        }
+
+        private void MoveFalseInnerTile(Tile tile)
+        {
+            elements[TileTag.Edge].Remove(tile);
+            elements[TileTag.Inner].Add(tile);
         }
 
         /// <summary>

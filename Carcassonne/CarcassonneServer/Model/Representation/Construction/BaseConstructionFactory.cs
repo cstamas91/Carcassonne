@@ -11,14 +11,14 @@ namespace CarcassonneServer.Model.Representation.Construction
             return collection.Aggregate((first, next) => first.Merge(next));
         }
 
-        public static List<BaseConstruction> Factory(Tile tile)
+        public static List<BaseConstruction> Factory(ref Tile tile)
         {
             List<BaseConstruction> constructions = new List<BaseConstruction>();
 
             foreach (Direction item in Enum.GetValues(typeof(Direction)))
             {
                 var construction = Factory(tile[item].Type);
-                construction.AddElement(tile);
+                construction.AddElement(ref tile);
                 constructions.Add(construction);
             }
 

@@ -4,11 +4,16 @@ using System.Linq;
 
 namespace CarcassonneServer.Model.Representation.Construction
 {
-    public abstract class BaseConstruction
+    public abstract class BaseConstruction : IBaseConstruction
     {
-        protected Dictionary<TileTag, ICollection<Tile>> elements = new Dictionary<TileTag, ICollection<Tile>>();
+        protected Dictionary<TileTag, ICollection<Tile>> elements = new Dictionary<TileTag, ICollection<Tile>>()
+        {
+            { TileTag.Border, new List<Tile>() },
+            { TileTag.Edge, new List<Tile>() },
+            { TileTag.Inner, new List<Tile>() }
+        };
         protected List<Meeple> meeples = new List<Meeple>();
-        public int Size { get { return elements.Count; } }
+        public int Size { get { return elements.Values.Sum(item => item.Count); } }
         public short Score { get; protected set; }
 
         public BaseConstruction()
@@ -25,12 +30,12 @@ namespace CarcassonneServer.Model.Representation.Construction
                 if (!elements.ContainsKey(TileTag.Edge))
                     elements.Add(TileTag.Edge, new List<Tile>());
 
-                return elements[TileTag.Edge];                    
+                return elements[TileTag.Edge];
             }
         }
         public string GUID { get; private set; }
 
-        virtual public void AddElement(Tile element) { }
+        virtual public void AddElement(ref Tile element) { }
         virtual public void AddMeeple(Meeple meeple) { }
 
         /// <summary>
@@ -64,7 +69,10 @@ namespace CarcassonneServer.Model.Representation.Construction
             return rhs.IsNeighbourTo(lhs);
         }
 
-        virtual public BaseConstruction Merge(BaseConstruction other) { return null; }
+        virtual public BaseConstruction Merge(BaseConstruction other)
+        {
+            return null;
+        }
         virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
         virtual protected bool IsNeighbourTo(Position element) { return false; }
         virtual protected bool IsNeighbourTo(BaseConstruction construction) { return false; }

@@ -14,19 +14,21 @@ namespace CarcassonneServer.Model.Representation
         private Meeple lastAddedMeeple;
         public GameTable() { }
 
-        public void SetTile(Tile tile)
+        public void SetTile(ref Tile tile)
         {
+            Tile tileNonref = tile;
+
             var neighboringConstructions = from construction in constructions
-                                           where construction | tile
+                                           where construction | tileNonref
                                            select construction;
 
             if (neighboringConstructions.Count() != 0)
             {
                 foreach (var item in neighboringConstructions)
-                    item.AddElement(tile);
+                    item.AddElement(ref tile);
             }
             else
-                constructions.AddRange(BaseConstructionFactory.Factory(tile));
+                constructions.AddRange(BaseConstructionFactory.Factory(ref tile));
         }
 
         public void SetMeeple(Meeple meeple)

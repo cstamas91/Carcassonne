@@ -10,27 +10,89 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public override bool IsFinished { get { return EvaluateIsFinished(); } }
 
-        private Tile start = null;
-        private Tile end = null;
-
         public RoadConstruction()
         {
         }
 
-        public RoadConstruction(Tile tile, params Direction[] sideDirections)
+        public RoadConstruction(ref Tile tile)
         {
-            foreach (var param in sideDirections)
-                tile[param].ConstructionGuid = GUID;
+            foreach (TileSideDescriptor side in tile.Sides.Where(item => item.Type == TileSideType.Road))
+                side.ConstructionGuid = GUID;
 
-            AddElement(tile);
-
-            start = tile;
-            end = tile;
+            this.AddElement(ref tile);
         }
 
-        public override void AddElement(Tile element)
+        public override void AddElement(ref Tile tileToAdd)
         {
-            throw new NotImplementedException();
+            /* Ha a mező nem szomszédos az úttal, kivételt dobunk.
+             * Ellenőrizzük, hogy a mezők valóban egymás mellé helyezhetők-e.
+             * Megállapítjuk, hogy milyen cédulát kap az út.
+             * Ellenőrizzük, hogy a céldulákat kezelni kell-e. */
+
+            Tile tileToAddNonref = tileToAdd;
+
+            if (elements.Values.Sum(item => item.Count) != 0)
+            {
+
+                if (!elements.Values.Aggregate((IEnumerable<Tile> first, IEnumerable<Tile> second) => first.Concat(second)).Any(item => item | tileToAddNonref))
+                    throw new ArgumentException("A mező nem szomszédos az úttal, így nem lehet hozzáadni.");
+
+                IEnumerable<Tile> neighboringTiles = elements.Values.Select(item => item.GetNeighboringTiles(tileToAddNonref)).Aggregate((first, second) => first.Concat(second));
+
+                foreach (Tile neighborTile in neighboringTiles)
+                {
+                    TileSideDescriptor tileToAddConnectingSide = tileToAdd[tileToAdd.NeighborDirection(neighborTile)];
+                    TileSideDescriptor neighborTileConnectingSide = neighborTile[neighborTile.NeighborDirection(tileToAdd)];
+
+                    if (tileToAddConnectingSide.Type != neighborTileConnectingSide.Type)
+                        throw new TileMatchException("A két mező egymással szembenéző oldalának típusa nem egyezik meg.", tileToAdd, neighborTile);
+                }
+
+                IEnumerable<Tile> connectingTileCollection = neighboringTiles.Where(tile => tile[tile.NeighborDirection(tileToAddNonref)].Type == TileSideType.Road);
+
+                if (connectingTileCollection.Count() > 1)
+                    throw new ArgumentException();
+
+                Tile connectingTile = connectingTileCollection.First();
+                TileSideDescriptor connectingSide = tileToAdd[tileToAdd.NeighborDirection(connectingTile)];
+
+                connectingSide.ConstructionGuid = this.GUID;
+
+
+                if (connectingSide.Closed)
+                {
+                    if (elements[TileTag.Border].Contains(connectingTile))
+                    {
+                        elements[TileTag.Border].Add(tileToAdd);
+                    }
+                    else
+                    {
+                        elements[TileTag.Edge].Remove(connectingTile);
+                        elements[TileTag.Inner].Add(connectingTile);
+                        elements[TileTag.Border].Add(tileToAdd);
+                    }
+                }
+                else
+                {
+                    if (elements[TileTag.Border].Contains(connectingTile))
+                    {
+                        elements[TileTag.Edge].Add(tileToAdd);
+                    }
+                    else
+                    {
+                        elements[TileTag.Edge].Remove(connectingTile);
+                        elements[TileTag.Inner].Add(connectingTile);
+                        elements[TileTag.Border].Add(tileToAdd);
+                    }
+                }
+            } 
+            else
+            {
+                if (tileToAdd.Sides.Where(side => side.Type == TileSideType.Road && side.Closed).Any())
+                    elements[TileTag.Border].Add(tileToAdd);
+                else
+                    elements[TileTag.Edge].Add(tileToAdd);
+            }
         }
 
         /// <summary>
@@ -39,6 +101,7 @@ namespace CarcassonneServer.Model.Representation.Construction
         /// <param name="element">A menedzselendő mező.</param>
         private void ManageGuids(Tile element, params Direction[] sideDirections)
         {
+            throw new NotImplementedException();
         }
 
         public override void AddMeeple(Meeple meeple)
@@ -61,7 +124,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         protected override bool IsNeighbourTo(Position element)
         {
-            return start | element || end | element;
+            return elements[TileTag.Edge].Any(item => item | element);
         }
 
         protected override bool IsNeighbourTo(BaseConstruction construction)
@@ -77,7 +140,11 @@ namespace CarcassonneServer.Model.Representation.Construction
 
         public override Direction NeighborDirection(Position other)
         {
-            return start | other ? start.NeighborDirection(other) : end.NeighborDirection(other);
+            Tile neighbor = elements[TileTag.Edge].First(item => item | other);
+            if (neighbor != null)
+                return neighbor.NeighborDirection(other);
+            else
+                throw new ArgumentException(@"Az 'other' elem nem szomszédos az úttal, így nem lehet irányt megállapítani.");
         }
         /// <summary>
         /// Két út összeépítésére szolgáló eljárás.

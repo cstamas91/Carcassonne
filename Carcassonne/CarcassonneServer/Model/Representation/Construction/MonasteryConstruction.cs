@@ -8,12 +8,12 @@ namespace CarcassonneServer.Model.Representation.Construction
     {
         private Tile monastery = null;
 
-        public MonasteryConstruction(Tile tile)
+        public MonasteryConstruction(ref Tile tile)
         {
-            AddElement(tile);
+            this.AddElement(ref tile);
         }                             
 
-        public override void AddElement(Tile element)
+        public override void AddElement(ref Tile element)
         {
             throw new NotImplementedException();
         }

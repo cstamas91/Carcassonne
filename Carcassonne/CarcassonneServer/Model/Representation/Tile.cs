@@ -2,6 +2,7 @@
 using System.IO;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace CarcassonneServer.Model.Representation
 {
@@ -24,6 +25,13 @@ namespace CarcassonneServer.Model.Representation
         public TileSideDescriptor Right { get { return sideDescriptor[RotationAdjustedDirection(Direction.Right)]; } }
         public TileSideDescriptor Down { get { return sideDescriptor[RotationAdjustedDirection(Direction.Down)]; } }
         public TileSideDescriptor Left { get { return sideDescriptor[RotationAdjustedDirection(Direction.Left)]; } }
+        public IEnumerable<TileSideDescriptor> Sides
+        {
+            get
+            {
+                return sideDescriptor.Values;
+            }
+        }
 
         public TileSideDescriptor this[Direction direction] { get { return sideDescriptor[RotationAdjustedDirection(direction)]; } } 
         public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }

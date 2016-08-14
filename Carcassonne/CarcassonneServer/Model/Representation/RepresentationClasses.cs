@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CarcassonneSharedModules.Tools;
 using System;
+using System.Runtime.Serialization;
 
 namespace CarcassonneServer.Model.Representation
 {
@@ -10,9 +11,11 @@ namespace CarcassonneServer.Model.Representation
     /// Egy mező négy oldalának típusait leíró osztály.
     /// Elérhetőek statikus példányok a szabvány mezőtípúsokhoz.
     /// </summary>
+    [Serializable]
     public class TileDescriptor : 
         Dictionary<Direction, TileSideDescriptor>, 
-        IPayloadContent
+        IPayloadContent,
+        ISerializable
     {        
         private bool isMonastery;
 
@@ -50,11 +53,10 @@ namespace CarcassonneServer.Model.Representation
 
     public class TileSideDescriptor
     {
-        //TODO: TileDescriptort refaktorálni, hogy TileSideDescriptorDecort használja
         public string ConstructionGuid { get; set; }
         public TileSideType Type { get { return descriptor.Type; } }
         public bool Closed { get { return descriptor.Closed; } }
-        private StaticTileSideDescriptor descriptor;
+        protected StaticTileSideDescriptor descriptor;
 
         public TileSideDescriptor(StaticTileSideDescriptor descriptor)
         {
@@ -63,6 +65,35 @@ namespace CarcassonneServer.Model.Representation
         }
     }
 
+    public class RoadTileDescriptor : TileSideDescriptor
+    {
+        public string LeftFieldConstructionGuid { get; set; }
+        public string RightFieldConstructionGuid { get; set; }
+
+        public RoadTileDescriptor(StaticTileSideDescriptor roadDescriptor, StaticTileSideDescriptor field1, StaticTileSideDescriptor field2)
+            : base (roadDescriptor)
+        {
+
+        }
+    }
+    //TODO: refaktorálni a meződescriptorok működését, hogy TileDescriptorRobust -> TileDescriptor lehessen.
+    public class TileDescriptorRobust
+    {
+        /// <summary>
+        /// directionToTypeMapping dolga megmondani, hogy egy adott irányban milyen típusú részmezője van az adott elemnek.
+        /// </summary>
+        private Dictionary<Direction, TileSideType> direcionToTypeMapping = new Dictionary<Direction, TileSideType>();
+        /// <summary>
+        /// typeToDirectionMapping dolga, hogy egy területtípus + GUID pároshoz megmondja, hogy milyen irányokban tartalmaz a mező ehhez az egységhez tartozó részmezőt. Például, egy vízszintes egyenes útnál egy ("Út", [építmény guidja]) pároshoz meg kell tudni mondani, hogy a {"jobb", "bal"} iránylista tartozik hozzá. Ha ugyanerre a mezőre a ("Mező", [mező guidja]) párosra kérdezünk, akkor vagy a {"jobb felső sarok", "bal felső sarok", "fel"} listát, vagy a {"jobb alsó sarok", "bal alsó sarok", "le"} listát kell visszakapnunk, a kapott GUIDtól függően.
+        /// </summary>
+        private Dictionary<Tuple<TileSideType, string>, List<List<Direction>>> typeToDirectionMapping = new Dictionary<Tuple<TileSideType, string>, List<List<Direction>>>();
+        public bool Monastery { get; private set; }
+
+        public TileDescriptorRobust()
+        {
+        }
+    }
+    
     public static class TileSideDescriptorFactory
     {
         public static TileSideDescriptor Factory(StaticTileSideDescriptor singleton)
@@ -90,7 +121,7 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         /// <param name="type">Az oldal által definiált terület típusa.</param>
         /// <param name="closed">Az oldal területzárást deifniál-e.</param>
-        public StaticTileSideDescriptor(TileSideType type, bool closed)
+        private  StaticTileSideDescriptor(TileSideType type, bool closed)
         {
             Type = type;
             Closed = closed;
@@ -131,9 +162,17 @@ namespace CarcassonneServer.Model.Representation
     public enum Direction : int
     {
         Up = 0,
+        UpRight,
+        RightUp,
         Right,
+        RightDown,
+        DownRight,
         Down,
-        Left
+        DownLeft,
+        LeftDown,
+        Left,
+        LeftUp,
+        UpLeft
     }
     /// <summary>
     /// A terület típusokat definiáló felsorolás.
