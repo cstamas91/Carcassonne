@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 
@@ -7,7 +8,7 @@ namespace CarcassonneSharedModules.Network
     /// <summary>
     /// Hálózati kommunikációért felelős osztály.
     /// </summary>
-    public class NetworkHandler
+    public class NetworkHandler : IDisposable
     {
 
         #region Declarations
@@ -57,6 +58,11 @@ namespace CarcassonneSharedModules.Network
 
         private void SendBroadcast(byte[] message)
         {
+        }
+
+        public void Dispose()
+        {
+            connectionListener.Close();
         }
 
         #endregion Methods

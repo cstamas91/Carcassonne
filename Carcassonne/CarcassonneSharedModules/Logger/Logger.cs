@@ -47,7 +47,7 @@ namespace CarcassonneSharedModules.Logger
         }
     }
 
-    public class FileLogger : AbstractLogger
+    public class FileLogger : AbstractLogger, IDisposable
     {
         private DateTime logStartTime;
 
@@ -110,6 +110,12 @@ namespace CarcassonneSharedModules.Logger
         private string BuildLogfileName()
         {
             return string.Format(@"{0}{1}__{2}.log", LogPath, DateTime.Today.ToString("yyyy-MM-dd"), logStartTime.ToString("hh-mm-ss-fff"));
+        }
+
+        public void Dispose()
+        {
+            logStream.Dispose();
+            logWriter.Dispose();
         }
     }
 
