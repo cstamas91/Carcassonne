@@ -38,7 +38,7 @@ namespace CarcassonneServer.Model.Representation.Construction.Tests
         [TestMethod()]
         public void IsFinishedTest()
         {
-
+            Assert.Fail();
         }
     }
 }

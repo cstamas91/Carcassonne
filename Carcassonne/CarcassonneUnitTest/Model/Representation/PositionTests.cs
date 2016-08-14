@@ -42,7 +42,7 @@ namespace CarcassonneServer.Model.Representation.Tests
                 new TileSideDescriptor(StaticTileSideDescriptor.ClosedField)),
                 new Position(0, 0));
 
-            RoadConstruction r1 = new RoadConstruction(t1);
+            RoadConstruction r1 = new RoadConstruction(ref t1);
 
             Tile t2 = new Tile(new TileDescriptor(
                 new TileSideDescriptor(StaticTileSideDescriptor.OpenRoad),
