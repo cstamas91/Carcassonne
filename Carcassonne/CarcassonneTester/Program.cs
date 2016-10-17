@@ -38,15 +38,6 @@ namespace CarcassonneTester
 
             //    }
             //}
-
-
-            Tile t1 = new Tile(new TileDescriptor(new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
-                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
-                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField),
-                                                  new TileSideDescriptor(StaticTileSideDescriptor.ClosedField), true));
-
-            var dict = t1.GetDirectionsForAreaType();
-
             Console.ReadKey();
         }
     }

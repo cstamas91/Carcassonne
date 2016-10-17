@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CarcassonneServer.Model.Representation.Construction
+namespace CarcassonneServer.Model.Representation.Area
 {
-    public class MonasteryConstruction : BaseConstruction
+    public class MonasteryArea : BaseArea
     {
         private Tile monastery = null;
 
-        public MonasteryConstruction(ref Tile tile)
+        public MonasteryArea(Tile tile)
         {
-            this.AddElement(ref tile);
+            this.AddSubArea(tile);
         }                             
 
-        public override void AddElement(ref Tile element)
+        public override void AddSubArea(Tile element)
         {
             throw new NotImplementedException();
         }
@@ -26,12 +26,12 @@ namespace CarcassonneServer.Model.Representation.Construction
             meeples.Add(meeple);
         }
 
-        public override TileSideType AreaType { get { return TileSideType.Field; } }
+        public override AreaType AreaType { get { return AreaType.Field; } }
 
         private List<Tile> edgeTiles = new List<Tile>();
         public override bool IsFinished { get { return elements.Count == 9; } }
 
-        protected override bool IsNeighbourTo(BaseConstruction construction)
+        protected override bool IsNeighbourTo(BaseArea area)
         {
             throw new NotImplementedException();
         }

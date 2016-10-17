@@ -12,19 +12,62 @@ namespace CarcassonneServer.Model.Representation
     public class Tile : Position, IPayloadContent
     {
         #region Declarations
-        private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
-
+        private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(ConnectingPoint)).Cast<int>().Max() + 1;
         private TileRotation rotation;
-        protected readonly TileDescriptor sideDescriptor;
-
-        private Direction RotationAdjustedDirection(Direction direction)
+        private List<SubArea> areas;
+        public List<SubArea> Areas
         {
-            return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
+            get
+            {
+                return areas;
+            }
         }
-        public TileSideDescriptor Up { get { return sideDescriptor[RotationAdjustedDirection(Direction.Up)]; } }
-        public TileSideDescriptor Right { get { return sideDescriptor[RotationAdjustedDirection(Direction.Right)]; } }
-        public TileSideDescriptor Down { get { return sideDescriptor[RotationAdjustedDirection(Direction.Down)]; } }
-        public TileSideDescriptor Left { get { return sideDescriptor[RotationAdjustedDirection(Direction.Left)]; } }
+
+        private ConnectingPoint RotationAdjustedDirection(ConnectingPoint direction)
+        {
+            return (ConnectingPoint)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
+        }
+
+        public SubArea this[ConnectingPoint direction]
+        {
+            get
+            {
+                IEnumerable<SubArea> areasWithDirection = areas.Where(area => area[direction]);
+
+                if (areasWithDirection.Count() != 1)
+                    throw new InvalidStateException("Egy irány egyetlen alterülethez tartozhat egy mezőn belül.");
+
+                return areasWithDirection.FirstOrDefault();
+            }
+        }
+        public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }
+
+        public Tile() { }
+        public Tile(IList<SubArea> subAreas, Position position)
+            : base (position.X, position.Y)
+        {
+            areas = subAreas.ToList();
+        }
+        #endregion Declarations
+
+
+        public void Rotate()
+        {
+            this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
+        }
+
+        #region IPayloadContent
+        override public void ReadContent(byte[] payloadContent)
+        {
+        }
+
+        override public void WriteContent(Stream contentStream)
+        {
+        }
+        #endregion IPayloadContent
+
+        #region Deprecated
+        protected readonly TileDescriptor sideDescriptor;
         public IEnumerable<TileSideDescriptor> Sides
         {
             get
@@ -32,33 +75,15 @@ namespace CarcassonneServer.Model.Representation
                 return sideDescriptor.Values;
             }
         }
-
-        public TileSideDescriptor this[Direction direction] { get { return sideDescriptor[RotationAdjustedDirection(direction)]; } } 
-        public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }
-
-        public Tile() { }
-
         public Tile(TileDescriptor tileDescriptor)
         {
             this.sideDescriptor = tileDescriptor;
         }
-
         public Tile(TileDescriptor tileDescriptor, Position pos)
-            :base(pos.X, pos.Y)
+            : base(pos.X, pos.Y)
         {
             this.sideDescriptor = tileDescriptor;
         }
-        #endregion Declarations
-
-        #region IPayloadContent
-        override public void ReadContent(byte[] payloadContent)
-        {
-        }
-                              
-        override public void WriteContent(Stream contentStream)
-        {
-        }
-        #endregion IPayloadContent
 
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
@@ -70,10 +95,6 @@ namespace CarcassonneServer.Model.Representation
         {
             return lhs.NeighbourTo(rhs);
         }
-
-        public void Rotate()
-        {
-            this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
-        }
+        #endregion Deprecated
     }
 }

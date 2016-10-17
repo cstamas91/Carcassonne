@@ -7,17 +7,18 @@ namespace CarcassonneServer.Model.Representation
     [Serializable]
     public abstract class AutoLoggingException : Exception
     {
+        protected string ExceptionLogStringSchema = "{0} : {1}";
         public AutoLoggingException(string message, [CallerMemberName] string callerName = "")
             :base(message)
         {
-            Logger.WriteLog(string.Format("{0}: {1}", callerName, message));
+            Logger.WriteLog(ExceptionLogStringSchema, callerName, message));
         }
     }
     [Serializable]
     public class UnrealisticResultException : AutoLoggingException
     {
-        public UnrealisticResultException(string Message)
-            :base(Message)
+        public UnrealisticResultException(string Message, [CallerMemberName] string callerName = "")
+            :base(Message, callerName)
         {
             
         }
@@ -27,8 +28,8 @@ namespace CarcassonneServer.Model.Representation
     {
         Tile tile1;
         Tile tile2;
-        public TileMatchException(string message, Tile tile1, Tile tile2)
-            :base(message)
+        public TileMatchException(string message, Tile tile1, Tile tile2, [CallerMemberName] string callerName = "")
+            :base(message, callerName)
         {
             this.tile1 = tile1;
             this.tile2 = tile2;
@@ -45,5 +46,13 @@ namespace CarcassonneServer.Model.Representation
                 return sides;
             }
         } 
+    }
+
+    public class InvalidStateException : AutoLoggingException
+    {
+        public InvalidStateException(string message, [CallerMemberName] string callerName = "")
+            : base (message, callerName)
+        {
+        }
     }
 }

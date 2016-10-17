@@ -21,11 +21,11 @@ namespace CarcassonneServer.Model.Representation
             set { inUse = value; }
         }
 
-        private string constructionGuid;
-        public string ConstructionGuid
+        private string areaGuid;
+        public string AreaGuid
         {
-            get { return constructionGuid;} 
-            private set { this.constructionGuid = value; }
+            get { return areaGuid;} 
+            private set { this.areaGuid = value; }
         }
 
 

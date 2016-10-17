@@ -1,40 +1,39 @@
 ﻿using CarcassonneSharedModules.Tools;
 using System.Collections.Generic;
 using System.IO;
-using CarcassonneServer.Model.Representation.Construction;
+using CarcassonneServer.Model.Representation.Area;
 using System.Linq;
 
 namespace CarcassonneServer.Model.Representation
 {
     public class GameTable : IPayloadContent
     {
-        private List<BaseConstruction> constructions = new List<BaseConstruction>();
-        public IEnumerable<BaseConstruction> Constructions { get { return constructions.AsEnumerable(); } }
+        private List<BaseArea> areas = new List<BaseArea>();
+        public IEnumerable<BaseArea> Areas { get { return areas.AsEnumerable(); } }
         private Tile lastAddedTile;
         private Meeple lastAddedMeeple;
         public GameTable() { }
 
-        public void SetTile(ref Tile tile)
+        public void SetTile(Tile tile)
         {
-            Tile tileNonref = tile;
+            var neighboringAreas = from area in areas
+                                           where area | tile
+                                           select area;
 
-            var neighboringConstructions = from construction in constructions
-                                           where construction | tileNonref
-                                           select construction;
-
-            if (neighboringConstructions.Count() != 0)
+            if (neighboringAreas.Count() != 0)
             {
-                foreach (var item in neighboringConstructions)
-                    item.AddElement(ref tile);
+                foreach (var item in neighboringAreas)
+                    item.AddSubArea(tile);
             }
             else
-                constructions.AddRange(BaseConstructionFactory.Factory(ref tile));
+                areas.AddRange(BaseAreaFactory.Factory(tile));
         }
 
         public void SetMeeple(Meeple meeple)
         {
-            constructions.SetMeeple(meeple, (c, m) => c.GUID == m.ConstructionGuid);
+            areas.SetMeeple(meeple, (c, m) => c.GUID == m.AreaGuid);
         }
+
         #region IPayloadContent
         public void ReadContent(byte[] payloadContent)
         {
@@ -46,8 +45,5 @@ namespace CarcassonneServer.Model.Representation
 
         }
         #endregion IPayloadContent
-
-
-
     }
 }

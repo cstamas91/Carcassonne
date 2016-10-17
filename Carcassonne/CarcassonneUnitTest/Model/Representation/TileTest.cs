@@ -1,5 +1,5 @@
 ﻿using CarcassonneServer.Model.Representation;
-using CarcassonneServer.Model.Representation.Construction;
+using CarcassonneServer.Model.Representation.Area;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CarcassonneUnitTest

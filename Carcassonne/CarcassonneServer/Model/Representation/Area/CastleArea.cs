@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace CarcassonneServer.Model.Representation.Construction
+namespace CarcassonneServer.Model.Representation.Area
 {
-    public class CastleConstruction : BaseConstruction
+    public class CastleArea : BaseArea
     {
-        public override TileSideType AreaType { get { return TileSideType.Castle; } }
+        public override AreaType AreaType { get { return AreaType.Castle; } }
 
         private bool? isFinished;
         public override bool IsFinished
@@ -19,14 +19,14 @@ namespace CarcassonneServer.Model.Representation.Construction
             }
         }
 
-        public CastleConstruction(Tile startTile = null)
+        public CastleArea(Tile startTile = null)
         {
         }
         /// <summary>
         /// Hozzáad egy mezőt a konstrukcióhoz.
         /// </summary>
         /// <param name='tileToAdd'>A hozzáadandó mező.</param>
-        public override void AddElement(ref Tile tileToAdd)
+        public override void AddSubArea(Tile tileToAdd)
         {
             /* 0. Ha a mező nem is szomszédos az építménnyel, kivételt kell dobni, valami gáz van.
              * 1. Meg kell állapítani, hogy a hozzáadandó mező milyen cédulát kapjon.
@@ -35,25 +35,23 @@ namespace CarcassonneServer.Model.Representation.Construction
              *      - Élmező bekerítődött => át kell helyezni a belső mezők közé
              *      - Belső mező nem változhat
              *      - Határmező nem változhat */
-            Tile tileToAddNonref = tileToAdd;
-
-            foreach (var key in elements.Keys)
-                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAddNonref) == 0) == Enum.GetValues(typeof(TileTag)).Length)
+             foreach (var key in elements.Keys)
+                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAdd) == 0) == Enum.GetValues(typeof(TileTag)).Length)
                     throw new ArgumentException("A mező nem szomszédos az építménnyel, így nem lehet hozzáadni.");
 
 
             IEnumerable<Tile> neighboringTiles = elements.Values
-                .Select(item => item.GetNeighboringTiles(tileToAddNonref))
+                .Select(item => item.GetNeighboringTiles(tileToAdd))
                 .Aggregate((fst, snd) => fst.Concat(snd));
 
             IEnumerable<TileSideDescriptor> connectingSides = from tile in neighboringTiles
-                                                              select tileToAddNonref[tileToAddNonref.NeighborDirection(tile)];
+                                                              select tileToAdd[tileToAdd.NeighborDirection(tile)];
 
             ManageTagsForTileToAdd(tileToAdd, neighboringTiles, connectingSides);
 
 
             foreach (TileSideDescriptor side in connectingSides)
-                side.ConstructionGuid = this.GUID;
+                side.AreaGuid = this.GUID;
 
             ManageFalseInnerTiles();
         }
@@ -89,16 +87,16 @@ namespace CarcassonneServer.Model.Representation.Construction
         ///<summary>Összeolvasztja a példányt a kapott konstrukcióval.</summary>
         ///<param name="other">A másik konstrukció</param>
         ///<returns>Az összeolvasztás után kapott konstrukció</returns>
-        public override BaseConstruction Merge(BaseConstruction other)
+        public override BaseArea Merge(BaseArea other)
         {
             /* Ha "other" nem megfelelő típusú, kivételt dobunk.
              * A megfelelő cédulájú listákat konkatenáljuk.
              * Megnézzük, hogy kell-e újracédulázni, ha igen, újracédulázunk */
 
-            if (other.GetType() != typeof(CastleConstruction))
+            if (other.GetType() != typeof(CastleArea))
                 throw new ArgumentException("Kastélyt csak kastéllyal lehet összeépíteni.");
 
-            CastleConstruction otherCastle = (CastleConstruction)other;
+            CastleArea otherCastle = (CastleArea)other;
 
 
             Dictionary<TileTag, ICollection<Tile>> newContainer = new Dictionary<TileTag, ICollection<Tile>>()
@@ -190,7 +188,7 @@ namespace CarcassonneServer.Model.Representation.Construction
 
             if (borders.Count(item => item | current && item != prev) > 1)
             {
-                Direction nextDirection = current.NeighborDirection(prev).Opposite();
+                ConnectingPoint nextDirection = current.NeighborDirection(prev).Opposite();
                 IEnumerable<Tile> candidates = borders.Where(item => item | current && item != prev);
                 return candidates.First(item => current.NeighborDirection(item) == nextDirection);
             }
@@ -198,16 +196,16 @@ namespace CarcassonneServer.Model.Representation.Construction
             return borders.First(item => item | current && item != prev);
         }
 
-        protected override bool IsNeighbourTo(BaseConstruction construction)
+        protected override bool IsNeighbourTo(BaseArea area)
         {
-            return (from tile in EdgeTiles
-                    where tile | construction
+            return (from tile in SubAreas
+                    where tile | area
                     select tile).Count() > 0;
         }
 
         protected override bool IsNeighbourTo(Position element)
         {
-            return (from tile in EdgeTiles
+            return (from tile in SubAreas
                     where tile | element
                     select tile).Count() > 0;
         }

@@ -1,8 +1,8 @@
-﻿namespace CarcassonneServer.Model.Representation.Construction
+﻿namespace CarcassonneServer.Model.Representation.Area
 {
     /* Elkészültség feltétele: minden benne lévő elem szomszédos egy másik benne lévő elemmel
      */
-    public class FieldConstruction : BaseConstruction
+    public class FieldArea : BaseArea
     {
     }
 }

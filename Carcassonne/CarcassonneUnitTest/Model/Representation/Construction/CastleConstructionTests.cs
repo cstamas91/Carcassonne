@@ -1,18 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CarcassonneServer.Model.Representation.Construction;
+using CarcassonneServer.Model.Representation.Area;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarcassonneServer.Model.Representation.Construction.Tests
+namespace CarcassonneServer.Model.Representation.Area.Tests
 {
     [TestClass()]
-    public class CastleConstructionTests
+    public class CastleAreaTests
     {
         [TestMethod()]
-        public void CastleConstructionTest()
+        public void CastleAreaTest()
         {
             Assert.Fail();
         }
