@@ -9,32 +9,28 @@ namespace CarcassonneServer.Model.Representation.Area
         protected List<Meeple> meeples = new List<Meeple>();
         public short Score { get; protected set; }
 
+        protected List<SubArea> SurroundedSubAreas { get; set; }
+        protected List<SubArea> OpenSubAreas { get; set; }
+        protected List<SubArea> subAreas;
+        public IEnumerable<SubArea> SubAreas { get { return subAreas; } }
+
         public BaseArea()
         {
             this.GUID = Guid.NewGuid().ToString();
-        }
-        public BaseArea(SubArea subArea)
-            :base()
-        {
-            subAreas.Add(subArea);
+            subAreas = new List<SubArea>();
+            SurroundedSubAreas = new List<SubArea>();
+            OpenSubAreas = new List<SubArea>();
         }
 
         virtual public AreaType AreaType { get; }
-        virtual public bool IsFinished { get; }
-        /// <summary>
-        /// Az "Él" címkével ellátott mezők az építményben. 
-        /// </summary>
-        protected List<SubArea> subAreas = new List<SubArea>();
-        public IEnumerable<SubArea> SubAreas { get { return subAreas; } }
         public string GUID { get; private set; }
 
+        virtual public bool IsFinished { get; }
+        
         virtual public void AddSubArea(SubArea subArea)
         {
             if (subArea.AreaType != AreaType)
                 throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
-
-            if (IsEmpty())
-                throw new InvalidOperationException("Üres területnek nem szabadna léteznie.");
         }
         virtual public void AddMeeple(Meeple meeple, SubArea subArea) { }
         
@@ -73,10 +69,16 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             return null;
         }
-        virtual public ConnectingPoint NeighborDirection(Position other) { throw new NotImplementedException(); }
+        virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
         virtual protected bool IsNeighbourTo(Position element) { return false; }
         virtual protected bool IsNeighbourTo(BaseArea area) { return false; }
         virtual protected bool EvaluateIsFinished() { return false; }
+        protected IEnumerable<SubArea> GetAdjacentSubAreas(SubArea target)
+        {
+            IEnumerable<Direction> directions = target.Edges;
+
+            return SubAreas.Where(a => a.Position | target.Position);
+        }
 
         protected IEnumerable<Tile> GetNeighboringTilesInArea(Tile otherTile)
         {

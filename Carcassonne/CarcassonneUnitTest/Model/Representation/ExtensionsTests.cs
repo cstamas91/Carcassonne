@@ -14,10 +14,10 @@ namespace CarcassonneServer.Model.Representation.Tests
         [TestMethod()]
         public void OppositeTest()
         {
-            Assert.AreEqual(ConnectingPoint.Left, ConnectingPoint.Right.Opposite());
-            Assert.AreEqual(ConnectingPoint.Right, ConnectingPoint.Left.Opposite());
-            Assert.AreEqual(ConnectingPoint.Down, ConnectingPoint.Up.Opposite());
-            Assert.AreEqual(ConnectingPoint.Up, ConnectingPoint.Down.Opposite());
+            Assert.AreEqual(Direction.Left, Direction.Right.Opposite());
+            Assert.AreEqual(Direction.Right, Direction.Left.Opposite());
+            Assert.AreEqual(Direction.Down, Direction.Up.Opposite());
+            Assert.AreEqual(Direction.Up, Direction.Down.Opposite());
         }
     }
 }

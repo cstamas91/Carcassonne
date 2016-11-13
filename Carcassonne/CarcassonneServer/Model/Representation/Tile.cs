@@ -12,7 +12,7 @@ namespace CarcassonneServer.Model.Representation
     public class Tile : Position, IPayloadContent
     {
         #region Declarations
-        private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(ConnectingPoint)).Cast<int>().Max() + 1;
+        private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
         private TileRotation rotation;
         private List<SubArea> areas;
         public List<SubArea> Areas
@@ -23,12 +23,12 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
-        private ConnectingPoint RotationAdjustedDirection(ConnectingPoint direction)
+        private Direction RotationAdjustedDirection(Direction direction)
         {
-            return (ConnectingPoint)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
+            return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
         }
 
-        public SubArea this[ConnectingPoint direction]
+        public SubArea this[Direction direction]
         {
             get
             {
@@ -50,7 +50,6 @@ namespace CarcassonneServer.Model.Representation
         }
         #endregion Declarations
 
-
         public void Rotate()
         {
             this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
@@ -65,6 +64,20 @@ namespace CarcassonneServer.Model.Representation
         {
         }
         #endregion IPayloadContent
+
+        public bool CanBeAdjacentWith(Tile other)
+        {
+            return this | other && FacingSidesAreCompatible(other);
+        }
+
+        private bool FacingSidesAreCompatible(Tile other)
+        {
+            foreach (Direction facingMinorDirection in AdjacentDirection(other).MinorDirections())
+                if (this[facingMinorDirection].AreaType != other[facingMinorDirection.Opposite()].AreaType)
+                    return false;
+
+            return true;
+        }
 
         #region Deprecated
         protected readonly TileDescriptor sideDescriptor;

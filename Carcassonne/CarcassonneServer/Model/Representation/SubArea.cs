@@ -9,12 +9,12 @@ namespace CarcassonneServer.Model.Representation
     public abstract class SubArea
     {
         private Tile parent;
-        private List<ConnectingPoint> edges = new List<ConnectingPoint>();
-        public List<ConnectingPoint> Edges { get; set; }
+        private List<Direction> edges = new List<Direction>();
+        public List<Direction> Edges { get; set; }
 
         public virtual int Points { get; set; }
 
-        public bool this[ConnectingPoint direction]
+        public bool this[Direction direction]
         {
             get
             {
@@ -47,7 +47,7 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
-        public SubArea(IList<ConnectingPoint> governedEdges, AreaType areaType, Tile parent)
+        public SubArea(IList<Direction> governedEdges, AreaType areaType, Tile parent)
         {
             this.parent = parent;
             this.edges = governedEdges.ToList();

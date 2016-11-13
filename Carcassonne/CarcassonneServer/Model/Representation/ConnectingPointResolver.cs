@@ -8,35 +8,35 @@ namespace CarcassonneServer.Model.Representation
 {
     public static class ConnectingPointResolver
     {
-        public static ConnectingPoint ResolveOpposite(this ConnectingPoint instance)
+        public static Direction ResolveOpposite(this Direction instance)
         {
             switch (instance)
             {
-                case ConnectingPoint.Up:
-                    return ConnectingPoint.Down;
-                case ConnectingPoint.UpRight:
-                    return ConnectingPoint.DownRight;
-                case ConnectingPoint.RightUp:
-                    return ConnectingPoint.LeftUp;
-                case ConnectingPoint.Right:
-                    return ConnectingPoint.Left;
-                case ConnectingPoint.RightDown:
-                    return ConnectingPoint.LeftDown;
-                case ConnectingPoint.DownRight:
-                    return ConnectingPoint.UpRight;
-                case ConnectingPoint.Down:
-                    return ConnectingPoint.Up;
-                case ConnectingPoint.DownLeft:
-                    return ConnectingPoint.UpLeft;
-                case ConnectingPoint.LeftDown:
-                    return ConnectingPoint.RightDown;
-                case ConnectingPoint.Left:
-                    return ConnectingPoint.Right;
-                case ConnectingPoint.LeftUp:
-                    return ConnectingPoint.RightUp;
-                case ConnectingPoint.UpLeft:
+                case Direction.Up:
+                    return Direction.Down;
+                case Direction.UpRight:
+                    return Direction.DownRight;
+                case Direction.RightUp:
+                    return Direction.LeftUp;
+                case Direction.Right:
+                    return Direction.Left;
+                case Direction.RightDown:
+                    return Direction.LeftDown;
+                case Direction.DownRight:
+                    return Direction.UpRight;
+                case Direction.Down:
+                    return Direction.Up;
+                case Direction.DownLeft:
+                    return Direction.UpLeft;
+                case Direction.LeftDown:
+                    return Direction.RightDown;
+                case Direction.Left:
+                    return Direction.Right;
+                case Direction.LeftUp:
+                    return Direction.RightUp;
+                case Direction.UpLeft:
                 default:
-                    return ConnectingPoint.DownLeft;
+                    return Direction.DownLeft;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace CarcassonneServer.Model.Representation
     /// </summary>
     [Serializable]
     public class TileDescriptor : 
-        Dictionary<ConnectingPoint, TileSideDescriptor>, 
+        Dictionary<Direction, TileSideDescriptor>, 
         IPayloadContent,
         ISerializable
     {        
@@ -31,7 +31,7 @@ namespace CarcassonneServer.Model.Representation
         /// <summary>
         /// Rendszerezi, hogy egy bizonyos irányból nézve, mely másik irányok érhetőek el közvetlenül az elemen belül.
         /// </summary>
-        public Dictionary<ConnectingPoint, IEnumerable<ConnectingPoint>> AccessibleFrom
+        public Dictionary<Direction, IEnumerable<Direction>> AccessibleFrom
         {
             get
             {
@@ -43,7 +43,7 @@ namespace CarcassonneServer.Model.Representation
                 accessibleFrom = value;
             }
         }
-        private Dictionary<ConnectingPoint, IEnumerable<ConnectingPoint>> accessibleFrom = new Dictionary<ConnectingPoint, IEnumerable<ConnectingPoint>>();
+        private Dictionary<Direction, IEnumerable<Direction>> accessibleFrom = new Dictionary<Direction, IEnumerable<Direction>>();
 
         /// <summary>
         /// Üres konstruktor a gyártáshoz.
@@ -142,7 +142,7 @@ namespace CarcassonneServer.Model.Representation
     /// <summary>
     /// A mező érintkezési pontjait definiáló felsorolás.
     /// </summary>
-    public enum ConnectingPoint : int
+    public enum Direction : int
     {
         Up = 1,
         UpRight = 2,

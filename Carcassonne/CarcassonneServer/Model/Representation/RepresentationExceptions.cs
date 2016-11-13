@@ -40,8 +40,8 @@ namespace CarcassonneServer.Model.Representation
             get
             {
                 TileSideDescriptor[] sides = new TileSideDescriptor[2];
-                sides[0] = tile1[tile1.NeighborDirection(tile2)];
-                sides[1] = tile2[tile2.NeighborDirection(tile1)];
+                sides[0] = tile1[tile1.AdjacentDirection(tile2)];
+                sides[1] = tile2[tile2.AdjacentDirection(tile1)];
 
                 return sides;
             }

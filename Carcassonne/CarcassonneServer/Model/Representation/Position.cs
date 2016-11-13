@@ -74,19 +74,19 @@ namespace CarcassonneServer.Model.Representation
             return base.GetHashCode();
         }
 
-        public ConnectingPoint NeighborDirection(Position other)
+        public Direction AdjacentDirection(Position other)
         {
             if(!(this | other))
                 throw new InvalidOperationException();
 
             if (X + 1 == other.X)
-                return ConnectingPoint.Up;
+                return Direction.Up;
             else if (X - 1 == other.X)
-                return ConnectingPoint.Down;
+                return Direction.Down;
             else if (Y + 1 == other.Y)
-                return ConnectingPoint.Right;
+                return Direction.Right;
             else
-                return ConnectingPoint.Left;
+                return Direction.Left;
         }
     }
 }

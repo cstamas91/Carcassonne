@@ -15,7 +15,7 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             List<BaseArea> areas = new List<BaseArea>();
 
-            foreach (ConnectingPoint item in Enum.GetValues(typeof(ConnectingPoint)))
+            foreach (Direction item in Enum.GetValues(typeof(Direction)))
             {
                 var area = Factory(tile[item].Type);
                 area.AddTile(tile);

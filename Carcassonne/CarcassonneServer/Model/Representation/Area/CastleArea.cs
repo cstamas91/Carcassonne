@@ -45,7 +45,7 @@ namespace CarcassonneServer.Model.Representation.Area
                 .Aggregate((fst, snd) => fst.Concat(snd));
 
             IEnumerable<TileSideDescriptor> connectingSides = from tile in neighboringTiles
-                                                              select tileToAdd[tileToAdd.NeighborDirection(tile)];
+                                                              select tileToAdd[tileToAdd.AdjacentDirection(tile)];
 
             ManageTagsForTileToAdd(tileToAdd, neighboringTiles, connectingSides);
 
@@ -188,9 +188,9 @@ namespace CarcassonneServer.Model.Representation.Area
 
             if (borders.Count(item => item | current && item != prev) > 1)
             {
-                ConnectingPoint nextDirection = current.NeighborDirection(prev).Opposite();
+                Direction nextDirection = current.AdjacentDirection(prev).Opposite();
                 IEnumerable<Tile> candidates = borders.Where(item => item | current && item != prev);
-                return candidates.First(item => current.NeighborDirection(item) == nextDirection);
+                return candidates.First(item => current.AdjacentDirection(item) == nextDirection);
             }
 
             return borders.First(item => item | current && item != prev);

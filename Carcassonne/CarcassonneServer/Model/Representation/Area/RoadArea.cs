@@ -9,16 +9,18 @@ namespace CarcassonneServer.Model.Representation.Area
         public override AreaType AreaType { get { return AreaType.Road; } }
 
         public override bool IsFinished { get { return EvaluateIsFinished(); } }
-
+        
         /// <summary>
         /// Alapértelmezett konstruktor.
         /// </summary>
-        public RoadArea() : base() { }
+        public RoadArea() : base()
+        {
+        }
 
         public RoadArea(SubArea subArea)
-            : base(subArea)
+            : base()
         {
-
+            AddSubArea(subArea);
         }
         /// <summary>
         /// Mező hozzáadása területhez.
@@ -30,14 +32,16 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <param name="subArea">Mező amit hozzá akarunk adni a területhez.</param>
         public override void AddSubArea(SubArea subArea)
         {
-            base.AddSubArea(subArea);            
+            base.AddSubArea(subArea);
+
+            List<SubArea> openAdjacentSubAreas = OpenSubAreas;
         }
 
         /// <summary>
         /// Beállítja a kapott mező megfelelő oldalak GUIDjainak a konstrukció guidját.
         /// </summary>
         /// <param name="element">A menedzselendő mező.</param>
-        private void ManageGuids(Tile element, params ConnectingPoint[] sideDirections)
+        private void ManageGuids(Tile element, params Direction[] sideDirections)
         {
             throw new NotImplementedException();
         }
@@ -53,7 +57,7 @@ namespace CarcassonneServer.Model.Representation.Area
         protected override bool EvaluateIsFinished()
         {
             //TODO: !!!!!!!!!Akkor bezárt egy terület, ha minden hozzá tartozó alterületre egyenként igaz, hogy az alterület oldali ebbe a területbe tartozó alterülettel érintkeznek.
-            throw new NotImplementedException();
+            //return this.subAreas.All(a => GetAdjacentSubAreas(a).All(adj => subAreas.Contains(adj)));
         }
 
         protected override bool IsNeighbourTo(Position element)
@@ -66,7 +70,7 @@ namespace CarcassonneServer.Model.Representation.Area
             throw new NotImplementedException();
         }
 
-        public override ConnectingPoint NeighborDirection(Position other)
+        public override Direction NeighborDirection(Position other)
         {
             throw new NotImplementedException();
         }

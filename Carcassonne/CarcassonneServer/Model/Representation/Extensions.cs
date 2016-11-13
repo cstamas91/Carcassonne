@@ -19,29 +19,47 @@ namespace CarcassonneServer.Model.Representation
             if (area != null)
                 area.AddMeeple(meeple);
         }
-        public static ConnectingPoint Opposite(this ConnectingPoint direction)
+        public static Direction Opposite(this Direction direction)
         {
             switch (direction)
             {
-                case ConnectingPoint.Down: return ConnectingPoint.Up;
-                case ConnectingPoint.Up: return ConnectingPoint.Down;
-                case ConnectingPoint.Left: return ConnectingPoint.Right;
-                default: return ConnectingPoint.Left;
+                case Direction.Down: return Direction.Up;
+                case Direction.Up: return Direction.Down;
+                case Direction.Left: return Direction.Right;
+                default: return Direction.Left;
             }
         }
+
+        public static List<Direction> MinorDirections(this Direction majorDirection)
+        {
+            switch (majorDirection)
+            {
+                case Direction.Down:
+                    return new List<Direction>() { Direction.Down, Direction.DownLeft, Direction.DownRight };
+                case Direction.Left:
+                    return new List<Direction>() { Direction.Left, Direction.LeftDown, Direction.LeftUp };
+                case Direction.Right:
+                    return new List<Direction>() { Direction.Right, Direction.RightDown, Direction.RightUp };
+                case Direction.Up:
+                    return new List<Direction>() { Direction.Up, Direction.UpLeft, Direction.UpRight };
+                default:
+                    throw new ArgumentException(string.Format("{0} nem fő irány.", majorDirection.ToString()));
+            }
+        }
+
         /// <summary>
         /// Visszaad egy asszociatív tömböt, amiben minden oldaltípushoz egy listában szerepel, hogy a vizsgált mező mely irányú oldala olyan típusú.
         /// </summary>
         /// <param name="tile">A kérdéses mező.</param>
         /// <returns>Egy dictionary ami oldaltípushoz irány listát rendel.</returns>
-        public static Dictionary<AreaType, List<ConnectingPoint>> GetDirectionsForAreaType(this Tile tile)
+        public static Dictionary<AreaType, List<Direction>> GetDirectionsForAreaType(this Tile tile)
         {
-            var dict = new Dictionary<AreaType, List<ConnectingPoint>>();
+            var dict = new Dictionary<AreaType, List<Direction>>();
 
             foreach (AreaType areaType in Enum.GetValues(typeof(AreaType)))
                 dict.Add(areaType,
-                    new List<ConnectingPoint>(
-                        from ConnectingPoint direction in Enum.GetValues(typeof(ConnectingPoint))
+                    new List<Direction>(
+                        from Direction direction in Enum.GetValues(typeof(Direction))
                         where tile[direction].Type == areaType
                         select direction));
 
