@@ -53,5 +53,11 @@ namespace CarcassonneServer.Model.Representation
             this.edges = governedEdges.ToList();
             this.areaType = areaType;
         }
+
+        public static bool operator |(SubArea lhs, SubArea rhs)
+        {
+            return
+                lhs.parent.TestAdjacency(rhs.parent);
+        }
     }
 }

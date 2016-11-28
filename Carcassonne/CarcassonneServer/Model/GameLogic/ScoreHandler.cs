@@ -7,7 +7,7 @@ using CarcassonneSharedModules.Tools;
 
 namespace CarcassonneServer.Model.GameLogic
 {
-    public class ScoreHandler : IPayloadContent
+    public class ScoreHandler
     {
         #region Declaration
         private Dictionary<Player, int> scoreTable;
@@ -47,34 +47,5 @@ namespace CarcassonneServer.Model.GameLogic
         }
 
         #endregion Public methods
-
-        #region IPayloadContent
-        public void ReadContent(byte[] payloadContent)
-        {
-            using (var ms = new MemoryStream(payloadContent))
-            {
-                var content = new byte[sizeof(short)];
-                var offset = ms.Read(content, 0, sizeof(short));
-
-                for (short i = 0; ms.CanRead; i++)
-                {
-                    offset += ms.Read(content, offset, sizeof(short));
-                    ScoreTable.Add(new Player(i, string.Empty), BitConverter.ToInt16(content, 0));
-                }
-            }
-        }
-
-        public void WriteContent(Stream contentStream)
-        {
-
-            var pairs = from items in ScoreTable
-                        orderby items.Key.Number
-                        select items;
-
-            contentStream.WriteShort((short)pairs.Count());
-            foreach (var pair in pairs)
-                contentStream.WriteShort((short)pair.Value);
-        }
-        #endregion IPayloadContent
     }
 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CarcassonneServer.Model.Representation
 {
-    public class Meeple : Position, IPayloadContent
+    public class Meeple : Position
     {
         #region Declaration
         public short OwnerId
@@ -44,18 +44,5 @@ namespace CarcassonneServer.Model.Representation
             this.InUse = false;
         }
         #endregion Declaration
-
-        #region IPayloadContent
-        public override void ReadContent(byte[] payloadContent)
-        {
-            base.ReadContent(payloadContent);
-        }
-
-        public override void WriteContent(Stream contentStream)
-        {
-            base.WriteContent(contentStream);
-        }
-        #endregion IPayloadContent
-
     }
 }

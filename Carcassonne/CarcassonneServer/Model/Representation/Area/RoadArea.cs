@@ -24,17 +24,41 @@ namespace CarcassonneServer.Model.Representation.Area
         }
         /// <summary>
         /// Mező hozzáadása területhez.
-        /// Ha a mező nem szomszédos az úttal, kivételt dobunk.
-        /// * Ellenőrizzük, hogy a mezők valóban egymás mellé helyezhetők-e.
-        /// * Megállapítjuk, hogy milyen cédulát kap az út.
-        /// * Ellenőrizzük, hogy a céldulákat kezelni kell-e.
         /// </summary>
         /// <param name="subArea">Mező amit hozzá akarunk adni a területhez.</param>
         public override void AddSubArea(SubArea subArea)
         {
             base.AddSubArea(subArea);
 
-            List<SubArea> openAdjacentSubAreas = OpenSubAreas;
+            //szomszédos belső elemek kezelése
+            List<SubArea> adjacentSubAreas = OpenSubAreas.Where(item => item | subArea).ToList();
+
+            adjacentSubAreas.ForEach(item =>
+            {
+                if (IsSurrounded(item))
+                {
+                    OpenSubAreas.Remove(item);
+                    SurroundedSubAreas.Add(item);
+                }
+            });
+
+            //hozzáadandó elem kezelése
+            subAreas.Add(subArea);
+            if (IsSurrounded(subArea))
+                SurroundedSubAreas.Add(subArea);
+            else
+                OpenSubAreas.Add(subArea);
+        }
+
+        /// <summary>
+        /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
+        /// </summary>
+        /// <param name="item">A vizsgált részterület.</param>
+        /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
+        private bool IsSurrounded(SubArea item)
+        {
+            List<SubArea> adjacents = SubAreas.Where(area => area | item).ToList();
+            return item.Edges.All(edge => adjacents.Any(adjacent => adjacent.Position.AdjacentDirection(item.Position) == edge));
         }
 
         /// <summary>
@@ -56,8 +80,7 @@ namespace CarcassonneServer.Model.Representation.Area
 
         protected override bool EvaluateIsFinished()
         {
-            //TODO: !!!!!!!!!Akkor bezárt egy terület, ha minden hozzá tartozó alterületre egyenként igaz, hogy az alterület oldali ebbe a területbe tartozó alterülettel érintkeznek.
-            //return this.subAreas.All(a => GetAdjacentSubAreas(a).All(adj => subAreas.Contains(adj)));
+            return OpenSubAreas.Count() == 0;
         }
 
         protected override bool IsNeighbourTo(Position element)

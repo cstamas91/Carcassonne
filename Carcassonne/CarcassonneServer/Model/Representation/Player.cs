@@ -7,7 +7,7 @@ using System.IO;
 
 namespace CarcassonneServer.Model.Representation
 {
-    public class Player : IPayloadContent
+    public class Player
     {
         #region Declaration
         private string name;
@@ -74,34 +74,6 @@ namespace CarcassonneServer.Model.Representation
             return meeples;
         }
         #endregion Private methods
-
-        #region IPayloadContent
-
-        public void ReadContent(byte[] payloadContent)
-        {
-            using (var ms = new MemoryStream(payloadContent))
-            {
-                var arr = new byte[sizeof(short)];
-                ms.Read(arr, 0, sizeof(short));
-                this.Number = BitConverter.ToInt16(arr, 0);
-
-                using (var sr = new StreamReader(ms, Encoding.Default, false, 4, true))
-                {
-                    Name = sr.ReadLine();
-                    GUID = sr.ReadLine();
-                }
-            }
-            if (Name.EndsWith("\n"))
-                Name = Name.Trim();
-        }
-
-        public void WriteContent(Stream contentStream)
-        {
-            contentStream.WriteShort((short)Number);
-            contentStream.WriteString(Name);
-            contentStream.WriteString(GUID);
-        }
-        #endregion IPayloadContent
 
         #region public methods
         public override string ToString()

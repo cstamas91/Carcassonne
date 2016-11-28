@@ -65,7 +65,6 @@
     <Compile Include="Model\Representation\ConnectingPointResolver.cs" />
     <Compile Include="Model\Representation\Extensions.cs" />
     <Compile Include="Model\Representation\Area\FieldArea.cs" />
-    <Compile Include="Model\Representation\Area\MonasteryArea.cs" />
     <Compile Include="Model\Representation\Area\RoadArea.cs" />
     <Compile Include="Model\Representation\GameTable.cs" />
     <Compile Include="Model\Representation\Meeple.cs" />

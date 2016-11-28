@@ -15,7 +15,6 @@ namespace CarcassonneServer.Model.Representation
     [Serializable]
     public class TileDescriptor : 
         Dictionary<Direction, TileSideDescriptor>, 
-        IPayloadContent,
         ISerializable
     {        
         /// <summary>
@@ -49,16 +48,6 @@ namespace CarcassonneServer.Model.Representation
         /// Üres konstruktor a gyártáshoz.
         /// </summary>
         public TileDescriptor() { }
-        
-        #region IPayloadContent
-        public void ReadContent(byte[] payloadContent)
-        {
-        }
-
-        public void WriteContent(Stream contentStream)
-        {
-        }
-        #endregion IPayloadContent
     }
 
     public class TileSideDescriptor

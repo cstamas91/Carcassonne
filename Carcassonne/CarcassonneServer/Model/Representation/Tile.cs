@@ -9,7 +9,7 @@ namespace CarcassonneServer.Model.Representation
     /// <summary>
     /// Egy játékmező logikai reprezentációja, tartalmazza az absztrakt interakciós logikát.
     /// </summary>
-    public class Tile : Position, IPayloadContent
+    public class Tile : Position
     {
         #region Declarations
         private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
@@ -28,6 +28,11 @@ namespace CarcassonneServer.Model.Representation
             return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
         }
 
+        /// <summary>
+        /// Indexer, ami egy irány változóra visszaadja a mezőn belül ahhoz az irányhoz tartozó alterületet.
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         public SubArea this[Direction direction]
         {
             get
@@ -54,23 +59,22 @@ namespace CarcassonneServer.Model.Representation
         {
             this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
         }
-
-        #region IPayloadContent
-        override public void ReadContent(byte[] payloadContent)
+        
+        /// <summary>
+        /// Kiértékeli, hogy a kapott mező emellé rakható-e.
+        /// </summary>
+        /// <param name="other">A másik játékmező.</param>
+        /// <returns>A másik játékmező lerkaható-e emellé.</returns>
+        public bool TestAdjacency(Tile other)
         {
+            return this | other && TestSideTypeCompatibility(other);
         }
-
-        override public void WriteContent(Stream contentStream)
-        {
-        }
-        #endregion IPayloadContent
-
-        public bool CanBeAdjacentWith(Tile other)
-        {
-            return this | other && FacingSidesAreCompatible(other);
-        }
-
-        private bool FacingSidesAreCompatible(Tile other)
+        /// <summary>
+        /// Kiértékeli, hogy a másik mező ezzel szemben lévő oldalán a terület típusok egyeznek.
+        /// </summary>
+        /// <param name="other">A másik játékmező.</param>
+        /// <returns>Terület típusok szerint lerakható-e a mező emellé.</returns>
+        private bool TestSideTypeCompatibility(Tile other)
         {
             foreach (Direction facingMinorDirection in AdjacentDirection(other).MinorDirections())
                 if (this[facingMinorDirection].AreaType != other[facingMinorDirection.Opposite()].AreaType)
