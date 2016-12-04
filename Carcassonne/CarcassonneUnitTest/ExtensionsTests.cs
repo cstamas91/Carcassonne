@@ -18,6 +18,7 @@ namespace CarcassonneServer.Model.Representation.Tests
             Assert.AreEqual(Direction.Right, Direction.Left.Opposite());
             Assert.AreEqual(Direction.Down, Direction.Up.Opposite());
             Assert.AreEqual(Direction.Up, Direction.Down.Opposite());
+            Assert.Fail("Kibővíteni a többi irányra!");
         }
     }
 }

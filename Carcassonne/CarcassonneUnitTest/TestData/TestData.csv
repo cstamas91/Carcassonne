@@ -1,0 +1,2 @@
+PozX1,PozY1,Area1-1,Area1-1Type,Area2-1,Area2-1Type,Area3-1,Area3-1Type,Area4-1,Area4-1Type,PozX2,PozY2,Area1-2,Area1-2Type,Area2-2,Area2-2Type,Area3-2,Area3-2Type,Area4-2,Area4-2Type,Expected
+0,0,1;2;3;11;12,0,5;6;7;8;9,0,4;10,1,,,0,1,1;2;3;11;12,0,5;6;7;8;9,0,4;10,1,,,1

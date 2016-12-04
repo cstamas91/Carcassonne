@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace CarcassonneServer.Model.Representation
 {
-    public abstract class SubArea
+    public class SubArea
     {
         private Tile parent;
         private List<Direction> edges = new List<Direction>();
-        public List<Direction> Edges { get; set; }
+        public List<Direction> Edges
+        {
+            get
+            {
+                return edges;
+            }
+        }
 
         public virtual int Points { get; set; }
 
@@ -47,9 +53,9 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
-        public SubArea(IList<Direction> governedEdges, AreaType areaType, Tile parent)
+        public SubArea(IList<Direction> governedEdges, AreaType areaType/*, Tile parent*/)
         {
-            this.parent = parent;
+            //this.parent = parent;
             this.edges = governedEdges.ToList();
             this.areaType = areaType;
         }
@@ -57,7 +63,7 @@ namespace CarcassonneServer.Model.Representation
         public static bool operator |(SubArea lhs, SubArea rhs)
         {
             return
-                lhs.parent.TestAdjacency(rhs.parent);
+                lhs.parent.IsValidAdjacent(rhs.parent);
         }
     }
 }

@@ -26,34 +26,9 @@ namespace CarcassonneServer.Model.Representation.Area
         /// Hozzáad egy mezőt a konstrukcióhoz.
         /// </summary>
         /// <param name='tileToAdd'>A hozzáadandó mező.</param>
-        public override void AddSubArea(Tile tileToAdd)
+        public void AddSubArea(Tile tileToAdd)
         {
-            /* 0. Ha a mező nem is szomszédos az építménnyel, kivételt kell dobni, valami gáz van.
-             * 1. Meg kell állapítani, hogy a hozzáadandó mező milyen cédulát kapjon.
-             * 2. A mező megfelelő oldalának leírójában be kell állítani az építmény GUIDját.
-             * 3. Ellenőrizni kell minden más mezőt, hogy címkeváltozás aktuális-e, ha igen, áthelyezni a megfelelő csoportba.
-             *      - Élmező bekerítődött => át kell helyezni a belső mezők közé
-             *      - Belső mező nem változhat
-             *      - Határmező nem változhat */
-             foreach (var key in elements.Keys)
-                if (elements.Values.Count(tileList => tileList.Count(tile => tile | tileToAdd) == 0) == Enum.GetValues(typeof(TileTag)).Length)
-                    throw new ArgumentException("A mező nem szomszédos az építménnyel, így nem lehet hozzáadni.");
-
-
-            IEnumerable<Tile> neighboringTiles = elements.Values
-                .Select(item => item.GetNeighboringTiles(tileToAdd))
-                .Aggregate((fst, snd) => fst.Concat(snd));
-
-            IEnumerable<TileSideDescriptor> connectingSides = from tile in neighboringTiles
-                                                              select tileToAdd[tileToAdd.AdjacentDirection(tile)];
-
-            ManageTagsForTileToAdd(tileToAdd, neighboringTiles, connectingSides);
-
-
-            foreach (TileSideDescriptor side in connectingSides)
-                side.AreaGuid = this.GUID;
-
-            ManageFalseInnerTiles();
+            throw new NotImplementedException();
         }
         /// <summary>
         /// Elhelyezi a hozzáadandó mezőt a szótár megfelelő kollekcióiban.
@@ -61,22 +36,12 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <param name="tileToAdd">A hozzáadandó mező.</param>
         private void ManageTagsForTileToAdd(Tile tileToAdd, IEnumerable<Tile> neighboringTiles, IEnumerable<TileSideDescriptor> connectingSides)
         {
-            if (neighboringTiles.Count() > 4)
-                throw new UnrealisticResultException("Négynél több oldala nem lehet szomszédos egy mezőnek.");
-
-            if (connectingSides.Any(side => side.Closed))
-                elements[TileTag.Border].Add(tileToAdd);
-
-            if (neighboringTiles.Count() < 4 && !elements[TileTag.Border].Contains(tileToAdd))
-                elements[TileTag.Edge].Add(tileToAdd);
-
-            if (neighboringTiles.Count() == 4)
-                elements[TileTag.Inner].Add(tileToAdd);
+            throw new NotImplementedException();
         }
 
         /// <summary>Elhelyezi a kapott figurát a konstrukción.</summary>
         /// <param name="meeple">Elhelyezendő figura.</param>
-        public override void AddMeeple(Meeple meeple)
+        public void AddMeeple(Meeple meeple)
         {
             if (!IsFinished && meeples.Count == 0)
                 meeples.Add(meeple);
@@ -89,47 +54,17 @@ namespace CarcassonneServer.Model.Representation.Area
         ///<returns>Az összeolvasztás után kapott konstrukció</returns>
         public override BaseArea Merge(BaseArea other)
         {
-            /* Ha "other" nem megfelelő típusú, kivételt dobunk.
-             * A megfelelő cédulájú listákat konkatenáljuk.
-             * Megnézzük, hogy kell-e újracédulázni, ha igen, újracédulázunk */
-
-            if (other.GetType() != typeof(CastleArea))
-                throw new ArgumentException("Kastélyt csak kastéllyal lehet összeépíteni.");
-
-            CastleArea otherCastle = (CastleArea)other;
-
-
-            Dictionary<TileTag, ICollection<Tile>> newContainer = new Dictionary<TileTag, ICollection<Tile>>()
-            {
-                { TileTag.Border, this.elements[TileTag.Border].Concat(otherCastle.elements[TileTag.Border]).ToList() },
-                { TileTag.Edge, this.elements[TileTag.Edge].Concat(otherCastle.elements[TileTag.Edge]).ToList() },
-                { TileTag.Inner, this.elements[TileTag.Inner].Concat(otherCastle.elements[TileTag.Inner]).ToList() }
-            };
-
-            this.elements = newContainer;
-
-            ManageFalseInnerTiles();
-
-            return this;
+            throw new NotImplementedException();
         }
 
         private void ManageFalseInnerTiles()
         {
-            /* A mozgatandó mezőket kigyűjtjük egy külön listába. 
-             * Felsorolás alatt az elemeket nem szabad eltávolítani a felsorolóból */
-            List<Tile> markedForMove = new List<Tile>();
-            foreach (Tile tile in elements[TileTag.Edge])
-                if (elements[TileTag.Edge].Count(item => item | tile) == 4)
-                    markedForMove.Add(tile);
-
-            foreach (Tile tile in markedForMove)
-                MoveFalseInnerTile(tile);
+            throw new NotImplementedException();
         }
 
         private void MoveFalseInnerTile(Tile tile)
         {
-            elements[TileTag.Edge].Remove(tile);
-            elements[TileTag.Inner].Add(tile);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -147,7 +82,7 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <returns>Van-e olyan mező, ami nincs teljesen körbevéve.</returns>
         private bool EdgeTilesExist()
         {
-            return elements[TileTag.Edge].Any();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -156,24 +91,7 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <returns>A szegély mezők zárt kört alkotnak-e.</returns>
         private bool AreBorderTilesClosed()
         {
-            /* Bejárjuk a szegélyező mezőket. Ha sikerül nemtriviálisan körbeérnünk, akkor a mezők zárt láncot alkotnak.*/
-            IEnumerable<Tile> borders = elements[TileTag.Border];
-            Tile first = borders.First();
-            Tile prev = first;
-            Tile current = borders.First(item => item | first);
-
-            while (true)
-            {
-                Tile temp = current;
-                current = GetNextBorderTile(current, prev);
-                prev = temp;
-
-                if (current == null)
-                    return false;
-
-                if (current == first)
-                    return true;
-            }
+            throw new NotImplementedException();
         }
         /// <summary>
         /// Visszaadja a bejárás soron következő elemét, odafigyelve arra a speciális esetre, ha a láncban több lehetséges következő lépés is létezik.
@@ -184,30 +102,17 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <returns></returns>
         private Tile GetNextBorderTile(Tile current, Tile prev)
         {
-            IEnumerable<Tile> borders = elements[TileTag.Border];
-
-            if (borders.Count(item => item | current && item != prev) > 1)
-            {
-                Direction nextDirection = current.AdjacentDirection(prev).Opposite();
-                IEnumerable<Tile> candidates = borders.Where(item => item | current && item != prev);
-                return candidates.First(item => current.AdjacentDirection(item) == nextDirection);
-            }
-
-            return borders.First(item => item | current && item != prev);
+            throw new NotImplementedException();
         }
 
         protected override bool IsNeighbourTo(BaseArea area)
         {
-            return (from tile in SubAreas
-                    where tile | area
-                    select tile).Count() > 0;
+            throw new NotImplementedException();
         }
 
         protected override bool IsNeighbourTo(Position element)
         {
-            return (from tile in SubAreas
-                    where tile | element
-                    select tile).Count() > 0;
+            throw new NotImplementedException();
         }
     }
 }

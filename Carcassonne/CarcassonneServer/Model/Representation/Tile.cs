@@ -45,7 +45,7 @@ namespace CarcassonneServer.Model.Representation
                 return areasWithDirection.FirstOrDefault();
             }
         }
-        public bool IsMonastery { get { return sideDescriptor.IsMonastery; } }
+        public bool IsMonastery { get { return false; } }
 
         public Tile() { }
         public Tile(IList<SubArea> subAreas, Position position)
@@ -65,18 +65,18 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         /// <param name="other">A másik játékmező.</param>
         /// <returns>A másik játékmező lerkaható-e emellé.</returns>
-        public bool TestAdjacency(Tile other)
+        public bool IsValidAdjacent(Tile other)
         {
-            return this | other && TestSideTypeCompatibility(other);
+            return this | other && IsSideTypeCompatible(other);
         }
         /// <summary>
         /// Kiértékeli, hogy a másik mező ezzel szemben lévő oldalán a terület típusok egyeznek.
         /// </summary>
         /// <param name="other">A másik játékmező.</param>
         /// <returns>Terület típusok szerint lerakható-e a mező emellé.</returns>
-        private bool TestSideTypeCompatibility(Tile other)
+        private bool IsSideTypeCompatible(Tile other)
         {
-            foreach (Direction facingMinorDirection in AdjacentDirection(other).MinorDirections())
+            foreach (Direction facingMinorDirection in DirectionTo(other).MinorDirections())
                 if (this[facingMinorDirection].AreaType != other[facingMinorDirection.Opposite()].AreaType)
                     return false;
 
@@ -84,34 +84,34 @@ namespace CarcassonneServer.Model.Representation
         }
 
         #region Deprecated
-        protected readonly TileDescriptor sideDescriptor;
-        public IEnumerable<TileSideDescriptor> Sides
-        {
-            get
-            {
-                return sideDescriptor.Values;
-            }
-        }
-        public Tile(TileDescriptor tileDescriptor)
-        {
-            this.sideDescriptor = tileDescriptor;
-        }
-        public Tile(TileDescriptor tileDescriptor, Position pos)
-            : base(pos.X, pos.Y)
-        {
-            this.sideDescriptor = tileDescriptor;
-        }
+        //protected readonly TileDescriptor sideDescriptor;
+        //public IEnumerable<TileSideDescriptor> Sides
+        //{
+        //    get
+        //    {
+        //        return sideDescriptor.Values;
+        //    }
+        //}
+        //public Tile(TileDescriptor tileDescriptor)
+        //{
+        //    this.sideDescriptor = tileDescriptor;
+        //}
+        //public Tile(TileDescriptor tileDescriptor, Position pos)
+        //    : base(pos.X, pos.Y)
+        //{
+        //    this.sideDescriptor = tileDescriptor;
+        //}
 
-        /// <summary>
-        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
-        /// </summary>
-        /// <param name="lhs">Bal Tile</param>
-        /// <param name="rhs">Jobb Tile</param>
-        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        public static bool operator |(Tile lhs, Tile rhs)
-        {
-            return lhs.NeighbourTo(rhs);
-        }
+        ///// <summary>
+        ///// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
+        ///// </summary>
+        ///// <param name="lhs">Bal Tile</param>
+        ///// <param name="rhs">Jobb Tile</param>
+        ///// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
+        //public static bool operator |(Tile lhs, Tile rhs)
+        //{
+        //    return lhs.NeighbourTo(rhs);
+        //}
         #endregion Deprecated
     }
 }

@@ -58,7 +58,7 @@ namespace CarcassonneServer.Model.Representation.Area
         private bool IsSurrounded(SubArea item)
         {
             List<SubArea> adjacents = SubAreas.Where(area => area | item).ToList();
-            return item.Edges.All(edge => adjacents.Any(adjacent => adjacent.Position.AdjacentDirection(item.Position) == edge));
+            return item.Edges.All(edge => adjacents.Any(adjacent => adjacent.Position.DirectionTo(item.Position) == edge));
         }
 
         /// <summary>

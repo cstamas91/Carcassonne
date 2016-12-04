@@ -6,11 +6,22 @@ namespace CarcassonneServer.Model.Representation
 {
     public class Position
     {
+        /// <summary>
+        /// Vertikális tengelyen való elmozdulást mutatja.
+        /// </summary>
         public short X { get; set; }
+        /// <summary>
+        /// Horizontális tengelyen való elmozdulást mutatja.
+        /// </summary>
         public short Y { get; set; }
 
 
         public Position() { }
+        /// <summary>
+        /// Pozíció konstruktora.
+        /// </summary>
+        /// <param name="x">Vertikálist tengely mentén való elmozdulás.</param>
+        /// <param name="y">Horizontális tengely mentén való elmozdulás.</param>
         public Position(short x, short y)
         {
             X = x;
@@ -54,19 +65,19 @@ namespace CarcassonneServer.Model.Representation
             return base.GetHashCode();
         }
 
-        public Direction AdjacentDirection(Position other)
+        public Direction DirectionTo(Position other)
         {
             if(!(this | other))
                 throw new InvalidOperationException();
 
             if (X + 1 == other.X)
-                return Direction.Up;
+                return Representation.Direction.Up;
             else if (X - 1 == other.X)
-                return Direction.Down;
+                return Representation.Direction.Down;
             else if (Y + 1 == other.Y)
-                return Direction.Right;
+                return Representation.Direction.Right;
             else
-                return Direction.Left;
+                return Representation.Direction.Left;
         }
     }
 }

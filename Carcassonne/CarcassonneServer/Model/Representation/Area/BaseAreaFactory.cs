@@ -13,34 +13,7 @@ namespace CarcassonneServer.Model.Representation.Area
 
         public static List<BaseArea> Factory(Tile tile)
         {
-            List<BaseArea> areas = new List<BaseArea>();
-
-            foreach (Direction item in Enum.GetValues(typeof(Direction)))
-            {
-                var area = Factory(tile[item].Type);
-                area.AddTile(tile);
-                areas.Add(area);
-            }
-
-            List<BaseArea> finalArea = null;
-
-            if (tile.IsMonastery)
-            {
-                FieldArea mergedFields = (from area in areas
-                                                  where area.AreaType == AreaType.Field
-                                                  select area).MergeArea() as FieldArea;
-
-                IEnumerable<RoadArea> road = from area in areas
-                                                     where area.AreaType == AreaType.Road
-                                                     select area as RoadArea;
-
-                if (road.Count() != 1)
-                    throw new InvalidOperationException();
-
-                finalArea = new List<BaseArea>() { mergedFields, road.First() };
-            }                                                                                
-
-            return finalArea;
+            throw new NotImplementedException();
         }
 
         private static BaseArea Factory(AreaType tsd)

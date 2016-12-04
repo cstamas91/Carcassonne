@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CarcassonneServer.Model.Representation.Area;
 using System.Linq;
+using System;
 
 namespace CarcassonneServer.Model.Representation
 {
@@ -16,22 +17,12 @@ namespace CarcassonneServer.Model.Representation
 
         public void SetTile(Tile tile)
         {
-            var neighboringAreas = from area in areas
-                                           where area | tile
-                                           select area;
-
-            if (neighboringAreas.Count() != 0)
-            {
-                foreach (var item in neighboringAreas)
-                    item.AddSubArea(tile);
-            }
-            else
-                areas.AddRange(BaseAreaFactory.Factory(tile));
+            throw new NotImplementedException();
         }
 
         public void SetMeeple(Meeple meeple)
         {
-            areas.SetMeeple(meeple, (c, m) => c.GUID == m.AreaGuid);
+            throw new NotImplementedException();
         }
     }
 }
