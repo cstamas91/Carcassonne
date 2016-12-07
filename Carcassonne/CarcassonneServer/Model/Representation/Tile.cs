@@ -15,6 +15,9 @@ namespace CarcassonneServer.Model.Representation
         private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
         private TileRotation rotation;
         private List<SubArea> areas;
+        /// <summary>
+        /// A mezőn lévő alterületek listája.
+        /// </summary>
         public List<SubArea> Areas
         {
             get
@@ -23,6 +26,11 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
+        /// <summary>
+        /// Segédfüggvény, ami egy abszolút irányból relatív irányt csinál.
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         private Direction RotationAdjustedDirection(Direction direction)
         {
             return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
@@ -55,11 +63,13 @@ namespace CarcassonneServer.Model.Representation
         }
         #endregion Declarations
 
+        /// <summary>
+        /// Elforgatja a mezőt. A mező belső reprezentációjában van egy "rotation" tag, ami a mező aktuális elfordulását írja le, relatív a mező alapállapotához.
+        /// </summary>
         public void Rotate()
         {
             this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
-        }
-        
+        }  
         /// <summary>
         /// Kiértékeli, hogy a kapott mező emellé rakható-e.
         /// </summary>
@@ -82,36 +92,5 @@ namespace CarcassonneServer.Model.Representation
 
             return true;
         }
-
-        #region Deprecated
-        //protected readonly TileDescriptor sideDescriptor;
-        //public IEnumerable<TileSideDescriptor> Sides
-        //{
-        //    get
-        //    {
-        //        return sideDescriptor.Values;
-        //    }
-        //}
-        //public Tile(TileDescriptor tileDescriptor)
-        //{
-        //    this.sideDescriptor = tileDescriptor;
-        //}
-        //public Tile(TileDescriptor tileDescriptor, Position pos)
-        //    : base(pos.X, pos.Y)
-        //{
-        //    this.sideDescriptor = tileDescriptor;
-        //}
-
-        ///// <summary>
-        ///// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
-        ///// </summary>
-        ///// <param name="lhs">Bal Tile</param>
-        ///// <param name="rhs">Jobb Tile</param>
-        ///// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        //public static bool operator |(Tile lhs, Tile rhs)
-        //{
-        //    return lhs.NeighbourTo(rhs);
-        //}
-        #endregion Deprecated
     }
 }

@@ -68,9 +68,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestData\TestData.csv">
+    <None Include="TestData\TestIsValidAdjacent.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestData\TestRotate.csv" />
   </ItemGroup>
   <ItemGroup />
   <Choose>
