@@ -14,6 +14,7 @@ namespace CarcassonneServer.Model.Representation
         #region Declarations
         private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
         private TileRotation rotation;
+        public TileRotation Rotation { get { return rotation; } set { rotation = value; } }
         private List<SubArea> areas;
         /// <summary>
         /// A mezőn lévő alterületek listája.
@@ -33,7 +34,7 @@ namespace CarcassonneServer.Model.Representation
         /// <returns></returns>
         private Direction RotationAdjustedDirection(Direction direction)
         {
-            return (Direction)((((short)direction - (short)rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
+            return (Direction)((((short)direction - (short)Rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
         }
 
         /// <summary>
@@ -55,6 +56,8 @@ namespace CarcassonneServer.Model.Representation
         }
         public bool IsMonastery { get { return false; } }
 
+        
+
         public Tile() { }
         public Tile(IList<SubArea> subAreas, Position position)
             : base (position.X, position.Y)
@@ -68,7 +71,7 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         public void Rotate()
         {
-            this.rotation = (TileRotation)((int)(this.rotation + 1) % Enum.GetValues(typeof(TileRotation)).Cast<int>().Max());
+            Rotation = Rotation.GetNext();
         }  
         /// <summary>
         /// Kiértékeli, hogy a kapott mező emellé rakható-e.

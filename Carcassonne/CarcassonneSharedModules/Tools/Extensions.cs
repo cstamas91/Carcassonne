@@ -12,6 +12,22 @@ namespace CarcassonneSharedModules.Tools
     /// </summary>
     public static class Extensions
     {
+        public static IEnumerable<T> GetMemberEnumeration<T>()
+            where T : struct
+        {
+            return Enum.GetValues(typeof(T)) as IEnumerable<T>;
+        }
+
+        public static T GetNext<T>(this T item)
+            where T : struct
+        {
+            if (!item.GetType().IsEnum)
+                throw new ArgumentException("Az item változónak Enum típusúnak kell lennie");
+
+            var values = (T[])Enum.GetValues(item.GetType());
+            int indexOfItem = Array.IndexOf(values, item);
+            return values.Length == indexOfItem + 1 ? values[0] : values[indexOfItem + 1];
+        }
         /// <summary>
         /// Short típusú érték Stream-be való írásának elkülönítése.
         /// </summary>

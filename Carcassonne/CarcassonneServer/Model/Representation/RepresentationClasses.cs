@@ -124,7 +124,8 @@ namespace CarcassonneServer.Model.Representation
     /// </summary>
     public enum TileRotation
     {
-        _90 = 1,
+        _0,
+        _90,
         _180,
         _270
     }

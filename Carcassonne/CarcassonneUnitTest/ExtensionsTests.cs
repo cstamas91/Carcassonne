@@ -1,18 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CarcassonneUnitTest;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace CarcassonneServer.Model.Representation.Tests
 {
     [TestClass()]
-    public class ExtensionsTests
+    public class ExtensionsTests : BaseTest
     {
         [TestMethod()]
-        public void OppositeTest()
+        [DataSource(
+            providerInvariantName,
+            @"|DataDirectory|\TestData\TestOpposite.csv",
+            @"TestOpposite#csv", DataAccessMethod.Sequential)]
+        public void TestOpposite()
         {
-            //Assert.AreEqual(Direction.Left, Direction.Right.Opposite());
-            //Assert.AreEqual(Direction.Right, Direction.Left.Opposite());
-            //Assert.AreEqual(Direction.Down, Direction.Up.Opposite());
-            //Assert.AreEqual(Direction.Up, Direction.Down.Opposite());
-            Assert.Fail("Kibővíteni a többi irányra!");
+            Direction baseValue = ReadEnum<Direction>(TestContext.DataRow, "Direction");
+            Direction expected = ReadEnum<Direction>(TestContext.DataRow, "Expected");
+            Direction actual = baseValue.Opposite();
+            Assert.AreEqual(expected, actual, string.Format("{0} is not opposite to {1}", expected.ToString()), actual.ToString());
         }
     }
 }

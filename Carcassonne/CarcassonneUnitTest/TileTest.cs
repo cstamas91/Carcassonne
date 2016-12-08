@@ -10,41 +10,30 @@ using System.Linq;
 namespace CarcassonneUnitTest
 {
     [TestClass]
-    public class TileTest
+    public class TileTest : BaseTest
     {
-        private TestContext testContextInstance;
-        private const string providerInvariantName = @"Microsoft.VisualStudio.TestTools.DataSource.CSV";
-        public TestContext TestContext
-        {
-            get { return testContextInstance; }
-            set { testContextInstance = value; }
-        }
+        private const string subAreaKeyTemplateForDirections = @"Area{0}-{1}"; // 0: subareaIndex, 1: tileIndex
+        private const string subAreaKeyTemplateForAreaType = @"Area{0}-{1}Type"; // 0: subareaIndex, 1: tileIndex
+        private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
 
-        public TileTest()
-        {
-            Debug.WriteLine("|DataDirectory|");
-        }
-
-        private Tuple<Tile, Tile> TestIsValidAdjacentDataReader(DataRow row)
+        private Tuple<Tile, Tile> ReadTestIsValidAdjacentData(DataRow row)
         {
             Tile[] tiles = new Tile[2];
-            string subAreaKeyTemplateForDirections = @"Area{0}-{1}"; // 0: subareaIndex, 1: tileIndex
-            string subAreaKeyTemplateForAreaType = @"Area{0}-{1}Type"; // 0: subareaIndex, 1: tileIndex
-            string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
             //A négy alterület oldalainak beolvasása:
             for (int tileIndex = 1; tileIndex < 3; tileIndex++)
             {
                 List<SubArea> subAreas = new List<SubArea>();
                 for (int subareIndex = 1; subareIndex < 5; subareIndex++)
                 {
-                    string[] directionStrings = row[string.Format(subAreaKeyTemplateForDirections, subareIndex, tileIndex)].ToString().Split(';');
-                    if (directionStrings.Length > 0 && !string.IsNullOrEmpty(directionStrings[0]))
-                    {
-                        List<Direction> directions = directionStrings.Select(str => (Direction)(int.Parse(str))).ToList();
-                        AreaType areaType = (AreaType)int.Parse(row[string.Format(subAreaKeyTemplateForAreaType, subareIndex, tileIndex)].ToString());
-                        subAreas.Add(new SubArea(directions, areaType));
-                    }
+                    List<Direction> directions = ReadEnumList<Direction>(row, string.Format(subAreaKeyTemplateForDirections, subareIndex, tileIndex));
+
+                    if (directions.Count == 0)
+                        continue;
+
+                    AreaType areaType = ReadEnum<AreaType>(row, string.Format(subAreaKeyTemplateForAreaType, subareIndex, tileIndex));
+                    subAreas.Add(new SubArea(directions, areaType));
                 }
+
                 Position p = new Position(
                 short.Parse(row[string.Format(positionKeyTemplate, "X", tileIndex)].ToString()),
                 short.Parse(row[string.Format(positionKeyTemplate, "Y", tileIndex)].ToString()));
@@ -53,22 +42,27 @@ namespace CarcassonneUnitTest
             }
             return new Tuple<Tile, Tile>(tiles[0], tiles[1]);
         }
-
-        private Tile TestRotateDataReader(DataRow row)
+        private Tile ReadTestRotateData(DataRow row)
         {
-            throw new NotImplementedException("testRotateDataReader");
+            TileRotation rotation = ReadEnum<TileRotation>(row, "Rotation");
+            Tile t = new Tile();
+            t.Rotation = rotation;
+            return t;
         }
-
 
         [TestMethod]
         [DataSource(
             providerInvariantName,
-            //@"D:\Git\Carcassonne\Carcassonne\CarcassonneUnitTest\TestData\TestRotate\TestRotate.csv",
             @"|DataDirectory|\TestData\TestRotate.csv",
             @"TestRotate#csv", DataAccessMethod.Sequential)]
         public void TestRotate()
         {
-            Assert.Fail("Implementációt befejezni.");
+            Tile tile = ReadTestRotateData(TestContext.DataRow);
+            TileRotation expected = ReadEnum<TileRotation>(TestContext.DataRow, "Expected");
+
+            tile.Rotate();
+
+            Assert.AreEqual(expected, tile.Rotation);
         }
 
         [TestMethod]
@@ -78,12 +72,10 @@ namespace CarcassonneUnitTest
             @"TestIsValidAdjacent#csv", DataAccessMethod.Sequential)]
         public void TestIsValidAdjacent()
         {
-            Tuple<Tile, Tile> tiles = TestIsValidAdjacentDataReader(TestContext.DataRow);
+            Tuple<Tile, Tile> tiles = ReadTestIsValidAdjacentData(TestContext.DataRow);
             bool expected = TestContext.DataRow["Expected"].ToString() == "1" ? true : false;
             bool actual = tiles.Item1.IsValidAdjacent(tiles.Item2);
             Assert.AreEqual(expected, actual);
         }
-
-        
     }
 }

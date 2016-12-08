@@ -107,13 +107,4 @@ namespace CarcassonneServer.Model.Representation.Area
             throw new NotImplementedException();
         }
     }
-
-    public static class Extensions
-    {
-        public static IEnumerable<T> GetMemberEnumeration<T>()
-            where T : struct
-        {
-            return Enum.GetValues(typeof(T)) as IEnumerable<T>;
-        }
-    }
 }
