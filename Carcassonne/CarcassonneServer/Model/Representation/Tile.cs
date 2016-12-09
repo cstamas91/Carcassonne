@@ -46,7 +46,7 @@ namespace CarcassonneServer.Model.Representation
         {
             get
             {
-                IEnumerable<SubArea> areasWithDirection = areas.Where(area => area[direction]);
+                IEnumerable<SubArea> areasWithDirection = areas.Where(area => area[RotationAdjustedDirection(direction)]);
 
                 if (areasWithDirection.Count() != 1)
                     throw new InvalidStateException("Egy irány egyetlen alterülethez tartozhat egy mezőn belül.");

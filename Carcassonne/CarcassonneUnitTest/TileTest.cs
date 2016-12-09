@@ -15,13 +15,10 @@ namespace CarcassonneUnitTest
         private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex
         private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
 
-        private Tile ReadTile(DataRow row, int index)
-        {
-            Position position = new Position(
-                Convert.ToInt16(row[string.Format(positionKeyTemplate, "X", index)].ToString()),
-                Convert.ToInt16(row[string.Format(positionKeyTemplate, "Y", index)].ToString()));
+        #region segéd függvények
 
-            var areaData = row[string.Format(areaDescriptionKeyTemplate, index)].ToString().Split(';');
+        private List<SubArea> ReadSubAreas(string[] areaData)
+        {
             List<SubArea> subAreas = new List<SubArea>();
             foreach (string subArea in areaData)
             {
@@ -32,6 +29,17 @@ namespace CarcassonneUnitTest
                 subAreas.Add(new SubArea(directions, subAreaType));
             }
 
+            return subAreas;
+        }
+
+        private Tile ReadTile(DataRow row, int index)
+        {
+            Position position = new Position(
+                Convert.ToInt16(row[string.Format(positionKeyTemplate, "X", index)].ToString()),
+                Convert.ToInt16(row[string.Format(positionKeyTemplate, "Y", index)].ToString()));
+
+            var subAreas = ReadSubAreas(row[string.Format(areaDescriptionKeyTemplate, index)].ToString().Split(';'));
+            
             return new Tile(subAreas, position);
         }
 
@@ -49,6 +57,16 @@ namespace CarcassonneUnitTest
             t.Rotation = rotation;
             return t;
         }
+
+        private Tile ReadTestIndexerData(DataRow row)
+        {
+            var subAreas = ReadSubAreas(row[string.Format(areaDescriptionKeyTemplate, "")].ToString().Split(';'));
+            Tile t = new Tile(subAreas, new Position(0, 0));
+            t.Rotation = ReadEnum<TileRotation>(row, "Rotation");
+            return t;
+        }
+
+        #endregion segéd függvények
 
         [TestMethod]
         [DataSource(
@@ -76,6 +94,23 @@ namespace CarcassonneUnitTest
             bool expected = TestContext.DataRow["Expected"].ToString() == "1" ? true : false;
             bool actual = tiles.Item1.IsValidAdjacent(tiles.Item2);
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        [DataSource(
+            providerInvariantName,
+            @"|DataDirectory|\TestData\TestIndexer.csv",
+            @"TestIndexer#csv", DataAccessMethod.Sequential)]
+        public void TestIndexer()
+        {
+            Tile t = ReadTestIndexerData(TestContext.DataRow);
+
+            Direction from = ReadEnum<Direction>(TestContext.DataRow, "Direction");
+            AreaType expectedAreaType = ReadEnum<AreaType>(TestContext.DataRow, "Expected");
+
+            AreaType actualAreaType = t[from].AreaType;
+
+            Assert.AreEqual(expectedAreaType, actualAreaType);
         }
     }
 }
