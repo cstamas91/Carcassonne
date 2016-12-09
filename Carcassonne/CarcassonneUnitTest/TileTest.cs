@@ -12,36 +12,36 @@ namespace CarcassonneUnitTest
     [TestClass]
     public class TileTest : BaseTest
     {
-        private const string subAreaKeyTemplateForDirections = @"Area{0}-{1}"; // 0: subareaIndex, 1: tileIndex
-        private const string subAreaKeyTemplateForAreaType = @"Area{0}-{1}Type"; // 0: subareaIndex, 1: tileIndex
+        private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex
         private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
+
+        private Tile ReadTile(DataRow row, int index)
+        {
+            Position position = new Position(
+                Convert.ToInt16(row[string.Format(positionKeyTemplate, "X", index)].ToString()),
+                Convert.ToInt16(row[string.Format(positionKeyTemplate, "Y", index)].ToString()));
+
+            var areaData = row[string.Format(areaDescriptionKeyTemplate, index)].ToString().Split(';');
+            List<SubArea> subAreas = new List<SubArea>();
+            foreach (string subArea in areaData)
+            {
+                var subAreaData = subArea.Split(':');
+                AreaType subAreaType = (AreaType)Enum.Parse(typeof(AreaType), subAreaData[0]);
+
+                List<Direction> directions = subAreaData[1].Split('-').Select(str => (Direction)Enum.Parse(typeof(Direction), str)).ToList();
+                subAreas.Add(new SubArea(directions, subAreaType));
+            }
+
+            return new Tile(subAreas, position);
+        }
 
         private Tuple<Tile, Tile> ReadTestIsValidAdjacentData(DataRow row)
         {
-            Tile[] tiles = new Tile[2];
-            //A négy alterület oldalainak beolvasása:
-            for (int tileIndex = 1; tileIndex < 3; tileIndex++)
-            {
-                List<SubArea> subAreas = new List<SubArea>();
-                for (int subareIndex = 1; subareIndex < 5; subareIndex++)
-                {
-                    List<Direction> directions = ReadEnumList<Direction>(row, string.Format(subAreaKeyTemplateForDirections, subareIndex, tileIndex));
+            Tile t1 = ReadTile(row, 1);
+            Tile t2 = ReadTile(row, 2);
+            return new Tuple<Tile, Tile>(t1, t2);
+        }        
 
-                    if (directions.Count == 0)
-                        continue;
-
-                    AreaType areaType = ReadEnum<AreaType>(row, string.Format(subAreaKeyTemplateForAreaType, subareIndex, tileIndex));
-                    subAreas.Add(new SubArea(directions, areaType));
-                }
-
-                Position p = new Position(
-                short.Parse(row[string.Format(positionKeyTemplate, "X", tileIndex)].ToString()),
-                short.Parse(row[string.Format(positionKeyTemplate, "Y", tileIndex)].ToString()));
-
-                tiles[tileIndex - 1] = new Tile(subAreas, p);
-            }
-            return new Tuple<Tile, Tile>(tiles[0], tiles[1]);
-        }
         private Tile ReadTestRotateData(DataRow row)
         {
             TileRotation rotation = ReadEnum<TileRotation>(row, "Rotation");

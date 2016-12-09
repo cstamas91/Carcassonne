@@ -17,7 +17,7 @@ namespace CarcassonneServer.Model.Representation.Tests
             Direction baseValue = ReadEnum<Direction>(TestContext.DataRow, "Direction");
             Direction expected = ReadEnum<Direction>(TestContext.DataRow, "Expected");
             Direction actual = baseValue.Opposite();
-            Assert.AreEqual(expected, actual, string.Format("{0} is not opposite to {1}", expected.ToString()), actual.ToString());
+            Assert.AreEqual(expected, actual, string.Format("{0} is not opposite to {1}", expected.ToString(), actual.ToString()));
         }
     }
 }
