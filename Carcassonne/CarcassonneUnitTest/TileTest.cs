@@ -12,10 +12,9 @@ namespace CarcassonneUnitTest
     [TestClass]
     public class TileTest : BaseTest
     {
+        #region segéd függvények
         private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex
         private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
-
-        #region segéd függvények
 
         private List<SubArea> ReadSubAreas(string[] areaData)
         {

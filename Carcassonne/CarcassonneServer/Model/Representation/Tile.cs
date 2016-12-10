@@ -34,7 +34,10 @@ namespace CarcassonneServer.Model.Representation
         /// <returns></returns>
         private Direction RotationAdjustedDirection(Direction direction)
         {
-            return (Direction)((((short)direction - (short)Rotation) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
+            int rotationEnumCount = Enum.GetValues(typeof(TileRotation)).Length;
+            int rotationDisplaceValue = DIRECTION_MOD_VALUE / rotationEnumCount;
+
+            return (Direction)((((short)direction + ((short)rotationDisplaceValue * (short)Rotation)) + DIRECTION_MOD_VALUE) % DIRECTION_MOD_VALUE);
         }
 
         /// <summary>

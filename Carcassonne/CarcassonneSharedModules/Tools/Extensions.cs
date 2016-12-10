@@ -26,7 +26,7 @@ namespace CarcassonneSharedModules.Tools
 
             var values = (T[])Enum.GetValues(item.GetType());
             int indexOfItem = Array.IndexOf(values, item);
-            return values.Length == indexOfItem + 1 ? values[0] : values[indexOfItem + 1];
+            return values[(indexOfItem + 1) % values.Length];
         }
         /// <summary>
         /// Short típusú érték Stream-be való írásának elkülönítése.

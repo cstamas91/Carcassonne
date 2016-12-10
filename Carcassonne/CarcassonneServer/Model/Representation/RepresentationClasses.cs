@@ -124,10 +124,10 @@ namespace CarcassonneServer.Model.Representation
     /// </summary>
     public enum TileRotation
     {
-        _0,
-        _90,
-        _180,
-        _270
+        _0 = 0,
+        _90 = 1,
+        _180 = 2,
+        _270 = 3
     }
     /// <summary>
     /// A mező érintkezési pontjait definiáló felsorolás.
