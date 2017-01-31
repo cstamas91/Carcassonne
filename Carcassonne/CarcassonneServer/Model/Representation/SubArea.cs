@@ -9,6 +9,7 @@ namespace CarcassonneServer.Model.Representation
     public class SubArea
     {
         private Tile parent;
+        public Tile Parent { get { return parent; } set { parent = value; } }
         private List<Direction> edges = new List<Direction>();
         public List<Direction> Edges
         {
@@ -53,17 +54,12 @@ namespace CarcassonneServer.Model.Representation
             }
         }
 
-        public SubArea(IList<Direction> governedEdges, AreaType areaType/*, Tile parent*/)
+        public SubArea(IList<Direction> governedEdges, AreaType areaType)
         {
-            //this.parent = parent;
-            this.edges = governedEdges.ToList();
+            edges = governedEdges.ToList();
             this.areaType = areaType;
         }
 
-        public static bool operator |(SubArea lhs, SubArea rhs)
-        {
-            return
-                lhs.parent.IsValidAdjacent(rhs.parent);
-        }
+        public static bool operator |(SubArea lhs, SubArea rhs) => lhs.parent.IsValidAdjacent(rhs.parent);
     }
 }

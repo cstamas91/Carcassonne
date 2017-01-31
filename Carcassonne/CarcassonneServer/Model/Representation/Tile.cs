@@ -58,14 +58,13 @@ namespace CarcassonneServer.Model.Representation
             }
         }
         public bool IsMonastery { get { return false; } }
-
         
-
         public Tile() { }
         public Tile(IList<SubArea> subAreas, Position position)
             : base (position.X, position.Y)
         {
             areas = subAreas.ToList();
+            areas.ForEach(a => a.Parent = this);
         }
         #endregion Declarations
 

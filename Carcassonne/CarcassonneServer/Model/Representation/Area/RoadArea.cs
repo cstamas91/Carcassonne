@@ -33,12 +33,12 @@ namespace CarcassonneServer.Model.Representation.Area
             //szomszédos belső elemek kezelése
             List<SubArea> adjacentSubAreas = OpenSubAreas.Where(item => item | subArea).ToList();
 
-            adjacentSubAreas.ForEach(item =>
+            adjacentSubAreas.ForEach(adjacentSubArea =>
             {
-                if (IsSurrounded(item))
+                if (IsSurrounded(adjacentSubArea))
                 {
-                    OpenSubAreas.Remove(item);
-                    SurroundedSubAreas.Add(item);
+                    OpenSubAreas.Remove(adjacentSubArea);
+                    SurroundedSubAreas.Add(adjacentSubArea);
                 }
             });
 
