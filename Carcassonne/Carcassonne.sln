@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneTester", "CarcassonneTester\CarcassonneTester.csproj", "{54760C64-0EBD-4A0E-9194-4E8531EB421E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneUnitTest", "CarcassonneUnitTest\CarcassonneUnitTest.csproj", "{04925F7F-FC62-40BA-8C64-5C21E9DCC0AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarcassonneClient", "CarcassonneClient\CarcassonneClient.csproj", "{9BB70DA7-B371-4DCE-9DF6-F53459279F30}"
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54760C64-0EBD-4A0E-9194-4E8531EB421E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04925F7F-FC62-40BA-8C64-5C21E9DCC0AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04925F7F-FC62-40BA-8C64-5C21E9DCC0AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04925F7F-FC62-40BA-8C64-5C21E9DCC0AE}.Release|Any CPU.ActiveCfg = Release|Any CPU

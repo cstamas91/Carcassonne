@@ -60,5 +60,14 @@ namespace CarcassonneServer.Model.Representation
                    where tile | other
                    select tile;
         }
+
+        public static IEnumerable<Y> MostOf<T, Y>(this IEnumerable<T> collection, Func<T, Y> selector)
+        {
+            Dictionary<Y, int> counts = new Dictionary<Y, int>();
+            counts = collection.GroupBy(selector).ToDictionary(g => g.Key, g => g.Count());
+            int max = counts.Values.Max();
+
+            return counts.Keys.Where(item => counts[item] == max);
+        }
     }
 }

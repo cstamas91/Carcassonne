@@ -69,7 +69,7 @@ namespace CarcassonneServer.Model.Representation
         {
             List<Meeple> meeples = new List<Meeple>();
             for (int i = 0; i < 15; i++)
-                meeples.Add(new Meeple(Number));
+                meeples.Add(new Meeple(this));
 
             return meeples;
         }

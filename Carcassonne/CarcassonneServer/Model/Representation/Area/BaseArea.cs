@@ -7,12 +7,19 @@ namespace CarcassonneServer.Model.Representation.Area
     public abstract class BaseArea : IBaseArea
     {
         #region Meeples
+        public IEnumerable<Player> Owners
+        {
+            get
+            {
+                return meeples.MostOf(m => m.Owner);
+            }
+        }
         protected List<Meeple> meeples = new List<Meeple>();
         virtual public void AddMeeple(Meeple meeple, SubArea subArea) { }
         #endregion Meeples
 
         #region Scoring
-        public short Score { get; protected set; }
+        virtual public int Score { get; }
         #endregion Scoring
 
         #region Areas
@@ -36,6 +43,12 @@ namespace CarcassonneServer.Model.Representation.Area
             if (subArea.AreaType != AreaType)
                 throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
         }
+        virtual public void RemoveSubArea(SubArea subArea)
+        {
+            if (!SubAreas.Contains(subArea))
+                throw new ArgumentException("Az alterület nem része a területnek.");
+        }
+
         virtual public BaseArea Merge(BaseArea other)
         {
             return null;
@@ -101,8 +114,5 @@ namespace CarcassonneServer.Model.Representation.Area
             OpenSubAreas = new List<SubArea>();
         }
         #endregion Constructors
-
-        
-        
     }
 }

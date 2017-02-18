@@ -6,10 +6,30 @@ namespace CarcassonneServer.Model.Representation.Area
 {
     public class RoadArea : BaseArea
     {
-        public override AreaType AreaType { get { return AreaType.Road; } }
+        public override AreaType AreaType
+        {
+            get
+            {
+                return AreaType.Road;
+            }
+        }
 
-        public override bool IsFinished { get { return EvaluateIsFinished(); } }
-        
+        public override bool IsFinished
+        {
+            get
+            {
+                return EvaluateIsFinished();
+            }
+        }
+
+        public override int Score
+        {
+            get
+            {
+                return SubAreas.Sum(a => a.Points);
+            }
+        }
+
         /// <summary>
         /// Alapértelmezett konstruktor.
         /// </summary>
@@ -30,6 +50,13 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             base.AddSubArea(subArea);
 
+            //hozzáadandó elem kezelése
+            subAreas.Add(subArea);
+            if (IsSurrounded(subArea))
+                SurroundedSubAreas.Add(subArea);
+            else
+                OpenSubAreas.Add(subArea);
+
             //szomszédos belső elemek kezelése
             List<SubArea> adjacentSubAreas = OpenSubAreas.Where(item => item | subArea).ToList();
 
@@ -41,13 +68,23 @@ namespace CarcassonneServer.Model.Representation.Area
                     SurroundedSubAreas.Add(adjacentSubArea);
                 }
             });
+        }
 
-            //hozzáadandó elem kezelése
-            subAreas.Add(subArea);
-            if (IsSurrounded(subArea))
-                SurroundedSubAreas.Add(subArea);
-            else
-                OpenSubAreas.Add(subArea);
+        public override void RemoveSubArea(SubArea subArea)
+        {
+            base.RemoveSubArea(subArea);
+
+            if (OpenSubAreas.Contains(subArea))
+            {
+                OpenSubAreas.Remove(subArea);
+            }
+            if (SurroundedSubAreas.Contains(subArea))
+            {
+                SurroundedSubAreas.Remove(subArea);
+            }
+
+            subAreas.Remove(subArea);
+
         }
 
         /// <summary>
@@ -58,29 +95,18 @@ namespace CarcassonneServer.Model.Representation.Area
         private bool IsSurrounded(SubArea item)
         {
             List<SubArea> adjacents = SubAreas.Where(area => area | item).ToList();
-            return item.Edges.All(edge => adjacents.Any(adjacent => adjacent.Position.DirectionTo(item.Position) == edge));
-        }
-
-        /// <summary>
-        /// Beállítja a kapott mező megfelelő oldalak GUIDjainak a konstrukció guidját.
-        /// </summary>
-        /// <param name="element">A menedzselendő mező.</param>
-        private void ManageGuids(Tile element, params Direction[] sideDirections)
-        {
-            throw new NotImplementedException();
+            return item.Edges.All(edge => adjacents.Any(adjacent => item.Position.DirectionTo(adjacent.Position) == edge));
         }
 
         public override void AddMeeple(Meeple meeple, SubArea subArea)
         {
-            if (meeples.Count > 0)
-                throw new InvalidOperationException();
-
-            meeples.Add(meeple);
+            if (meeples.Count == 0)
+                meeples.Add(meeple);
         }
 
         protected override bool EvaluateIsFinished()
         {
-            return OpenSubAreas.Count() == 0;
+            return OpenSubAreas.Count == 0;
         }
 
         protected override bool IsNeighbourTo(Position element)

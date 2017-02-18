@@ -66,7 +66,9 @@ namespace CarcassonneUnitTest
         }
 
         #endregion segéd függvények
-
+        /// <summary>
+        /// Teszteli, hogy egy mező elforgatása után a várt alterületeket érjük el az irány indexerrel.
+        /// </summary>
         [TestMethod]
         [DataSource(
             providerInvariantName,
@@ -81,7 +83,9 @@ namespace CarcassonneUnitTest
 
             Assert.AreEqual(expected, tile.Rotation);
         }
-
+        /// <summary>
+        /// Teszteli az egymás mellé elhelyezhetőséget kiértékelő függvényt.
+        /// </summary>
         [TestMethod]
         [DataSource(
             providerInvariantName,
@@ -94,7 +98,9 @@ namespace CarcassonneUnitTest
             bool actual = tiles.Item1.IsValidAdjacent(tiles.Item2);
             Assert.AreEqual(expected, actual);
         }
-
+        /// <summary>
+        /// Teszteli az irány indexert.
+        /// </summary>
         [TestMethod]
         [DataSource(
             providerInvariantName,

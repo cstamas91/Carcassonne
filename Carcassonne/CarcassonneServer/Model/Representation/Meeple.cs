@@ -7,11 +7,7 @@ namespace CarcassonneServer.Model.Representation
     public class Meeple : Position
     {
         #region Declaration
-        public short OwnerId
-        {
-            get;
-            private set;
-        }
+        public Player Owner { get; set; }
 
         private bool inUse;
 
@@ -38,9 +34,9 @@ namespace CarcassonneServer.Model.Representation
         /// Meeple ktor. Létrejötterkor megkapja, hogy melyik játékos birtokolja. Alapból egyik meeple sincs használatban.
         /// </summary>
         /// <param name="owner">Birtokló játékos</param>
-        public Meeple(short id)
+        public Meeple(Player player)
         {
-            this.OwnerId = id;
+            this.Owner = player;
             this.InUse = false;
         }
         #endregion Declaration

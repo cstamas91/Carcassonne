@@ -8,9 +8,11 @@ namespace CarcassonneServer.Model.Representation.Area
         IEnumerable<SubArea> SubAreas { get; }
         string GUID { get; }
         bool IsFinished { get; }
-        short Score { get; }
+        int Score { get; }
+        IEnumerable<Player> Owners { get; }
 
         void AddSubArea(SubArea subArea);
+        void RemoveSubArea(SubArea subArea);
         void AddMeeple(Meeple meeple, SubArea subArea);
         BaseArea Merge(BaseArea other);
         Direction NeighborDirection(Position other);
