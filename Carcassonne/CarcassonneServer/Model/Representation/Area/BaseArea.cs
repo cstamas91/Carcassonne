@@ -51,8 +51,23 @@ namespace CarcassonneServer.Model.Representation.Area
 
         virtual public BaseArea Merge(BaseArea other)
         {
-            return null;
+            var otherSubAreas = other.SubAreas.ToList();
+            foreach (var item in otherSubAreas)
+            {
+                other.RemoveSubArea(item);
+                subAreas.Add(item);
+            }
+
+            OpenSubAreas = new List<SubArea>();
+            SurroundedSubAreas = new List<SubArea>();
+
+            foreach (var item in SubAreas)
+                SortSubArea(item);
+
+            return this;
         }
+
+        virtual protected void SortSubArea(SubArea item) { }
         virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
         virtual protected bool IsNeighbourTo(Position element) { return false; }
         virtual protected bool IsNeighbourTo(BaseArea area) { return false; }

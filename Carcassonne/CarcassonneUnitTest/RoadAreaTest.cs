@@ -119,7 +119,7 @@ namespace CarcassonneUnitTest
             Player owner = new Player(1, "test");
             area.AddMeeple(new Meeple(owner), t1[Direction.Down]);
 
-            Assert.IsTrue(area.Owners.Contains(owner));            
+            Assert.IsTrue(area.Owners.Contains(owner));
         }
 
         /// <summary>
@@ -163,13 +163,70 @@ namespace CarcassonneUnitTest
         [TestMethod]
         public void TestEvaluateFinishedNegative()
         {
-            Assert.Fail();
+            Tile t1 = new Tile(
+                new List<SubArea>()
+                {
+                    new SubArea(
+                        new List<Direction>()
+                        {
+                            Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
+                        }, AreaType.Field),
+                    new SubArea(
+                        new List<Direction>() { Direction.Down }, AreaType.Road)
+                }, new Position(0, 0));
+            Tile t2 = new Tile(
+                new List<SubArea>()
+                {
+                    new SubArea(
+                        new List<Direction>()
+                        {
+                            Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight, Direction.RightDown, Direction.RightUp, Direction.LeftDown, Direction.LeftUp
+                        }, AreaType.Field),
+                    new SubArea(
+                        new List<Direction>()
+                        {
+                            Direction.Up, Direction.Down
+                        }, AreaType.Road)
+                }, new Position(-1, 0));
+            RoadArea area = new RoadArea(t1[Direction.Down]);
+            area.AddSubArea(t2[Direction.Up]);
+
+            Assert.IsFalse(area.IsFinished);
         }
 
         [TestMethod]
         public void TestMerge()
         {
-            Assert.Fail();
+            Tile t1 = new Tile(
+                new List<SubArea>()
+                {
+                    new SubArea(
+                        new List<Direction>()
+                        {
+                            Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
+                        }, AreaType.Field),
+                    new SubArea(
+                        new List<Direction>() { Direction.Down }, AreaType.Road)
+                }, new Position(0, 0));
+            RoadArea r1 = new RoadArea(t1[Direction.Down]);
+
+            Tile t2 = new Tile(
+                new List<SubArea>()
+                {
+                    new SubArea(
+                        new List<Direction>() { Direction.Up }, AreaType.Road),
+                    new SubArea(
+                        new List<Direction>()
+                        {
+                            Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
+                        }, AreaType.Field)
+                }, new Position(-1, 0));
+            RoadArea r2 = new RoadArea(t2[Direction.Up]);
+
+            var merged = r1.Merge(r2);
+
+            Assert.AreEqual(2, merged.SubAreas.Count());
+            Assert.IsTrue(merged.IsFinished);
         }
 
         [TestMethod]

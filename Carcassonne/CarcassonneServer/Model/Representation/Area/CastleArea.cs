@@ -49,13 +49,13 @@ namespace CarcassonneServer.Model.Representation.Area
                 throw new InvalidOperationException();
         }
 
-        ///<summary>Összeolvasztja a példányt a kapott konstrukcióval.</summary>
-        ///<param name="other">A másik konstrukció</param>
-        ///<returns>Az összeolvasztás után kapott konstrukció</returns>
-        public override BaseArea Merge(BaseArea other)
-        {
-            throw new NotImplementedException();
-        }
+        /////<summary>Összeolvasztja a példányt a kapott konstrukcióval.</summary>
+        /////<param name="other">A másik konstrukció</param>
+        /////<returns>Az összeolvasztás után kapott konstrukció</returns>
+        //public override BaseArea Merge(BaseArea other)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         private void ManageFalseInnerTiles()
         {

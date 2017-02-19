@@ -123,14 +123,13 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// Két út összeépítésére szolgáló eljárás.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns>Hamissal, ha a két út nem szomszédos, egyébként igazzal, ha az összeolvasztás sikeres.</returns>
-        public override BaseArea Merge(BaseArea other)
+
+        override protected void SortSubArea(SubArea area)
         {
-            throw new NotImplementedException();
+            if (IsSurrounded(area))
+                SurroundedSubAreas.Add(area);
+            else
+                OpenSubAreas.Add(area);
         }
     }
 }
