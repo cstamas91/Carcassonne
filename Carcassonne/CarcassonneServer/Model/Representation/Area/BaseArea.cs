@@ -24,7 +24,7 @@ namespace CarcassonneServer.Model.Representation.Area
 
         #region Areas
         public string GUID { get; private set; }
-
+        public IEnumerable<SubArea> SubAreas { get { return subAreas; } }
         /// <summary>
         /// Azok a részterületek, amik teljesen körbe vannak véve.
         /// </summary>
@@ -34,60 +34,56 @@ namespace CarcassonneServer.Model.Representation.Area
         /// </summary>
         protected List<SubArea> OpenSubAreas { get; set; }
         protected List<SubArea> subAreas;
-        public IEnumerable<SubArea> SubAreas { get { return subAreas; } }
-        virtual public AreaType AreaType { get; }
-        virtual public bool IsFinished { get; }
-
-        virtual public void AddSubArea(SubArea subArea)
-        {
-            if (subArea.AreaType != AreaType)
-                throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
-        }
-        virtual public void RemoveSubArea(SubArea subArea)
-        {
-            if (!SubAreas.Contains(subArea))
-                throw new ArgumentException("Az alterület nem része a területnek.");
-        }
-
-        virtual public BaseArea Merge(BaseArea other)
-        {
-            var otherSubAreas = other.SubAreas.ToList();
-            foreach (var item in otherSubAreas)
-            {
-                other.RemoveSubArea(item);
-                subAreas.Add(item);
-            }
-
-            OpenSubAreas = new List<SubArea>();
-            SurroundedSubAreas = new List<SubArea>();
-
-            foreach (var item in SubAreas)
-                SortSubArea(item);
-
-            return this;
-        }
-
-        virtual protected void SortSubArea(SubArea item) { }
-        virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
-        virtual protected bool IsNeighbourTo(Position element) { return false; }
-        virtual protected bool IsNeighbourTo(BaseArea area) { return false; }
-        virtual protected bool EvaluateIsFinished() { return false; }
         protected IEnumerable<SubArea> GetAdjacentSubAreas(SubArea target)
         {
             IEnumerable<Direction> directions = target.Edges;
 
             return SubAreas.Where(a => a.Position | target.Position);
         }
-
         protected IEnumerable<Tile> GetNeighboringTilesInArea(Tile otherTile)
         {
             throw new NotImplementedException();
         }
-
         protected bool IsEmpty()
         {
             return this.subAreas.Count() == 0;
         }
+        protected HashSet<Position> Positions { get; set; }
+
+        virtual public AreaType AreaType { get; }
+        virtual public bool IsFinished { get; }
+        virtual public void AddSubArea(SubArea subArea)
+        {
+            if (subArea.AreaType != AreaType)
+                throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
+
+            Positions.Add(subArea.Parent);
+        }
+        virtual public void RemoveSubArea(SubArea subArea)
+        {
+            if (!SubAreas.Contains(subArea))
+                throw new ArgumentException("Az alterület nem része a területnek.");
+
+            Positions.Remove(subArea.Parent);
+        }
+        virtual public BaseArea Merge(BaseArea other)
+        {
+            var otherSubAreas = other.SubAreas.ToList();
+            foreach (var item in otherSubAreas)
+            {
+                other.RemoveSubArea(item);
+                AddSubArea(item);
+            }
+
+            return this;
+        }
+        virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
+
+        virtual protected void SortSubArea(SubArea item) { }
+        virtual protected bool IsNeighbourTo(Position element) { return false; }
+        virtual protected bool IsNeighbourTo(BaseArea area) { return false; }
+        virtual protected bool EvaluateIsFinished() { return false; }
+
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
         /// </summary>
@@ -127,6 +123,7 @@ namespace CarcassonneServer.Model.Representation.Area
             subAreas = new List<SubArea>();
             SurroundedSubAreas = new List<SubArea>();
             OpenSubAreas = new List<SubArea>();
+            Positions = new HashSet<Position>();
         }
         #endregion Constructors
     }

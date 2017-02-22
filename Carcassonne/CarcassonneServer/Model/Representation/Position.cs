@@ -6,6 +6,15 @@ namespace CarcassonneServer.Model.Representation
 {
     public class Position
     {
+        private const short MAX_X = short.MaxValue;
+        private const short MAX_Y = short.MaxValue - 1;
+        public bool IsBounded
+        {
+            get
+            {
+                return X == 0 || X == MAX_X || Y == 0 || Y == MAX_Y;
+            }
+        }
         /// <summary>
         /// Vertikális tengelyen való elmozdulást mutatja.
         /// </summary>
@@ -62,7 +71,7 @@ namespace CarcassonneServer.Model.Representation
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return X * MAX_X + Y;
         }
 
         public Direction DirectionTo(Position other)
@@ -78,6 +87,39 @@ namespace CarcassonneServer.Model.Representation
                 return Representation.Direction.Right;
             else
                 return Representation.Direction.Left;
+        }
+
+        public Position GetPosition(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Down:
+                case Direction.DownRight:
+                case Direction.DownLeft:
+                    if (X - 1 < 0)
+                        throw new OutOfBoundsException(string.Format("{0} -> {1}", X, direction.ToString()), this, direction);
+                    return new Position((short)(X - 1), Y);
+                case Direction.Left:
+                case Direction.LeftDown:
+                case Direction.LeftUp:
+                    if (Y - 1 < 0)
+                        throw new OutOfBoundsException(string.Format("{0} -> {1}", Y, direction.ToString()), this, direction);
+                    return new Position(X, (short)(Y - 1));
+                case Direction.Up:
+                case Direction.UpLeft:
+                case Direction.UpRight:
+                    if (X == short.MaxValue)
+                        throw new OutOfBoundsException(string.Format("{0} -> {1}", X, direction.ToString()), this, direction);
+                    return new Position((short)(X + 1), Y);
+                case Direction.Right:
+                case Direction.RightDown:
+                case Direction.RightUp:
+                    if (Y == short.MaxValue - 1)
+                        throw new OutOfBoundsException(string.Format("{0} -> {1}", Y, direction.ToString()), this, direction);
+                    return new Position(X, (short)(Y + 1));
+                default:
+                    throw new ArgumentException(string.Format("Nincs ilyen irány: {0}", direction));
+            }
         }
     }
 }

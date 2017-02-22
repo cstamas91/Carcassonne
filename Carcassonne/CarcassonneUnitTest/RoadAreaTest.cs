@@ -102,7 +102,7 @@ namespace CarcassonneUnitTest
                         }, AreaType.Field),
                     new SubArea(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
-                }, new Position(0, 0));
+                }, new Position(1, 0));
             Tile t2 = new Tile(
                 new List<SubArea>()
                 {
@@ -113,7 +113,7 @@ namespace CarcassonneUnitTest
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field)
-                }, new Position(-1, 0));
+                }, new Position(0, 0));
 
             RoadArea area = new RoadArea(t1[Direction.Down]);
             Player owner = new Player(1, "test");
@@ -138,7 +138,7 @@ namespace CarcassonneUnitTest
                         }, AreaType.Field),
                     new SubArea(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
-                }, new Position(0, 0));
+                }, new Position(1, 0));
             Tile t2 = new Tile(
                 new List<SubArea>()
                 {
@@ -149,7 +149,7 @@ namespace CarcassonneUnitTest
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field)
-                }, new Position(-1, 0));
+                }, new Position(0, 0));
 
             RoadArea area = new RoadArea(t1[Direction.Down]);
             area.AddSubArea(t2[Direction.Up]);
@@ -207,7 +207,7 @@ namespace CarcassonneUnitTest
                         }, AreaType.Field),
                     new SubArea(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
-                }, new Position(0, 0));
+                }, new Position(1, 0));
             RoadArea r1 = new RoadArea(t1[Direction.Down]);
 
             Tile t2 = new Tile(
@@ -220,7 +220,7 @@ namespace CarcassonneUnitTest
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field)
-                }, new Position(-1, 0));
+                }, new Position(0, 0));
             RoadArea r2 = new RoadArea(t2[Direction.Up]);
 
             var merged = r1.Merge(r2);

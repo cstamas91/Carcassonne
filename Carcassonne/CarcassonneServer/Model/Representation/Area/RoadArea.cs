@@ -52,22 +52,17 @@ namespace CarcassonneServer.Model.Representation.Area
 
             //hozzáadandó elem kezelése
             subAreas.Add(subArea);
+            SurroundedSubAreas = new List<SubArea>();
+            OpenSubAreas = new List<Representation.SubArea>();
+            subAreas.ForEach(SortArea);
+        }
+
+        private void SortArea(SubArea subArea)
+        {
             if (IsSurrounded(subArea))
                 SurroundedSubAreas.Add(subArea);
             else
                 OpenSubAreas.Add(subArea);
-
-            //szomszédos belső elemek kezelése
-            List<SubArea> adjacentSubAreas = OpenSubAreas.Where(item => item | subArea).ToList();
-
-            adjacentSubAreas.ForEach(adjacentSubArea =>
-            {
-                if (IsSurrounded(adjacentSubArea))
-                {
-                    OpenSubAreas.Remove(adjacentSubArea);
-                    SurroundedSubAreas.Add(adjacentSubArea);
-                }
-            });
         }
 
         public override void RemoveSubArea(SubArea subArea)
@@ -75,16 +70,12 @@ namespace CarcassonneServer.Model.Representation.Area
             base.RemoveSubArea(subArea);
 
             if (OpenSubAreas.Contains(subArea))
-            {
                 OpenSubAreas.Remove(subArea);
-            }
+
             if (SurroundedSubAreas.Contains(subArea))
-            {
                 SurroundedSubAreas.Remove(subArea);
-            }
 
             subAreas.Remove(subArea);
-
         }
 
         /// <summary>
@@ -94,8 +85,22 @@ namespace CarcassonneServer.Model.Representation.Area
         /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
         private bool IsSurrounded(SubArea item)
         {
-            List<SubArea> adjacents = SubAreas.Where(area => area | item).ToList();
-            return item.Edges.All(edge => adjacents.Any(adjacent => item.Position.DirectionTo(adjacent.Position) == edge));
+            bool isSurrounded = true;
+            foreach (Direction d in item.Edges)
+            { 
+                try
+                {
+                    isSurrounded &= Positions.Contains(item.Parent.GetPosition(d));
+                }
+                catch (OutOfBoundsException oobEx)
+                {
+                    if (!oobEx.Position.IsBounded)
+                        throw;
+                    isSurrounded &= false;
+                }
+            }
+
+            return isSurrounded;
         }
 
         public override void AddMeeple(Meeple meeple, SubArea subArea)
