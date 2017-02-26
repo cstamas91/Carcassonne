@@ -30,13 +30,6 @@ namespace CarcassonneServer.Model.Representation.Area
             }
         }
 
-        /// <summary>
-        /// Alapértelmezett konstruktor.
-        /// </summary>
-        public RoadArea() : base()
-        {
-        }
-
         public RoadArea(SubArea subArea)
             : base()
         {
@@ -49,20 +42,8 @@ namespace CarcassonneServer.Model.Representation.Area
         public override void AddSubArea(SubArea subArea)
         {
             base.AddSubArea(subArea);
-
-            //hozzáadandó elem kezelése
             subAreas.Add(subArea);
-            SurroundedSubAreas = new List<SubArea>();
-            OpenSubAreas = new List<Representation.SubArea>();
-            subAreas.ForEach(SortArea);
-        }
-
-        private void SortArea(SubArea subArea)
-        {
-            if (IsSurrounded(subArea))
-                SurroundedSubAreas.Add(subArea);
-            else
-                OpenSubAreas.Add(subArea);
+            SortSubAreas();
         }
 
         public override void RemoveSubArea(SubArea subArea)
@@ -78,31 +59,6 @@ namespace CarcassonneServer.Model.Representation.Area
             subAreas.Remove(subArea);
         }
 
-        /// <summary>
-        /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
-        /// </summary>
-        /// <param name="item">A vizsgált részterület.</param>
-        /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
-        private bool IsSurrounded(SubArea item)
-        {
-            bool isSurrounded = true;
-            foreach (Direction d in item.Edges)
-            { 
-                try
-                {
-                    isSurrounded &= Positions.Contains(item.Parent.GetPosition(d));
-                }
-                catch (OutOfBoundsException oobEx)
-                {
-                    if (!oobEx.Position.IsBounded)
-                        throw;
-                    isSurrounded &= false;
-                }
-            }
-
-            return isSurrounded;
-        }
-
         public override void AddMeeple(Meeple meeple, SubArea subArea)
         {
             if (meeples.Count == 0)
@@ -116,19 +72,14 @@ namespace CarcassonneServer.Model.Representation.Area
 
         protected override bool IsNeighbourTo(Position element)
         {
-            throw new NotImplementedException();
+            return OpenSubAreas.Any(os => os.Parent | element);
         }
 
         protected override bool IsNeighbourTo(BaseArea area)
         {
-            throw new NotImplementedException();
+            return OpenSubAreas.Any(os => area.SubAreas.Any(s => os | s));
         }
-
-        public override Direction NeighborDirection(Position other)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         override protected void SortSubArea(SubArea area)
         {
             if (IsSurrounded(area))

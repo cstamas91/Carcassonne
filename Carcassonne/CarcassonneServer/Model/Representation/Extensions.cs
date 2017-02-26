@@ -7,6 +7,32 @@ namespace CarcassonneServer.Model.Representation
 {
     public static class Extensions
     {
+        public static Direction RotationAdjustedDirection(this Direction direction, TileRotation Rotation)
+        {
+            int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Length;
+            int rotationEnumCount = Enum.GetValues(typeof(TileRotation)).Length;
+            int rotationDisplaceValue = DIRECTION_MOD_VALUE / rotationEnumCount;
+
+            return (Direction)(
+                (((short)direction + 
+                ((short)rotationDisplaceValue * (short)Rotation)))
+                % DIRECTION_MOD_VALUE);
+        }
+
+        public static Direction GetTileDirectionFromAreaDirection(this Direction areaDirection, TileRotation rotation)
+        {
+            int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Length;
+            int rotationEnumCount = Enum.GetValues(typeof(TileRotation)).Length;
+            int rotationDisplaceValue = DIRECTION_MOD_VALUE / rotationEnumCount;
+
+            var initialResult = ((short)areaDirection - ((short)rotationDisplaceValue * (short)rotation));
+            if (initialResult < 0)
+                initialResult += DIRECTION_MOD_VALUE;
+
+            var retValue = (Direction)(initialResult % DIRECTION_MOD_VALUE); 
+            return retValue;
+        }
+
         public static Direction Opposite(this Direction direction)
         {
             switch (direction)
@@ -68,6 +94,12 @@ namespace CarcassonneServer.Model.Representation
             int max = counts.Values.Max();
 
             return counts.Keys.Where(item => counts[item] == max);
+        }
+
+        public static IEnumerable<T> GetEnumValues<T>()
+            where T: struct
+        {
+            return Enum.GetValues(typeof(T)) as IEnumerable<T>;
         }
     }
 }

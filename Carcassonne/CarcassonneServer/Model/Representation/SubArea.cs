@@ -61,5 +61,7 @@ namespace CarcassonneServer.Model.Representation
         }
 
         public static bool operator |(SubArea lhs, SubArea rhs) => lhs.parent.IsValidAdjacent(rhs.parent);
+        public static bool operator |(SubArea lhs, Tile rhs) => lhs.parent.IsValidAdjacent(rhs);
+        public static bool operator |(Tile lhs, SubArea rhs) => rhs | lhs;
     }
 }

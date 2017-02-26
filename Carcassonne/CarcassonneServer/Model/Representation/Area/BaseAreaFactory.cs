@@ -15,15 +15,5 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             throw new NotImplementedException();
         }
-
-        private static BaseArea Factory(AreaType tsd)
-        {
-            switch (tsd)
-            {
-                case AreaType.Castle: return new CastleArea();
-                case AreaType.Field: return new FieldArea();
-                default: return new RoadArea();
-            }
-        }
     }
 }

@@ -15,6 +15,5 @@ namespace CarcassonneServer.Model.Representation.Area
         void RemoveSubArea(SubArea subArea);
         void AddMeeple(Meeple meeple, SubArea subArea);
         BaseArea Merge(BaseArea other);
-        Direction NeighborDirection(Position other);
     }
 }

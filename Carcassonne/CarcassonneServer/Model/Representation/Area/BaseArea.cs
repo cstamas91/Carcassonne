@@ -59,6 +59,31 @@ namespace CarcassonneServer.Model.Representation.Area
 
             Positions.Add(subArea.Parent);
         }
+        /// <summary>
+        /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
+        /// </summary>
+        /// <param name="item">A vizsgált részterület.</param>
+        /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
+        protected bool IsSurrounded(SubArea item)
+        {
+            bool isSurrounded = true;
+            foreach (Direction direction in item.Edges.Select(d => d.GetTileDirectionFromAreaDirection(item.Parent.Rotation)))
+            {
+                try
+                {
+                    isSurrounded &= Positions.Contains(item.Parent.GetPosition(direction));
+                }
+                catch (OutOfBoundsException oobEx)
+                {
+                    if (!oobEx.Position.IsBounded)
+                        throw;
+                    isSurrounded &= false;
+                }
+            }
+
+            return isSurrounded;
+        }
+
         virtual public void RemoveSubArea(SubArea subArea)
         {
             if (!SubAreas.Contains(subArea))
@@ -77,11 +102,28 @@ namespace CarcassonneServer.Model.Representation.Area
 
             return this;
         }
-        virtual public Direction NeighborDirection(Position other) { throw new NotImplementedException(); }
+        virtual protected void SortSubArea(SubArea area)
+        {
+            if (IsSurrounded(area))
+                SurroundedSubAreas.Add(area);
+            else
+                OpenSubAreas.Add(area);
+        }
+        virtual protected void SortSubAreas()
+        {
+            OpenSubAreas = new List<SubArea>();
+            SurroundedSubAreas = new List<SubArea>();
 
-        virtual protected void SortSubArea(SubArea item) { }
-        virtual protected bool IsNeighbourTo(Position element) { return false; }
-        virtual protected bool IsNeighbourTo(BaseArea area) { return false; }
+            subAreas.ForEach(SortSubArea);
+        }
+        virtual protected bool IsNeighbourTo(Position element)
+        {
+            return Positions.Contains(element);
+        }
+        virtual protected bool IsNeighbourTo(BaseArea area)
+        {
+            return area.Positions.Any(p => Positions.Any(pp => pp | p));
+        }
         virtual protected bool EvaluateIsFinished() { return false; }
 
         /// <summary>

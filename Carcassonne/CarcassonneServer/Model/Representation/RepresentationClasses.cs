@@ -134,18 +134,18 @@ namespace CarcassonneServer.Model.Representation
     /// </summary>
     public enum Direction : int
     {
-        Up = 1,
-        UpRight = 2,
-        RightUp = 3,
-        Right = 4,
-        RightDown = 5,
-        DownRight = 6,
-        Down = 7,
-        DownLeft = 8,
-        LeftDown = 9,
-        Left = 10,
-        LeftUp = 11,
-        UpLeft = 12,
+        Up = 0,
+        UpRight,
+        RightUp,
+        Right,
+        RightDown,
+        DownRight,
+        Down,
+        DownLeft,
+        LeftDown,
+        Left,
+        LeftUp,
+        UpLeft,
     }
     /// <summary>
     /// A terület típusokat definiáló felsorolás.
