@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace CarcassonneServer.Model.Representation.Area
@@ -42,8 +41,6 @@ namespace CarcassonneServer.Model.Representation.Area
         public override void AddSubArea(SubArea subArea)
         {
             base.AddSubArea(subArea);
-            subAreas.Add(subArea);
-            SortSubAreas();
         }
 
         public override void RemoveSubArea(SubArea subArea)
@@ -80,12 +77,21 @@ namespace CarcassonneServer.Model.Representation.Area
             return OpenSubAreas.Any(os => area.SubAreas.Any(s => os | s));
         }
         
-        override protected void SortSubArea(SubArea area)
+        protected override void SortSubArea(SubArea area)
         {
             if (IsSurrounded(area))
                 SurroundedSubAreas.Add(area);
             else
                 OpenSubAreas.Add(area);
+        }
+
+        protected override bool CanAdd(SubArea subArea)
+        {
+            if (OpenSubAreas.Count > 0 && !OpenSubAreas.Any(osa => osa | subArea))
+                throw new TileAddException("Failed CANADD");
+
+            IEnumerable<SubArea> borders = OpenSubAreas.Where(osa => osa | subArea);
+            return borders.All(border => border.CanBeAdjacent(subArea));
         }
     }
 }

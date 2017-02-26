@@ -88,7 +88,7 @@ namespace CarcassonneServer.Model.Representation
         /// <returns>Terület típusok szerint lerakható-e a mező emellé.</returns>
         private bool IsSideTypeCompatible(Tile other)
         {
-            foreach (Direction facingMinorDirection in DirectionTo(other).MinorDirections())
+            foreach (Direction facingMinorDirection in GetDirection(other).MinorDirections())
                 if (this[facingMinorDirection].AreaType != other[facingMinorDirection.Opposite()].AreaType)
                     return false;
             return true;

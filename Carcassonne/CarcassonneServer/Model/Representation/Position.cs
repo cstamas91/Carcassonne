@@ -74,7 +74,7 @@ namespace CarcassonneServer.Model.Representation
             return X * MAX_X + Y;
         }
 
-        public Direction DirectionTo(Position other)
+        public Direction GetDirection(Position other)
         {
             if(!(this | other))
                 throw new InvalidOperationException();
@@ -120,6 +120,11 @@ namespace CarcassonneServer.Model.Representation
                 default:
                     throw new ArgumentException(string.Format("Nincs ilyen irány: {0}", direction));
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}", X, Y);
         }
     }
 }

@@ -31,8 +31,6 @@ namespace CarcassonneServer.Model.Representation.Area
         override public void AddSubArea(SubArea subArea)
         {
             base.AddSubArea(subArea);
-            subAreas.Add(subArea);
-            SortSubAreas();
         }
         /// <summary>Elhelyezi a kapott figurát a konstrukción.</summary>
         /// <param name="meeple">Elhelyezendő figura.</param>
@@ -51,15 +49,24 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             return OpenSubAreas.Count == 0;
         }
-        
-        protected override bool IsNeighbourTo(BaseArea area)
+
+        override protected bool IsNeighbourTo(BaseArea area)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool IsNeighbourTo(Position element)
+        override protected bool IsNeighbourTo(Position element)
         {
             throw new NotImplementedException();
+        }
+
+        protected override bool CanAdd(SubArea subArea)
+        {
+            if (OpenSubAreas.Count > 0 && !OpenSubAreas.Any(osa => osa | subArea))
+                throw new TileAddException("Failed CANADD");
+
+            IEnumerable<SubArea> borders = OpenSubAreas.Where(osa => osa | subArea);
+            return borders.All(border => border.CanBeAdjacent(subArea));
         }
     }
 }

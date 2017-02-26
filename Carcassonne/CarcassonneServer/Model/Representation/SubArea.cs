@@ -18,6 +18,13 @@ namespace CarcassonneServer.Model.Representation
                 return edges;
             }
         }
+        public IEnumerable<Direction> ActualEdges
+        {
+            get
+            {
+                return Edges.Select(direction => direction.GetTileDirectionFromAreaDirection(Parent.Rotation));
+            }
+        }
 
         public virtual int Points { get; set; }
 
@@ -60,8 +67,19 @@ namespace CarcassonneServer.Model.Representation
             this.areaType = areaType;
         }
 
-        public static bool operator |(SubArea lhs, SubArea rhs) => lhs.parent.IsValidAdjacent(rhs.parent);
-        public static bool operator |(SubArea lhs, Tile rhs) => lhs.parent.IsValidAdjacent(rhs);
+        public static bool operator |(SubArea lhs, SubArea rhs) => lhs.Parent | rhs.Parent;
+        public static bool operator |(SubArea lhs, Tile rhs) => lhs.Parent | rhs;
         public static bool operator |(Tile lhs, SubArea rhs) => rhs | lhs;
+
+        public bool CanBeAdjacent(SubArea other)
+        {
+            Direction facingMajorDirection = GetDirection(other);
+            IEnumerable<Direction> minorDirections = facingMajorDirection.MinorDirections().Where(minorDirection => ActualEdges.Contains(minorDirection));
+
+            return minorDirections.All(minorDirection => other.ActualEdges.Contains(minorDirection.Opposite())) &&
+                ActualEdges.Contains(facingMajorDirection) ? other.ActualEdges.Contains(facingMajorDirection.Opposite()) : true;           
+        }
+
+        private Direction GetDirection(SubArea other) => Parent.GetDirection(other.Parent);
     }
 }

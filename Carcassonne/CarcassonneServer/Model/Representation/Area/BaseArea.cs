@@ -48,17 +48,34 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             return this.subAreas.Count() == 0;
         }
-        protected HashSet<Position> Positions { get; set; }
+        public HashSet<Position> Positions { get; set; }
 
         virtual public AreaType AreaType { get; }
-        virtual public bool IsFinished { get; }
+        virtual public bool IsFinished
+        {
+            get
+            {
+                return EvaluateIsFinished();
+            }
+        }
         virtual public void AddSubArea(SubArea subArea)
         {
             if (subArea.AreaType != AreaType)
                 throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
 
-            Positions.Add(subArea.Parent);
+            if (CanAdd(subArea))
+            {
+                Positions.Add(subArea.Parent);
+                subAreas.Add(subArea);
+                SortSubAreas();
+            }                                                 
+            else
+                throw new TileAddException(this, subArea);
+
+            if (!Invariant())
+                throw new InvariantFailedException(this, "");
         }
+        protected abstract bool CanAdd(SubArea subArea);
         /// <summary>
         /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
         /// </summary>
@@ -124,8 +141,14 @@ namespace CarcassonneServer.Model.Representation.Area
         {
             return area.Positions.Any(p => Positions.Any(pp => pp | p));
         }
-        virtual protected bool EvaluateIsFinished() { return false; }
-
+        virtual protected bool EvaluateIsFinished()
+        {
+            return OpenSubAreas.Count == 0 && SurroundedSubAreas.Count == subAreas.Count;
+        }
+        bool Invariant()
+        {
+            return OpenSubAreas.Count + SurroundedSubAreas.Count == subAreas.Count;
+        }
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
         /// </summary>
