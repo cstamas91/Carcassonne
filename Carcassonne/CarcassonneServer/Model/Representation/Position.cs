@@ -1,13 +1,12 @@
 ﻿using System;
-using CarcassonneSharedModules.Tools;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CarcassonneServer.Model.Representation
 {
     public class Position
     {
-        private const short MAX_X = short.MaxValue;
-        private const short MAX_Y = short.MaxValue - 1;
+        private const int MAX_X = short.MaxValue;
+        private const int MAX_Y = short.MaxValue - 1;
         public bool IsBounded
         {
             get
@@ -18,11 +17,11 @@ namespace CarcassonneServer.Model.Representation
         /// <summary>
         /// Vertikális tengelyen való elmozdulást mutatja.
         /// </summary>
-        public short X { get; set; }
+        public int X { get; set; }
         /// <summary>
         /// Horizontális tengelyen való elmozdulást mutatja.
         /// </summary>
-        public short Y { get; set; }
+        public int Y { get; set; }
 
 
         public Position() { }
@@ -31,7 +30,7 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         /// <param name="x">Vertikálist tengely mentén való elmozdulás.</param>
         /// <param name="y">Horizontális tengely mentén való elmozdulás.</param>
-        public Position(short x, short y)
+        public Position(int x, int y)
         {
             X = x;
             Y = y;
@@ -120,6 +119,12 @@ namespace CarcassonneServer.Model.Representation
                 default:
                     throw new ArgumentException(string.Format("Nincs ilyen irány: {0}", direction));
             }
+        }
+
+        public IEnumerable<Position> GetAdjacentPositions()
+        {
+            foreach (Direction direction in new List<Direction>() { Direction.Up, Direction.Down, Direction.Left, Direction.Right })
+                yield return GetPosition(direction);
         }
 
         public override string ToString()

@@ -3,6 +3,7 @@ using CarcassonneSharedModules.Logger;
 using System.Runtime.CompilerServices;
 using CarcassonneServer.Model.Representation.Area;
 using System.Linq;
+using CarcassonneServer.Model.Representation.SubAreas;
 
 namespace CarcassonneServer.Model.Representation
 {
@@ -56,7 +57,7 @@ namespace CarcassonneServer.Model.Representation
         public TileAddException(string message, [CallerMemberName] string callerName = "")
          : base(message, callerName){ }
 
-        public TileAddException(BaseArea area, SubArea subArea, [CallerMemberName] string callerName = "")
+        public TileAddException(IBaseArea area, ISubArea subArea, [CallerMemberName] string callerName = "")
             : base (string.Format("Positions: {0}, AreaType: {1}, Position: {2}, Type: {3}",
                     area.Positions.Aggregate("", (str, pos) => str += string.Format("{0}\n\r", pos.ToString())),
                     subArea.AreaType.ToString(),
@@ -83,6 +84,26 @@ namespace CarcassonneServer.Model.Representation
             : base(message, callerName)
         {
             Area = area;
+        }
+    }
+
+    public class AreaMergeException : AutoLoggingException
+    {
+        private IBaseArea target;
+        private IBaseArea other;
+
+        public IBaseArea Target => target;
+        public IBaseArea Other => other;
+
+        public AreaMergeException(
+            string message, 
+            IBaseArea target,
+            IBaseArea other,
+            [CallerMemberName] string callerName = "")
+            : base(message, callerName)
+        {
+            this.target = target;
+            this.other = other;
         }
     }
 }

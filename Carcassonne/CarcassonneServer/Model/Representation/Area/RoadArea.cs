@@ -1,49 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using CarcassonneServer.Model.Representation.SubAreas;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CarcassonneServer.Model.Representation.Area
 {
     public class RoadArea : BaseArea
     {
-        public override AreaType AreaType
-        {
-            get
-            {
-                return AreaType.Road;
-            }
-        }
+        public override AreaType AreaType => AreaType.Road;
 
-        public override bool IsFinished
-        {
-            get
-            {
-                return EvaluateIsFinished();
-            }
-        }
+        public override int Score => SubAreas.Sum(a => a.Points);
 
-        public override int Score
-        {
-            get
-            {
-                return SubAreas.Sum(a => a.Points);
-            }
-        }
-
-        public RoadArea(SubArea subArea)
+        protected RoadArea(int id, ISubArea subArea)
             : base()
         {
+            this.id = id;
             AddSubArea(subArea);
         }
         /// <summary>
         /// Mező hozzáadása területhez.
         /// </summary>
         /// <param name="subArea">Mező amit hozzá akarunk adni a területhez.</param>
-        public override void AddSubArea(SubArea subArea)
-        {
-            base.AddSubArea(subArea);
-        }
+        public override void AddSubArea(ISubArea subArea) => base.AddSubArea(subArea);
 
-        public override void RemoveSubArea(SubArea subArea)
+        public override void RemoveSubArea(ISubArea subArea)
         {
             base.RemoveSubArea(subArea);
 
@@ -56,28 +36,18 @@ namespace CarcassonneServer.Model.Representation.Area
             subAreas.Remove(subArea);
         }
 
-        public override void AddMeeple(Meeple meeple, SubArea subArea)
+        public override void AddMeeple(Meeple meeple, int id)
         {
-            if (meeples.Count == 0)
-                meeples.Add(meeple);
+            throw new NotImplementedException();
         }
 
-        protected override bool EvaluateIsFinished()
-        {
-            return OpenSubAreas.Count == 0;
-        }
+        protected override bool EvaluateIsFinished() => base.EvaluateIsFinished();
 
-        protected override bool IsNeighbourTo(Position element)
-        {
-            return OpenSubAreas.Any(os => os.Parent | element);
-        }
+        protected override bool IsNeighbourTo(Position element) => OpenSubAreas.Any(os => os.Parent | element);
 
-        protected override bool IsNeighbourTo(BaseArea area)
-        {
-            return OpenSubAreas.Any(os => area.SubAreas.Any(s => os | s));
-        }
-        
-        protected override void SortSubArea(SubArea area)
+        protected override bool IsNeighbourTo(BaseArea area) => OpenSubAreas.Any(os => area.SubAreas.Any(s => os.IsAdjacent(s)));
+
+        protected override void SortSubArea(ISubArea area)
         {
             if (IsSurrounded(area))
                 SurroundedSubAreas.Add(area);
@@ -85,13 +55,9 @@ namespace CarcassonneServer.Model.Representation.Area
                 OpenSubAreas.Add(area);
         }
 
-        protected override bool CanAdd(SubArea subArea)
-        {
-            if (OpenSubAreas.Count > 0 && !OpenSubAreas.Any(osa => osa | subArea))
-                throw new TileAddException("Failed CANADD");
+        override public bool CanAdd(ISubArea subArea) => base.CanAdd(subArea);
 
-            IEnumerable<SubArea> borders = OpenSubAreas.Where(osa => osa | subArea);
-            return borders.All(border => border.CanBeAdjacent(subArea));
-        }
+        private static int currentId;
+        public static new RoadArea Get(ISubArea initialArea) => new RoadArea(++currentId, initialArea);
     }
 }

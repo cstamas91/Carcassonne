@@ -1,5 +1,6 @@
 ﻿using CarcassonneServer.Model.Representation;
 using CarcassonneServer.Model.Representation.Area;
+using CarcassonneServer.Model.Representation.SubAreas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,25 +14,25 @@ namespace CarcassonneUnitTest
         public void TestConstructor()
         {
             Tile initialTile = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.Up, Direction.Down
                         }, AreaType.Road),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.Right, Direction.DownRight, Direction.DownLeft, Direction.UpRight, Direction.RightDown
                         }, AreaType.Field),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.Left, Direction.LeftDown, Direction.DownLeft, Direction.LeftUp, Direction.UpLeft
                         }, AreaType.Field)
                 }, new Position(0, 0));
-            RoadArea road = new RoadArea(initialTile.Areas.FirstOrDefault(sa => sa.AreaType == AreaType.Road));
+            RoadArea road = BaseArea.Get(initialTile.Areas.FirstOrDefault(sa => sa.AreaType == AreaType.Road)) as RoadArea;
 
             Assert.AreEqual(1, road.SubAreas.Count());
         }
@@ -42,43 +43,43 @@ namespace CarcassonneUnitTest
         public void TestAddTile()
         {
             Tile initialTile = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                                new SubArea(
+                                BaseSubArea.Get(
                                     new List<Direction>()
                                     {
                                         Direction.Up, Direction.Down
                                     }, AreaType.Road),
-                                new SubArea(
+                                BaseSubArea.Get(
                                     new List<Direction>()
                                     {
                                         Direction.Right, Direction.DownRight, Direction.RightUp, Direction.UpRight, Direction.RightDown
                                     }, AreaType.Field),
-                                new SubArea(
+                                BaseSubArea.Get(
                                     new List<Direction>()
                                     {
                                         Direction.Left, Direction.LeftDown, Direction.DownLeft, Direction.LeftUp, Direction.UpLeft
                                     }, AreaType.Field)
                 }, new Position(0, 0));
-            RoadArea road = new RoadArea(initialTile.Areas.FirstOrDefault(sa => sa.AreaType == AreaType.Road));
+            RoadArea road = BaseArea.Get(initialTile.Areas.FirstOrDefault(sa => sa.AreaType == AreaType.Road)) as RoadArea;
             Tile additionalTile = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                                            new SubArea(
-                                                new List<Direction>()
-                                                {
-                                                    Direction.Up, Direction.Down
-                                                }, AreaType.Road),
-                                            new SubArea(
-                                                new List<Direction>()
-                                                {
-                                                    Direction.Right, Direction.DownRight, Direction.RightUp, Direction.UpRight, Direction.RightDown
-                                                }, AreaType.Field),
-                                            new SubArea(
-                                                new List<Direction>()
-                                                {
-                                                    Direction.Left, Direction.LeftDown, Direction.DownLeft, Direction.LeftUp, Direction.UpLeft
-                                                }, AreaType.Field)
+                                BaseSubArea.Get(
+                                    new List<Direction>()
+                                    {
+                                        Direction.Up, Direction.Down
+                                    }, AreaType.Road),
+                                BaseSubArea.Get(
+                                    new List<Direction>()
+                                    {
+                                        Direction.Right, Direction.DownRight, Direction.RightUp, Direction.UpRight, Direction.RightDown
+                                    }, AreaType.Field),
+                                BaseSubArea.Get(
+                                    new List<Direction>()
+                                    {
+                                        Direction.Left, Direction.LeftDown, Direction.DownLeft, Direction.LeftUp, Direction.UpLeft
+                                    }, AreaType.Field)
                 }, new Position(1, 0));
 
             road.AddSubArea(additionalTile.Areas.FirstOrDefault(a => a.AreaType == AreaType.Road));
@@ -92,34 +93,7 @@ namespace CarcassonneUnitTest
         [TestMethod]
         public void TestAddMeeple()
         {
-            Tile t1 = new Tile(
-                new List<SubArea>()
-                {
-                    new SubArea(
-                        new List<Direction>()
-                        {
-                            Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
-                        }, AreaType.Field),
-                    new SubArea(
-                        new List<Direction>() { Direction.Down }, AreaType.Road)
-                }, new Position(1, 0));
-            Tile t2 = new Tile(
-                new List<SubArea>()
-                {
-                    new SubArea(
-                        new List<Direction>() { Direction.Up }, AreaType.Road),
-                    new SubArea(
-                        new List<Direction>()
-                        {
-                            Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
-                        }, AreaType.Field)
-                }, new Position(0, 0));
-
-            RoadArea area = new RoadArea(t1[Direction.Down]);
-            Player owner = new Player(1, "test");
-            area.AddMeeple(new Meeple(owner), t1[Direction.Down]);
-
-            Assert.IsTrue(area.Owners.Contains(owner));
+            Assert.Fail();
         }
 
         /// <summary>
@@ -129,29 +103,29 @@ namespace CarcassonneUnitTest
         public void TestEvaluateFinished()
         {
             Tile t1 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
                 }, new Position(1, 0));
             Tile t2 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>() { Direction.Up }, AreaType.Road),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field)
                 }, new Position(0, 0));
 
-            RoadArea area = new RoadArea(t1[Direction.Down]);
+            RoadArea area = BaseArea.Get(t1[Direction.Down]) as RoadArea;
             area.AddSubArea(t2[Direction.Up]);
 
             Assert.IsTrue(area.IsFinished);
@@ -164,31 +138,31 @@ namespace CarcassonneUnitTest
         public void TestEvaluateFinishedNegative()
         {
             Tile t1 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
                 }, new Position(0, 0));
             Tile t2 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight, Direction.RightDown, Direction.RightUp, Direction.LeftDown, Direction.LeftUp
                         }, AreaType.Field),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.Up, Direction.Down
                         }, AreaType.Road)
                 }, new Position(-1, 0));
-            RoadArea area = new RoadArea(t1[Direction.Down]);
+            RoadArea area = BaseArea.Get(t1[Direction.Down]) as RoadArea;
             area.AddSubArea(t2[Direction.Up]);
 
             Assert.IsFalse(area.IsFinished);
@@ -198,30 +172,30 @@ namespace CarcassonneUnitTest
         public void TestMerge()
         {
             Tile t1 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>() { Direction.Down }, AreaType.Road)
                 }, new Position(1, 0));
-            RoadArea r1 = new RoadArea(t1[Direction.Down]);
+            RoadArea r1 = BaseArea.Get(t1[Direction.Down]) as RoadArea;
 
             Tile t2 = new Tile(
-                new List<SubArea>()
+                new List<ISubArea>()
                 {
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>() { Direction.Up }, AreaType.Road),
-                    new SubArea(
+                    BaseSubArea.Get(
                         new List<Direction>()
                         {
                             Direction.DownLeft, Direction.LeftDown, Direction.Left, Direction.LeftUp, Direction.UpLeft, Direction.Down, Direction.UpRight, Direction.RightUp, Direction.Right, Direction.RightDown, Direction.DownRight
                         }, AreaType.Field)
                 }, new Position(0, 0));
-            RoadArea r2 = new RoadArea(t2[Direction.Up]);
+            RoadArea r2 = BaseArea.Get(t2[Direction.Up]) as RoadArea;
 
             var merged = r1.Merge(r2);
 

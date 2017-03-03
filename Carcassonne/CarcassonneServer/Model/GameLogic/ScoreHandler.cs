@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using CarcassonneServer.Model.Representation;
 using CarcassonneSharedModules.Tools;
+using CarcassonneServer.Model.Representation.GameItems;
 
 namespace CarcassonneServer.Model.GameLogic
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarcassonneServer.Model.Representation.SubAreas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +16,10 @@ namespace CarcassonneServer.Model.Representation.Area
             }
         }
         protected List<Meeple> meeples = new List<Meeple>();
-        virtual public void AddMeeple(Meeple meeple, SubArea subArea) { }
+        virtual public void AddMeeple(Meeple meeple, int id)
+        {
+            throw new NotImplementedException();
+        }
         #endregion Meeples
 
         #region Scoring
@@ -24,17 +28,18 @@ namespace CarcassonneServer.Model.Representation.Area
 
         #region Areas
         public string GUID { get; private set; }
-        public IEnumerable<SubArea> SubAreas { get { return subAreas; } }
+        protected List<ISubArea> subAreas;
+        public IEnumerable<ISubArea> SubAreas => subAreas;
         /// <summary>
         /// Azok a részterületek, amik teljesen körbe vannak véve.
         /// </summary>
-        protected List<SubArea> SurroundedSubAreas { get; set; }
+        protected List<ISubArea> SurroundedSubAreas { get; set; }
         /// <summary>
         /// Azok a részterületek, amiknek van még olyan oldala, ami szabad.
         /// </summary>
-        protected List<SubArea> OpenSubAreas { get; set; }
-        protected List<SubArea> subAreas;
-        protected IEnumerable<SubArea> GetAdjacentSubAreas(SubArea target)
+        protected List<ISubArea> OpenSubAreas { get; set; }
+        
+        protected IEnumerable<ISubArea> GetAdjacentSubAreas(ISubArea target)
         {
             IEnumerable<Direction> directions = target.Edges;
 
@@ -49,6 +54,7 @@ namespace CarcassonneServer.Model.Representation.Area
             return this.subAreas.Count() == 0;
         }
         public HashSet<Position> Positions { get; set; }
+        public bool Contains(Position position) => Positions.Contains(position);
 
         virtual public AreaType AreaType { get; }
         virtual public bool IsFinished
@@ -58,7 +64,7 @@ namespace CarcassonneServer.Model.Representation.Area
                 return EvaluateIsFinished();
             }
         }
-        virtual public void AddSubArea(SubArea subArea)
+        virtual public void AddSubArea(ISubArea subArea)
         {
             if (subArea.AreaType != AreaType)
                 throw new ArgumentException("Nem egyezik az alterület típusa a terület típusával.");
@@ -75,13 +81,23 @@ namespace CarcassonneServer.Model.Representation.Area
             if (!Invariant())
                 throw new InvariantFailedException(this, "");
         }
-        protected abstract bool CanAdd(SubArea subArea);
+        virtual public bool CanAdd(ISubArea subArea)
+        {
+            if (subAreas.Count == 0 && AreaType == subArea.AreaType)
+                return true;
+
+            if (IsFinished || !HasAdjacentSubarea(subArea))
+                return false;
+
+            IEnumerable<ISubArea> borders = OpenSubAreas.Where(osa => osa.IsAdjacent(subArea));
+            return borders.All(border => border.CanBeAdjacent(subArea));
+        }
         /// <summary>
         /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
         /// </summary>
         /// <param name="item">A vizsgált részterület.</param>
         /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
-        protected bool IsSurrounded(SubArea item)
+        protected bool IsSurrounded(ISubArea item)
         {
             bool isSurrounded = true;
             foreach (Direction direction in item.Edges.Select(d => d.GetTileDirectionFromAreaDirection(item.Parent.Rotation)))
@@ -101,15 +117,18 @@ namespace CarcassonneServer.Model.Representation.Area
             return isSurrounded;
         }
 
-        virtual public void RemoveSubArea(SubArea subArea)
+        virtual public void RemoveSubArea(ISubArea subArea)
         {
             if (!SubAreas.Contains(subArea))
                 throw new ArgumentException("Az alterület nem része a területnek.");
 
             Positions.Remove(subArea.Parent);
         }
-        virtual public BaseArea Merge(BaseArea other)
+        virtual public BaseArea Merge(IBaseArea other)
         {
+            if (other.AreaType != AreaType)
+                throw new AreaMergeException(string.Format("Invalid types: {0} and {1}", AreaType, other.AreaType), this, other);
+
             var otherSubAreas = other.SubAreas.ToList();
             foreach (var item in otherSubAreas)
             {
@@ -119,7 +138,7 @@ namespace CarcassonneServer.Model.Representation.Area
 
             return this;
         }
-        virtual protected void SortSubArea(SubArea area)
+        virtual protected void SortSubArea(ISubArea area)
         {
             if (IsSurrounded(area))
                 SurroundedSubAreas.Add(area);
@@ -128,8 +147,8 @@ namespace CarcassonneServer.Model.Representation.Area
         }
         virtual protected void SortSubAreas()
         {
-            OpenSubAreas = new List<SubArea>();
-            SurroundedSubAreas = new List<SubArea>();
+            OpenSubAreas = new List<ISubArea>();
+            SurroundedSubAreas = new List<ISubArea>();
 
             subAreas.ForEach(SortSubArea);
         }
@@ -143,7 +162,7 @@ namespace CarcassonneServer.Model.Representation.Area
         }
         virtual protected bool EvaluateIsFinished()
         {
-            return OpenSubAreas.Count == 0 && SurroundedSubAreas.Count == subAreas.Count;
+            return (OpenSubAreas.Count == 0) && (SurroundedSubAreas.Count == subAreas.Count) && (subAreas.Count > 0);
         }
         bool Invariant()
         {
@@ -178,18 +197,37 @@ namespace CarcassonneServer.Model.Representation.Area
         public static bool operator |(Position lhs, BaseArea rhs)
         {
             return rhs.IsNeighbourTo(lhs);
-        }
+        }        
+        public bool IsAdjacent(Tile tile) => tile.GetAdjacentPositions().Any(p => Positions.Contains(p));
+        private bool HasAdjacentSubarea(ISubArea subArea) => OpenSubAreas.Count > 0 && OpenSubAreas.Any(osa => osa.IsAdjacent(subArea));
         #endregion Areas
 
         #region Constructors
-        public BaseArea()
+        protected int id;
+
+        protected BaseArea()
         {
             this.GUID = Guid.NewGuid().ToString();
-            subAreas = new List<SubArea>();
-            SurroundedSubAreas = new List<SubArea>();
-            OpenSubAreas = new List<SubArea>();
+            subAreas = new List<ISubArea>();
+            SurroundedSubAreas = new List<ISubArea>();
+            OpenSubAreas = new List<ISubArea>();
             Positions = new HashSet<Position>();
         }
         #endregion Constructors
+
+        public static IBaseArea Get(ISubArea initialArea)
+        {
+            switch (initialArea.AreaType)
+            {
+                case AreaType.Castle:
+                    return CastleArea.Get(initialArea);
+                case AreaType.Field:
+                    return FieldArea.Get(initialArea);
+                case AreaType.Road:
+                    return RoadArea.Get(initialArea);
+                default:
+                    throw new ArgumentException();
+            }
+        }
     }
 }

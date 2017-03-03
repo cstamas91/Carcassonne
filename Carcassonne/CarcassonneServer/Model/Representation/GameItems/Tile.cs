@@ -1,8 +1,8 @@
 ﻿using CarcassonneSharedModules.Tools;
-using System.IO;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using CarcassonneServer.Model.Representation.SubAreas;
 
 namespace CarcassonneServer.Model.Representation
 {
@@ -15,11 +15,11 @@ namespace CarcassonneServer.Model.Representation
         private int DIRECTION_MOD_VALUE = Enum.GetValues(typeof(Direction)).Cast<int>().Max() + 1;
         private TileRotation rotation;
         public TileRotation Rotation { get { return rotation; } set { rotation = value; } }
-        private List<SubArea> areas;
+        private List<ISubArea> areas;
         /// <summary>
         /// A mezőn lévő alterületek listája.
         /// </summary>
-        public List<SubArea> Areas
+        public List<ISubArea> Areas
         {
             get
             {
@@ -42,11 +42,11 @@ namespace CarcassonneServer.Model.Representation
         /// </summary>
         /// <param name="direction"></param>
         /// <returns></returns>
-        public SubArea this[Direction direction]
+        public ISubArea this[Direction direction]
         {
             get
             {
-                IEnumerable<SubArea> areasWithDirection = areas.Where(area => area[RotationAdjustedDirection(direction)]);
+                IEnumerable<ISubArea> areasWithDirection = areas.Where(area => area[RotationAdjustedDirection(direction)]);
 
                 if (areasWithDirection.Count() != 1)
                     throw new InvalidStateException("Egy irány egyetlen alterülethez tartozhat egy mezőn belül.");
@@ -57,7 +57,7 @@ namespace CarcassonneServer.Model.Representation
         public bool IsMonastery { get { return false; } }
         
         public Tile() { }
-        public Tile(IList<SubArea> subAreas, Position position)
+        public Tile(IList<ISubArea> subAreas, Position position)
             : base (position.X, position.Y)
         {
             areas = subAreas.ToList();

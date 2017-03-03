@@ -9,11 +9,6 @@ namespace CarcassonneServer.Model.Representation.Area
         public static BaseArea MergeArea(this IEnumerable<BaseArea> collection)
         {
             return collection.Aggregate((first, next) => first.Merge(next));
-        }
-
-        public static List<BaseArea> Factory(Tile tile)
-        {
-            throw new NotImplementedException();
-        }
+        }    
     }
 }

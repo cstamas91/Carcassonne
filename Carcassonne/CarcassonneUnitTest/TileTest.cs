@@ -1,5 +1,6 @@
 ﻿using CarcassonneServer.Model.Representation;
 using CarcassonneServer.Model.Representation.Area;
+using CarcassonneServer.Model.Representation.SubAreas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,16 @@ namespace CarcassonneUnitTest
         private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex
         private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
 
-        private List<SubArea> ReadSubAreas(string[] areaData)
+        private List<ISubArea> ReadSubAreas(string[] areaData)
         {
-            List<SubArea> subAreas = new List<SubArea>();
+            List<ISubArea> subAreas = new List<ISubArea>();
             foreach (string subArea in areaData)
             {
                 var subAreaData = subArea.Split(':');
                 AreaType subAreaType = (AreaType)Enum.Parse(typeof(AreaType), subAreaData[0]);
 
                 List<Direction> directions = subAreaData[1].Split('-').Select(str => (Direction)Enum.Parse(typeof(Direction), str)).ToList();
-                subAreas.Add(new SubArea(directions, subAreaType));
+                subAreas.Add(BaseSubArea.Get(directions, subAreaType));
             }
 
             return subAreas;

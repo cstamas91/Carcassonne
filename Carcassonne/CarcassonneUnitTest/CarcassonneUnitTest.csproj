@@ -59,6 +59,8 @@
     <Compile Include="FieldAreaTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoadAreaTest.cs" />
+    <Compile Include="SubAreaTests.cs" />
+    <Compile Include="TestData\GameTableTests.cs" />
     <Compile Include="TileTest.cs" />
   </ItemGroup>
   <ItemGroup>
