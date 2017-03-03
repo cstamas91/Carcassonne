@@ -4,8 +4,6 @@ using System.Linq;
 
 namespace CarcassonneServer.Model.Representation.SubAreas
 {
-
-
     public class BaseSubArea : ISubArea
     {
         #region properties
@@ -23,11 +21,11 @@ namespace CarcassonneServer.Model.Representation.SubAreas
         virtual public AreaType AreaType { get; }
         private List<Direction> edges;
         public List<Direction> Edges => edges;
-        public IEnumerable<Direction> ActualEdges => 
+        public IEnumerable<Direction> ActualEdges =>
             Edges.Select(
                 direction => direction
                     .GetTileDirectionFromAreaDirection(Parent.Rotation));
-        public virtual int Points => GetPoints();
+        public virtual int Score => GetPoints();
         #endregion properties
 
         #region constructors
@@ -40,7 +38,7 @@ namespace CarcassonneServer.Model.Representation.SubAreas
         {
             this.id = id;
         }
-        protected BaseSubArea(IList<Direction> governedEdges) 
+        protected BaseSubArea(IList<Direction> governedEdges)
             : this()
         {
             edges = governedEdges.ToList();
@@ -65,9 +63,15 @@ namespace CarcassonneServer.Model.Representation.SubAreas
                 return false;
 
             return minorDirections.All(minorDirection => other.ActualEdges.Contains(minorDirection.Opposite())) &&
-                ActualEdges.Contains(facingMajorDirection) ? other.ActualEdges.Contains(facingMajorDirection.Opposite()) : true;           
+                ActualEdges.Contains(facingMajorDirection) ? other.ActualEdges.Contains(facingMajorDirection.Opposite()) : true;
         }
+        public void SetMeeple(Meeple meeple)
+        {
+            if (this.meeple != null)
+                throw new AddMeepleException(this, meeple);
 
+            this.meeple = meeple;
+        }
         #endregion public
 
         #region private
@@ -79,7 +83,7 @@ namespace CarcassonneServer.Model.Representation.SubAreas
         public bool IsAdjacent(Tile rhs) => Parent | rhs;
         #endregion private
 
-
+        #region factory
         private static int current;
         public static ISubArea Get(IList<Direction> directions, AreaType areaType)
         {
@@ -97,50 +101,6 @@ namespace CarcassonneServer.Model.Representation.SubAreas
                     throw new ArgumentException("No such AreaType exists");
             }
         }
-    }
-
-    public class FieldSubArea : BaseSubArea
-    {
-        public override AreaType AreaType => AreaType.Field;
-        public override int Points => 0;
-
-        protected FieldSubArea(int id, IList<Direction> directions)
-            : base(id, directions) { }
-
-        private static int currentIndex = 0;
-        public static FieldSubArea Get(IList<Direction> directions)
-        {
-            return new FieldSubArea(++currentIndex, directions);
-        }
-    }
-
-    public class RoadSubArea : BaseSubArea
-    {
-        public override AreaType AreaType => AreaType.Road;
-        public override int Points => 0;
-
-        protected RoadSubArea(int id, IList<Direction> directions)
-            : base(id, directions) { }
-
-        private static int currentIndex = 0;
-        public static RoadSubArea Get(IList<Direction> directions)
-        {
-            return new RoadSubArea(++currentIndex, directions);
-        }
-    }
-
-    public class CastleSubArea : BaseSubArea
-    {
-        public override AreaType AreaType => AreaType.Castle;
-        public override int Points => 0;
-
-        protected CastleSubArea(int id, IList<Direction> directions)
-            : base(id, directions) { }
-
-        private static int currentIndex = 0;
-        public static CastleSubArea Get(IList<Direction> directions)
-        {
-            return new CastleSubArea(++currentIndex, directions);
-        }
+        #endregion factory
     }
 }

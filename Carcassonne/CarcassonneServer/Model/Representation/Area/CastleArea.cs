@@ -1,5 +1,7 @@
 ﻿using CarcassonneServer.Model.Representation.SubAreas;
 using System;
+using System.Linq;
+
 namespace CarcassonneServer.Model.Representation.Area
 {
     public class CastleArea : BaseArea
@@ -13,12 +15,7 @@ namespace CarcassonneServer.Model.Representation.Area
         }                                                  
 
         override public void AddSubArea(ISubArea subArea) => base.AddSubArea(subArea);
-
-        override public void AddMeeple(Meeple meeple, int id)
-        {
-            throw new NotImplementedException();
-        }
-
+                                      
         protected override bool EvaluateIsFinished() => base.EvaluateIsFinished();
 
         override protected bool IsNeighbourTo(BaseArea area)
@@ -35,5 +32,7 @@ namespace CarcassonneServer.Model.Representation.Area
 
         private static int currentId;
         public static new CastleArea Get(ISubArea initialArea) => new CastleArea(++currentId, initialArea);
+
+        public override int Score => Positions.Count * 2 + meeples.Count(meeple => meeple.Owner == Owners.FirstOrDefault()) * 2;
     }
 }

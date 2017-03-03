@@ -12,7 +12,7 @@ namespace CarcassonneSharedModules.Tools
     /// </summary>
     public static class Extensions
     {
-        public static IEnumerable<T> GetMemberEnumeration<T>()
+        public static IEnumerable<T> GetMemberEnumeration<T>(this T enumType)
             where T : struct
         {
             return Enum.GetValues(typeof(T)) as IEnumerable<T>;

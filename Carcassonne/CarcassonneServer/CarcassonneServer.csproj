@@ -66,6 +66,8 @@
     <Compile Include="Model\Representation\Area\FieldArea.cs" />
     <Compile Include="Model\Representation\Area\RoadArea.cs" />
     <Compile Include="Model\Representation\GameItems\GameTable.cs" />
+    <Compile Include="Model\Representation\SubAreas\CastleSubArea.cs" />
+    <Compile Include="Model\Representation\SubAreas\FieldSubArea.cs" />
     <Compile Include="Model\Representation\SubAreas\ISubArea.cs" />
     <Compile Include="Model\Representation\GameItems\Meeple.cs" />
     <Compile Include="Model\Representation\GameItems\Player.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Model\Representation\SubAreas\BaseSubArea.cs" />
     <Compile Include="Model\Representation\GameItems\Tile.cs" />
     <Compile Include="Model\Representation\RepresentationExceptions.cs" />
+    <Compile Include="Model\Representation\SubAreas\RoadSubArea.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

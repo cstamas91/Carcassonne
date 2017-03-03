@@ -12,11 +12,12 @@ namespace CarcassonneServer.Model.Representation.SubAreas
         int Id { get; }
         Meeple Meeple { get; }
         Tile Parent { get; set; }
-        int Points { get; }
+        int Score { get; }
         Position Position { get; }
 
         bool CanBeAdjacent(ISubArea other);
         bool IsAdjacent(ISubArea rhs);
         bool IsAdjacent(Tile rhs);
+        void SetMeeple(Meeple meeple);
     }
 }

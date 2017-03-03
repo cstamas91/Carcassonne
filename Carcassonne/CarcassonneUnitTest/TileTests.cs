@@ -11,7 +11,7 @@ using System.Linq;
 namespace CarcassonneUnitTest
 {
     [TestClass]
-    public class TileTest : BaseTest
+    public class TileTests : BaseTest
     {
         #region segéd függvények
         private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex

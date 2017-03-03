@@ -22,12 +22,6 @@ namespace CarcassonneServer.Model.Representation.Area
 
         override public bool CanAdd(ISubArea subArea) => base.CanAdd(subArea);
 
-        public override void AddMeeple(Meeple meeple, int id)
-        {
-            throw new NotImplementedException();
-        }
-
-
         private static int currentId;
         public static new FieldArea Get(ISubArea initialArea) => new FieldArea(++currentId, initialArea);
     }

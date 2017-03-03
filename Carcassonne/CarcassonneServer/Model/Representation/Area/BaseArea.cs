@@ -8,23 +8,11 @@ namespace CarcassonneServer.Model.Representation.Area
     public abstract class BaseArea : IBaseArea
     {
         #region Meeples
-        public IEnumerable<Player> Owners
-        {
-            get
-            {
-                return meeples.MostOf(m => m.Owner);
-            }
-        }
-        protected List<Meeple> meeples = new List<Meeple>();
-        virtual public void AddMeeple(Meeple meeple, int id)
-        {
-            throw new NotImplementedException();
-        }
+        public IEnumerable<Player> Owners => meeples.MostOf(m => m.Owner);
+        protected IEnumerable<Meeple> meeples => subAreas.Select(subArea => subArea.Meeple);
+        public void AddMeeple(Meeple meeple, int id) =>
+            subAreas.FirstOrDefault(subarea => subarea.Id == id).SetMeeple(meeple);
         #endregion Meeples
-
-        #region Scoring
-        virtual public int Score { get; }
-        #endregion Scoring
 
         #region Areas
         public string GUID { get; private set; }
@@ -38,24 +26,14 @@ namespace CarcassonneServer.Model.Representation.Area
         /// Azok a részterületek, amiknek van még olyan oldala, ami szabad.
         /// </summary>
         protected List<ISubArea> OpenSubAreas { get; set; }
-        
-        protected IEnumerable<ISubArea> GetAdjacentSubAreas(ISubArea target)
-        {
-            IEnumerable<Direction> directions = target.Edges;
-
-            return SubAreas.Where(a => a.Position | target.Position);
-        }
+        protected IEnumerable<ISubArea> GetAdjacentSubAreas(ISubArea target) => SubAreas.Where(a => a.Position | target.Position);
         protected IEnumerable<Tile> GetNeighboringTilesInArea(Tile otherTile)
         {
             throw new NotImplementedException();
         }
-        protected bool IsEmpty()
-        {
-            return this.subAreas.Count() == 0;
-        }
+        protected bool IsEmpty() => subAreas.Count() == 0;
         public HashSet<Position> Positions { get; set; }
         public bool Contains(Position position) => Positions.Contains(position);
-
         virtual public AreaType AreaType { get; }
         virtual public bool IsFinished
         {
@@ -74,9 +52,9 @@ namespace CarcassonneServer.Model.Representation.Area
                 Positions.Add(subArea.Parent);
                 subAreas.Add(subArea);
                 SortSubAreas();
-            }                                                 
+            }
             else
-                throw new TileAddException(this, subArea);
+                throw new AddTileException(this, subArea);
 
             if (!Invariant())
                 throw new InvariantFailedException(this, "");
@@ -100,11 +78,14 @@ namespace CarcassonneServer.Model.Representation.Area
         protected bool IsSurrounded(ISubArea item)
         {
             bool isSurrounded = true;
-            foreach (Direction direction in item.Edges.Select(d => d.GetTileDirectionFromAreaDirection(item.Parent.Rotation)))
+            foreach (Direction direction in item.ActualEdges)
             {
                 try
                 {
-                    isSurrounded &= Positions.Contains(item.Parent.GetPosition(direction));
+                    var pos = item.Parent.GetPosition(direction);
+                    isSurrounded &= 
+                        Positions.Contains(pos) &&
+                        subAreas.Any(subArea => (subArea.Position as Position).Equals(pos) && subArea.ActualEdges.Contains(direction.Opposite()));
                 }
                 catch (OutOfBoundsException oobEx)
                 {
@@ -116,7 +97,6 @@ namespace CarcassonneServer.Model.Representation.Area
 
             return isSurrounded;
         }
-
         virtual public void RemoveSubArea(ISubArea subArea)
         {
             if (!SubAreas.Contains(subArea))
@@ -152,22 +132,10 @@ namespace CarcassonneServer.Model.Representation.Area
 
             subAreas.ForEach(SortSubArea);
         }
-        virtual protected bool IsNeighbourTo(Position element)
-        {
-            return Positions.Contains(element);
-        }
-        virtual protected bool IsNeighbourTo(BaseArea area)
-        {
-            return area.Positions.Any(p => Positions.Any(pp => pp | p));
-        }
-        virtual protected bool EvaluateIsFinished()
-        {
-            return (OpenSubAreas.Count == 0) && (SurroundedSubAreas.Count == subAreas.Count) && (subAreas.Count > 0);
-        }
-        bool Invariant()
-        {
-            return OpenSubAreas.Count + SurroundedSubAreas.Count == subAreas.Count;
-        }
+        virtual protected bool IsNeighbourTo(Position element) => Positions.Contains(element);
+        virtual protected bool IsNeighbourTo(BaseArea area) => area.Positions.Any(p => Positions.Any(pp => pp | p));
+        virtual protected bool EvaluateIsFinished() => (OpenSubAreas.Count == 0) && (SurroundedSubAreas.Count == subAreas.Count) && (subAreas.Count > 0);
+        private bool Invariant() => OpenSubAreas.Count + SurroundedSubAreas.Count == subAreas.Count;
         /// <summary>
         /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
         /// </summary>
@@ -197,17 +165,17 @@ namespace CarcassonneServer.Model.Representation.Area
         public static bool operator |(Position lhs, BaseArea rhs)
         {
             return rhs.IsNeighbourTo(lhs);
-        }        
+        }
         public bool IsAdjacent(Tile tile) => tile.GetAdjacentPositions().Any(p => Positions.Contains(p));
         private bool HasAdjacentSubarea(ISubArea subArea) => OpenSubAreas.Count > 0 && OpenSubAreas.Any(osa => osa.IsAdjacent(subArea));
         #endregion Areas
 
         #region Constructors
+        virtual public int Score { get { return 0; } }
         protected int id;
-
         protected BaseArea()
         {
-            this.GUID = Guid.NewGuid().ToString();
+            GUID = Guid.NewGuid().ToString();
             subAreas = new List<ISubArea>();
             SurroundedSubAreas = new List<ISubArea>();
             OpenSubAreas = new List<ISubArea>();
@@ -215,6 +183,7 @@ namespace CarcassonneServer.Model.Representation.Area
         }
         #endregion Constructors
 
+        #region factory
         public static IBaseArea Get(ISubArea initialArea)
         {
             switch (initialArea.AreaType)
@@ -229,5 +198,6 @@ namespace CarcassonneServer.Model.Representation.Area
                     throw new ArgumentException();
             }
         }
+        #endregion factory
     }
 }

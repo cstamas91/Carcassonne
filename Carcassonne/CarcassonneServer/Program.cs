@@ -9,12 +9,6 @@ namespace CarcassonneServer
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            Logger.LogToConsole = true;
-            Logger.WriteLog("Server started.");
-            Logger.WriteLog("Server stopping.");
-            Logger.EndLog();
-        }
+        static void Main(string[] args) { }
     }
 }

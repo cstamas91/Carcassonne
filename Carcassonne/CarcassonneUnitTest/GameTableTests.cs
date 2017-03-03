@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CarcassonneUnitTest.TestData
+namespace CarcassonneUnitTest
 {
     [TestClass]
     public class GameTableTests : BaseTest

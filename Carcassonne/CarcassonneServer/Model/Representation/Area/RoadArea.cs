@@ -9,8 +9,6 @@ namespace CarcassonneServer.Model.Representation.Area
     {
         public override AreaType AreaType => AreaType.Road;
 
-        public override int Score => SubAreas.Sum(a => a.Points);
-
         protected RoadArea(int id, ISubArea subArea)
             : base()
         {
@@ -35,29 +33,16 @@ namespace CarcassonneServer.Model.Representation.Area
 
             subAreas.Remove(subArea);
         }
-
-        public override void AddMeeple(Meeple meeple, int id)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override bool EvaluateIsFinished() => base.EvaluateIsFinished();
 
         protected override bool IsNeighbourTo(Position element) => OpenSubAreas.Any(os => os.Parent | element);
 
         protected override bool IsNeighbourTo(BaseArea area) => OpenSubAreas.Any(os => area.SubAreas.Any(s => os.IsAdjacent(s)));
 
-        protected override void SortSubArea(ISubArea area)
-        {
-            if (IsSurrounded(area))
-                SurroundedSubAreas.Add(area);
-            else
-                OpenSubAreas.Add(area);
-        }
-
         override public bool CanAdd(ISubArea subArea) => base.CanAdd(subArea);
 
         private static int currentId;
         public static new RoadArea Get(ISubArea initialArea) => new RoadArea(++currentId, initialArea);
+        public override int Score => Positions.Count;
     }
 }

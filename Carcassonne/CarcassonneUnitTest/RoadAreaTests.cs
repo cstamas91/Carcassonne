@@ -8,7 +8,7 @@ using System.Linq;
 namespace CarcassonneUnitTest
 {
     [TestClass]
-    public class RoadAreaTest : BaseTest
+    public class RoadAreaTests : BaseTest
     {
         [TestMethod]
         public void TestConstructor()
@@ -85,15 +85,6 @@ namespace CarcassonneUnitTest
             road.AddSubArea(additionalTile.Areas.FirstOrDefault(a => a.AreaType == AreaType.Road));
 
             Assert.AreEqual(2, road.SubAreas.Count());
-        }
-
-        /// <summary>
-        /// Teszteli egy ember hozzáadását.
-        /// </summary>
-        [TestMethod]
-        public void TestAddMeeple()
-        {
-            Assert.Fail();
         }
 
         /// <summary>
@@ -207,6 +198,52 @@ namespace CarcassonneUnitTest
         public void TestScore()
         {
             Assert.Fail();
+        }
+
+        [TestMethod]
+        public void TestLoop()
+        {
+            var roadEdges = new List<Direction>() { Direction.Left, Direction.Down };
+            var smallFieldEdges = new List<Direction>() { Direction.LeftDown, Direction.DownLeft };
+
+            Tile t1 = new Tile(
+                new List<ISubArea>()
+                {
+                    BaseSubArea.Get(roadEdges, AreaType.Road),
+                    BaseSubArea.Get(smallFieldEdges, AreaType.Field),
+                    BaseSubArea.Get(Extensions.GetEnumValues<Direction>().Except(roadEdges).Except(smallFieldEdges).ToList(), AreaType.Field )
+                }, new Position(11, 9));
+            Tile t2 = new Tile(
+                new List<ISubArea>()
+                {
+                    BaseSubArea.Get(roadEdges, AreaType.Road),
+                    BaseSubArea.Get(smallFieldEdges, AreaType.Field),
+                    BaseSubArea.Get(Extensions.GetEnumValues<Direction>().Except(roadEdges).Except(smallFieldEdges).ToList(), AreaType.Field )
+                }, new Position(11, 8)) { Rotation = TileRotation._90 };
+            Tile t3 = new Tile(
+                new List<ISubArea>()
+                {
+                    BaseSubArea.Get(roadEdges, AreaType.Road),
+                    BaseSubArea.Get(smallFieldEdges, AreaType.Field),
+                    BaseSubArea.Get(Extensions.GetEnumValues<Direction>().Except(roadEdges).Except(smallFieldEdges).ToList(), AreaType.Field )
+                }, new Position(10, 8)) { Rotation = TileRotation._180 };
+            Tile t4 = new Tile(
+                new List<ISubArea>()
+                {
+                    BaseSubArea.Get(new List<Direction>() { Direction.Left }, AreaType.Road),
+                    BaseSubArea.Get(new List<Direction>() { Direction.Down }, AreaType.Road),
+                    BaseSubArea.Get(new List<Direction>() { Direction.Right }, AreaType.Road),
+                    BaseSubArea.Get(new List<Direction>() { Direction.LeftDown, Direction.DownLeft }, AreaType.Field),
+                    BaseSubArea.Get(new List<Direction>() { Direction.RightDown, Direction.DownRight }, AreaType.Field),
+                    BaseSubArea.Get(new List<Direction>() { Direction.LeftUp, Direction.UpLeft, Direction.Up, Direction.UpRight, Direction.RightUp }, AreaType.Field)
+                }, new Position(10, 9)) { Rotation = TileRotation._270 };
+            RoadArea roadArea = BaseArea.Get(t1[Direction.Down]) as RoadArea;
+            roadArea.AddSubArea(t2[Direction.Right]);
+            roadArea.AddSubArea(t3[Direction.Up]);
+            roadArea.AddSubArea(t4[Direction.Left]);
+            roadArea.AddSubArea(t4[Direction.Up]);
+
+            Assert.IsTrue(roadArea.IsFinished);
         }
     }
 }

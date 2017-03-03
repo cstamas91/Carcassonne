@@ -21,24 +21,21 @@ namespace CarcassonneServer.Model.Representation
     public class UnrealisticResultException : AutoLoggingException
     {
         public UnrealisticResultException(string Message, [CallerMemberName] string callerName = "")
-            : base(Message, callerName)
-        {
-
-        }
+            : base(Message, callerName) { }
     }
 
     public class InvalidStateException : AutoLoggingException
     {
         public InvalidStateException(string message, [CallerMemberName] string callerName = "")
-            : base(message, callerName)
-        {
-        }
+            : base(message, callerName) { }
     }
 
     public class OutOfBoundsException : AutoLoggingException
     {
-        public Position Position { get; set; }
-        public Direction Direction { get; set; }
+        private Position position;
+        public Position Position => position;
+        private Direction direction;
+        public Direction Direction => direction;
 
         public OutOfBoundsException(string message, [CallerMemberName] string callerName = "")
             : base(message, callerName)
@@ -47,17 +44,17 @@ namespace CarcassonneServer.Model.Representation
         public OutOfBoundsException(string message, Position position, Direction direction, [CallerMemberName] string callerName = "")
             : this (message, callerName)
         {
-            Position = position;
-            Direction = direction;
+            this.position = position;
+            this.direction = direction;
         }
     }
 
-    public class TileAddException : AutoLoggingException
+    public class AddTileException : AutoLoggingException
     {
-        public TileAddException(string message, [CallerMemberName] string callerName = "")
+        public AddTileException(string message, [CallerMemberName] string callerName = "")
          : base(message, callerName){ }
 
-        public TileAddException(IBaseArea area, ISubArea subArea, [CallerMemberName] string callerName = "")
+        public AddTileException(IBaseArea area, ISubArea subArea, [CallerMemberName] string callerName = "")
             : base (string.Format("Positions: {0}, AreaType: {1}, Position: {2}, Type: {3}",
                     area.Positions.Aggregate("", (str, pos) => str += string.Format("{0}\n\r", pos.ToString())),
                     subArea.AreaType.ToString(),
@@ -65,25 +62,24 @@ namespace CarcassonneServer.Model.Representation
                     subArea.AreaType.ToString()), callerName) { }
     }
 
+    public class AddMeepleException : AutoLoggingException
+    {
+        public AddMeepleException(string message, [CallerMemberName] string callerName = "")
+            : base(message, callerName) { }
+
+        public AddMeepleException(ISubArea subArea, Meeple meeple, [CallerMemberName] string callerName = "")
+            : base(string.Format("SubArea: {0}, Meeple: {1}", subArea.ToString(), meeple.ToString()), callerName) { }
+    }
+
     public class InvariantFailedException : AutoLoggingException
     {
         private BaseArea area;
-        public BaseArea Area
-        {
-            get
-            {
-                return area;
-            }
-            set
-            {
-                area = value;
-            }
-        }
+        public BaseArea Area => area;
 
         public InvariantFailedException(BaseArea area, string message, [CallerMemberName] string callerName = "")
             : base(message, callerName)
         {
-            Area = area;
+            this.area = area;
         }
     }
 

@@ -57,11 +57,12 @@
     <Compile Include="CastleAreaTests.cs" />
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="FieldAreaTests.cs" />
+    <Compile Include="MeepleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoadAreaTest.cs" />
+    <Compile Include="RoadAreaTests.cs" />
     <Compile Include="SubAreaTests.cs" />
-    <Compile Include="TestData\GameTableTests.cs" />
-    <Compile Include="TileTest.cs" />
+    <Compile Include="GameTableTests.cs" />
+    <Compile Include="TileTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CarcassonneServer\CarcassonneServer.csproj">
