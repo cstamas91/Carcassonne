@@ -19,7 +19,7 @@ namespace CarcassonneUnitTest
             @"TestRotate#csv", DataAccessMethod.Sequential)]
         public void TestRotate()
         {
-            Tile tile = tiles[TileTypeEnum.Crossroads]();
+            Tile tile = TileFactory.Get(TileType.CrossRoads);
             tile.Rotation = (TileRotation)TestContext.DataRow["Rotation"];
             TileRotation expected = (TileRotation)TestContext.DataRow["Expected"];
 
@@ -37,8 +37,8 @@ namespace CarcassonneUnitTest
             @"TestIsValidAdjacent#csv", DataAccessMethod.Sequential)]
         public void TestIsValidAdjacent()
         {
-            Tile t1 = tiles[(TileTypeEnum)TestContext.DataRow["Type1"]]();
-            Tile t2 = tiles[(TileTypeEnum)TestContext.DataRow["Type2"]]();
+            Tile t1 = TileFactory.Get((TileType)TestContext.DataRow["Type1"]);
+            Tile t2 = TileFactory.Get((TileType)TestContext.DataRow["Type2"]);
             t1.Rotation = (TileRotation)TestContext.DataRow["Rotation1"];
             t2.Rotation = (TileRotation)TestContext.DataRow["Rotation2"];
             t1.X = (int)TestContext.DataRow["P1X"];
@@ -59,25 +59,15 @@ namespace CarcassonneUnitTest
             @"TestIndexer#csv", DataAccessMethod.Sequential)]
         public void TestIndexer()
         {
-            TileTypeEnum tileType = (TileTypeEnum)TestContext.DataRow["Type"];
+            TileType tileType = (TileType)TestContext.DataRow["Type"];
             TileRotation tileRotation = (TileRotation)TestContext.DataRow["Rotation"];
             Direction direction = (Direction)TestContext.DataRow["Direction"];
 
-            Tile tile = tiles[tileType]();
+            Tile tile = TileFactory.Get(tileType);
             tile.Rotation = tileRotation;
 
             AreaType expected = (AreaType)TestContext.DataRow["Expected"];
             Assert.AreEqual(expected, tile[direction].AreaType);
-        }
-
-        private Dictionary<TileTypeEnum, Func<Tile>> tiles = new Dictionary<TileTypeEnum, Func<Tile>>()
-        {
-            { TileTypeEnum.Crossroads, Activator.CreateInstance<CrossRoads> }
-        };
-
-        enum TileTypeEnum
-        {
-            Crossroads = 18,
         }
     }
 }

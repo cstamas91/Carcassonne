@@ -51,11 +51,11 @@ namespace CarcassonneServer.Model.Representation
         protected bool isMonastery;
         public bool IsMonastery => isMonastery;
         
-        public Tile(List<ISubArea> subAreas) :base(-1, -1)
+        public Tile(List<ISubArea> subAreas, bool isMonastery = false) :base(-1, -1)
         {
             areas = subAreas;
             areas.ForEach(area => area.Parent = this);
-            isMonastery = false;
+            this.isMonastery = isMonastery;
         }
         #endregion Declarations
         /// <summary>
