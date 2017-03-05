@@ -19,13 +19,7 @@ namespace CarcassonneServer.Model.Representation
         /// <summary>
         /// A mezőn lévő alterületek listája.
         /// </summary>
-        public List<ISubArea> Areas
-        {
-            get
-            {
-                return areas;
-            }
-        }
+        virtual public IEnumerable<ISubArea> Areas => areas;
 
         /// <summary>
         /// Segédfüggvény, ami egy abszolút irányból relatív irányt csinál.
@@ -54,17 +48,16 @@ namespace CarcassonneServer.Model.Representation
                 return areasWithDirection.FirstOrDefault();
             }
         }
-        public bool IsMonastery { get { return false; } }
+        protected bool isMonastery;
+        public bool IsMonastery => isMonastery;
         
-        public Tile() { }
-        public Tile(IList<ISubArea> subAreas, Position position)
-            : base (position.X, position.Y)
+        public Tile(List<ISubArea> subAreas) :base(-1, -1)
         {
-            areas = subAreas.ToList();
-            areas.ForEach(a => a.Parent = this);
+            areas = subAreas;
+            areas.ForEach(area => area.Parent = this);
+            isMonastery = false;
         }
         #endregion Declarations
-
         /// <summary>
         /// Elforgatja a mezőt. A mező belső reprezentációjában van egy "rotation" tag, ami a mező aktuális elfordulását írja le, relatív a mező alapállapotához.
         /// </summary>

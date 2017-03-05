@@ -23,35 +23,37 @@ namespace CarcassonneUnitTest
         [TestMethod]
         public void SetMeepleOnSubArea()
         {
-            Tile tile = new Tile(
-                new List<ISubArea>()
-                {
-                    BaseSubArea.Get(new List<Direction>() { Direction.Up, Direction.Down }, AreaType.Road),
-                    BaseSubArea.Get(new List<Direction>() { Direction.UpRight, Direction.DownRight, Direction.Right, Direction.RightUp, Direction.RightDown }, AreaType.Field),
-                    BaseSubArea.Get(new List<Direction>() { Direction.UpLeft, Direction.DownLeft, Direction.Left, Direction.LeftDown, Direction.LeftUp }, AreaType.Road),
-                }, new Position(11, 9));
-            Meeple meeple = new Meeple(player1);
-            tile[Direction.Up].SetMeeple(meeple);
-            
-            Assert.IsNotNull(tile[Direction.Up].Meeple);
+            //Tile tile = new Tile(
+            //    new List<ISubArea>()
+            //    {
+            //        BaseSubArea.Get(new List<Direction>() { Direction.Up, Direction.Down }, AreaType.Road),
+            //        BaseSubArea.Get(new List<Direction>() { Direction.UpRight, Direction.DownRight, Direction.Right, Direction.RightUp, Direction.RightDown }, AreaType.Field),
+            //        BaseSubArea.Get(new List<Direction>() { Direction.UpLeft, Direction.DownLeft, Direction.Left, Direction.LeftDown, Direction.LeftUp }, AreaType.Road),
+            //    }, new Position(11, 9));
+            //Meeple meeple = new Meeple(player1);
+            //tile[Direction.Up].SetMeeple(meeple);
+
+            //Assert.IsNotNull(tile[Direction.Up].Meeple);
+            Assert.Fail();
         }
 
         [TestMethod]
         public void SetMeepleOnArea()
         {
-            Tile tile = new Tile(
-                new List<ISubArea>()
-                {
-                    BaseSubArea.Get(new List<Direction>() { Direction.Up, Direction.Down }, AreaType.Road),
-                    BaseSubArea.Get(new List<Direction>() { Direction.UpRight, Direction.DownRight, Direction.Right, Direction.RightUp, Direction.RightDown }, AreaType.Field),
-                    BaseSubArea.Get(new List<Direction>() { Direction.UpLeft, Direction.DownLeft, Direction.Left, Direction.LeftDown, Direction.LeftUp }, AreaType.Road),
-                }, new Position(11, 9));
-            var roadArea = BaseArea.Get(tile[Direction.Up]);
-            Meeple meeple = new Meeple(player1);
+            //Tile tile = new Tile(
+            //    new List<ISubArea>()
+            //    {
+            //        BaseSubArea.Get(new List<Direction>() { Direction.Up, Direction.Down }, AreaType.Road),
+            //        BaseSubArea.Get(new List<Direction>() { Direction.UpRight, Direction.DownRight, Direction.Right, Direction.RightUp, Direction.RightDown }, AreaType.Field),
+            //        BaseSubArea.Get(new List<Direction>() { Direction.UpLeft, Direction.DownLeft, Direction.Left, Direction.LeftDown, Direction.LeftUp }, AreaType.Road),
+            //    }, new Position(11, 9));
+            //var roadArea = BaseArea.Get(tile[Direction.Up]);
+            //Meeple meeple = new Meeple(player1);
 
-            roadArea.AddMeeple(meeple, tile[Direction.Up].Id);
+            //roadArea.AddMeeple(meeple, tile[Direction.Up].Id);
 
-            Assert.IsTrue(roadArea.Owners.Contains(player1));
+            //Assert.IsTrue(roadArea.Owners.Contains(player1));
+            Assert.Fail();
         }
     }
 }

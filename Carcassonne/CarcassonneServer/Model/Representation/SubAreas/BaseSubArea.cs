@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CarcassonneServer.Model.Representation.SubAreas
 {
-    public class BaseSubArea : ISubArea
+    public abstract class BaseSubArea : ISubArea
     {
         #region properties
         private int id;
@@ -33,15 +33,15 @@ namespace CarcassonneServer.Model.Representation.SubAreas
         {
             edges = new List<Direction>();
         }
+        private BaseSubArea(IList<Direction> governedEdges)
+            : this()
+        {
+            edges = governedEdges.ToList();
+        }
         protected BaseSubArea(int id, IList<Direction> governedEdges)
             : this(governedEdges)
         {
             this.id = id;
-        }
-        protected BaseSubArea(IList<Direction> governedEdges)
-            : this()
-        {
-            edges = governedEdges.ToList();
         }
         #endregion constructors
 
@@ -85,7 +85,7 @@ namespace CarcassonneServer.Model.Representation.SubAreas
 
         #region factory
         private static int current;
-        public static ISubArea Get(IList<Direction> directions, AreaType areaType)
+        public static ISubArea Get(AreaType areaType, params Direction[] directions)
         {
             int id = ++current;
 

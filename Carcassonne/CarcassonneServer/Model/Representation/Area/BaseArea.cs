@@ -8,16 +8,16 @@ namespace CarcassonneServer.Model.Representation.Area
     public abstract class BaseArea : IBaseArea
     {
         #region Meeples
-        public IEnumerable<Player> Owners => meeples.MostOf(m => m.Owner);
         protected IEnumerable<Meeple> meeples => subAreas.Select(subArea => subArea.Meeple);
+        public IEnumerable<Player> Owners => meeples.MostOf(m => m.Owner);
         public void AddMeeple(Meeple meeple, int id) =>
             subAreas.FirstOrDefault(subarea => subarea.Id == id).SetMeeple(meeple);
         #endregion Meeples
 
         #region Areas
-        public string GUID { get; private set; }
+        private bool Invariant() => OpenSubAreas.Count + SurroundedSubAreas.Count == subAreas.Count;
+        private bool HasAdjacentSubarea(ISubArea subArea) => OpenSubAreas.Count > 0 && OpenSubAreas.Any(osa => osa.IsAdjacent(subArea));
         protected List<ISubArea> subAreas;
-        public IEnumerable<ISubArea> SubAreas => subAreas;
         /// <summary>
         /// Azok a részterületek, amik teljesen körbe vannak véve.
         /// </summary>
@@ -32,8 +32,85 @@ namespace CarcassonneServer.Model.Representation.Area
             throw new NotImplementedException();
         }
         protected bool IsEmpty() => subAreas.Count() == 0;
+        /// <summary>
+        /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
+        /// </summary>
+        /// <param name="item">A vizsgált részterület.</param>
+        /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
+        protected bool IsSurrounded(ISubArea item)
+        {
+            bool isSurrounded = true;
+            foreach (Direction direction in item.ActualEdges)
+            {
+                try
+                {
+                    var pos = item.Parent.GetPosition(direction);
+                    isSurrounded &=
+                        Positions.Contains(pos) &&
+                        subAreas.Any(subArea => (subArea.Position as Position).Equals(pos) && subArea.ActualEdges.Contains(direction.Opposite()));
+                }
+                catch (OutOfBoundsException oobEx)
+                {
+                    if (!oobEx.Position.IsBounded)
+                        throw;
+                    isSurrounded &= false;
+                }
+            }
+
+            return isSurrounded;
+        }
+        virtual protected void SortSubArea(ISubArea area)
+        {
+            if (IsSurrounded(area))
+                SurroundedSubAreas.Add(area);
+            else
+                OpenSubAreas.Add(area);
+        }
+        virtual protected void SortSubAreas()
+        {
+            OpenSubAreas = new List<ISubArea>();
+            SurroundedSubAreas = new List<ISubArea>();
+
+            subAreas.ForEach(SortSubArea);
+        }
+        virtual protected bool IsNeighbourTo(Position element) => Positions.Contains(element);
+        virtual protected bool IsNeighbourTo(BaseArea area) => area.Positions.Any(p => Positions.Any(pp => pp | p));
+        virtual protected bool EvaluateIsFinished() => (OpenSubAreas.Count == 0) && (SurroundedSubAreas.Count == subAreas.Count) && (subAreas.Count > 0);
+        public string GUID { get; private set; }
+        public IEnumerable<ISubArea> SubAreas => subAreas;
         public HashSet<Position> Positions { get; set; }
         public bool Contains(Position position) => Positions.Contains(position);
+        /// <summary>
+        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
+        /// </summary>
+        /// <param name="lhs">Bal terület</param>
+        /// <param name="rhs">Jobb terület</param>
+        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
+        public static bool operator |(BaseArea lhs, BaseArea rhs)
+        {
+            return lhs.IsNeighbourTo(rhs);
+        }
+        /// <summary>
+        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
+        /// </summary>
+        /// <param name="lhs">Bal terület</param>
+        /// <param name="rhs">Jobb Position</param>
+        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
+        public static bool operator |(BaseArea lhs, Position rhs)
+        {
+            return lhs.IsNeighbourTo(rhs);
+        }
+        /// <summary>
+        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
+        /// </summary>
+        /// <param name="lhs">Jobb Position</param>
+        /// <param name="rhs">Bal terület</param>
+        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
+        public static bool operator |(Position lhs, BaseArea rhs)
+        {
+            return rhs.IsNeighbourTo(lhs);
+        }
+        public bool IsAdjacent(Tile tile) => tile.GetAdjacentPositions().Any(p => Positions.Contains(p));
         virtual public AreaType AreaType { get; }
         virtual public bool IsFinished
         {
@@ -70,33 +147,6 @@ namespace CarcassonneServer.Model.Representation.Area
             IEnumerable<ISubArea> borders = OpenSubAreas.Where(osa => osa.IsAdjacent(subArea));
             return borders.All(border => border.CanBeAdjacent(subArea));
         }
-        /// <summary>
-        /// Kiértékeli, hogy egy mező körbe van-e véve a területhez tartozó többi mezővel, vagy van még szabad oldala.
-        /// </summary>
-        /// <param name="item">A vizsgált részterület.</param>
-        /// <returns>A vizsgált részterület be van-e kerítve vagy nem.</returns>
-        protected bool IsSurrounded(ISubArea item)
-        {
-            bool isSurrounded = true;
-            foreach (Direction direction in item.ActualEdges)
-            {
-                try
-                {
-                    var pos = item.Parent.GetPosition(direction);
-                    isSurrounded &= 
-                        Positions.Contains(pos) &&
-                        subAreas.Any(subArea => (subArea.Position as Position).Equals(pos) && subArea.ActualEdges.Contains(direction.Opposite()));
-                }
-                catch (OutOfBoundsException oobEx)
-                {
-                    if (!oobEx.Position.IsBounded)
-                        throw;
-                    isSurrounded &= false;
-                }
-            }
-
-            return isSurrounded;
-        }
         virtual public void RemoveSubArea(ISubArea subArea)
         {
             if (!SubAreas.Contains(subArea))
@@ -118,60 +168,9 @@ namespace CarcassonneServer.Model.Representation.Area
 
             return this;
         }
-        virtual protected void SortSubArea(ISubArea area)
-        {
-            if (IsSurrounded(area))
-                SurroundedSubAreas.Add(area);
-            else
-                OpenSubAreas.Add(area);
-        }
-        virtual protected void SortSubAreas()
-        {
-            OpenSubAreas = new List<ISubArea>();
-            SurroundedSubAreas = new List<ISubArea>();
-
-            subAreas.ForEach(SortSubArea);
-        }
-        virtual protected bool IsNeighbourTo(Position element) => Positions.Contains(element);
-        virtual protected bool IsNeighbourTo(BaseArea area) => area.Positions.Any(p => Positions.Any(pp => pp | p));
-        virtual protected bool EvaluateIsFinished() => (OpenSubAreas.Count == 0) && (SurroundedSubAreas.Count == subAreas.Count) && (subAreas.Count > 0);
-        private bool Invariant() => OpenSubAreas.Count + SurroundedSubAreas.Count == subAreas.Count;
-        /// <summary>
-        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
-        /// </summary>
-        /// <param name="lhs">Bal terület</param>
-        /// <param name="rhs">Jobb terület</param>
-        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        public static bool operator |(BaseArea lhs, BaseArea rhs)
-        {
-            return lhs.IsNeighbourTo(rhs);
-        }
-        /// <summary>
-        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
-        /// </summary>
-        /// <param name="lhs">Bal terület</param>
-        /// <param name="rhs">Jobb Position</param>
-        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        public static bool operator |(BaseArea lhs, Position rhs)
-        {
-            return lhs.IsNeighbourTo(rhs);
-        }
-        /// <summary>
-        /// Operátor túltöltés szomszédsági kapcsolat eldöntéséhez.
-        /// </summary>
-        /// <param name="lhs">Jobb Position</param>
-        /// <param name="rhs">Bal terület</param>
-        /// <returns>Igazat, ha Bal és Jobb szomszédok, egyébként hamisat.</returns>
-        public static bool operator |(Position lhs, BaseArea rhs)
-        {
-            return rhs.IsNeighbourTo(lhs);
-        }
-        public bool IsAdjacent(Tile tile) => tile.GetAdjacentPositions().Any(p => Positions.Contains(p));
-        private bool HasAdjacentSubarea(ISubArea subArea) => OpenSubAreas.Count > 0 && OpenSubAreas.Any(osa => osa.IsAdjacent(subArea));
         #endregion Areas
 
         #region Constructors
-        virtual public int Score { get { return 0; } }
         protected int id;
         protected BaseArea()
         {
@@ -181,6 +180,7 @@ namespace CarcassonneServer.Model.Representation.Area
             OpenSubAreas = new List<ISubArea>();
             Positions = new HashSet<Position>();
         }
+        virtual public int Score { get { return 0; } }
         #endregion Constructors
 
         #region factory

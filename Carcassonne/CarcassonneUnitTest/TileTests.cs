@@ -1,72 +1,14 @@
 ﻿using CarcassonneServer.Model.Representation;
-using CarcassonneServer.Model.Representation.Area;
-using CarcassonneServer.Model.Representation.SubAreas;
+using CarcassonneServer.Model.Representation.GameItems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 
 namespace CarcassonneUnitTest
 {
     [TestClass]
     public class TileTests : BaseTest
     {
-        #region segéd függvények
-        private const string areaDescriptionKeyTemplate = @"AreaDescription{0}"; //0: tileIndex
-        private const string positionKeyTemplate = @"Poz{0}{1}"; // 0: tengely, 1: tileIndex
-
-        private List<ISubArea> ReadSubAreas(string[] areaData)
-        {
-            List<ISubArea> subAreas = new List<ISubArea>();
-            foreach (string subArea in areaData)
-            {
-                var subAreaData = subArea.Split(':');
-                AreaType subAreaType = (AreaType)Enum.Parse(typeof(AreaType), subAreaData[0]);
-
-                List<Direction> directions = subAreaData[1].Split('-').Select(str => (Direction)Enum.Parse(typeof(Direction), str)).ToList();
-                subAreas.Add(BaseSubArea.Get(directions, subAreaType));
-            }
-
-            return subAreas;
-        }
-
-        private Tile ReadTile(DataRow row, int index)
-        {
-            Position position = new Position(
-                Convert.ToInt16(row[string.Format(positionKeyTemplate, "X", index)].ToString()),
-                Convert.ToInt16(row[string.Format(positionKeyTemplate, "Y", index)].ToString()));
-
-            var subAreas = ReadSubAreas(row[string.Format(areaDescriptionKeyTemplate, index)].ToString().Split(';'));
-            
-            return new Tile(subAreas, position);
-        }
-
-        private Tuple<Tile, Tile> ReadTestIsValidAdjacentData(DataRow row)
-        {
-            Tile t1 = ReadTile(row, 1);
-            Tile t2 = ReadTile(row, 2);
-            return new Tuple<Tile, Tile>(t1, t2);
-        }        
-
-        private Tile ReadTestRotateData(DataRow row)
-        {
-            TileRotation rotation = ReadEnum<TileRotation>(row, "Rotation");
-            Tile t = new Tile();
-            t.Rotation = rotation;
-            return t;
-        }
-
-        private Tile ReadTestIndexerData(DataRow row)
-        {
-            var subAreas = ReadSubAreas(row[string.Format(areaDescriptionKeyTemplate, "")].ToString().Split(';'));
-            Tile t = new Tile(subAreas, new Position(0, 0));
-            t.Rotation = ReadEnum<TileRotation>(row, "Rotation");
-            return t;
-        }
-
-        #endregion segéd függvények
         /// <summary>
         /// Teszteli, hogy egy mező elforgatása után a várt alterületeket érjük el az irány indexerrel.
         /// </summary>
@@ -77,8 +19,9 @@ namespace CarcassonneUnitTest
             @"TestRotate#csv", DataAccessMethod.Sequential)]
         public void TestRotate()
         {
-            Tile tile = ReadTestRotateData(TestContext.DataRow);
-            TileRotation expected = ReadEnum<TileRotation>(TestContext.DataRow, "Expected");
+            Tile tile = tiles[TileTypeEnum.Crossroads]();
+            tile.Rotation = (TileRotation)TestContext.DataRow["Rotation"];
+            TileRotation expected = (TileRotation)TestContext.DataRow["Expected"];
 
             tile.Rotate();
 
@@ -94,10 +37,17 @@ namespace CarcassonneUnitTest
             @"TestIsValidAdjacent#csv", DataAccessMethod.Sequential)]
         public void TestIsValidAdjacent()
         {
-            Tuple<Tile, Tile> tiles = ReadTestIsValidAdjacentData(TestContext.DataRow);
-            bool expected = TestContext.DataRow["Expected"].ToString() == "1" ? true : false;
-            bool actual = tiles.Item1.IsValidAdjacent(tiles.Item2);
-            Assert.AreEqual(expected, actual);
+            Tile t1 = tiles[(TileTypeEnum)TestContext.DataRow["Type1"]]();
+            Tile t2 = tiles[(TileTypeEnum)TestContext.DataRow["Type2"]]();
+            t1.Rotation = (TileRotation)TestContext.DataRow["Rotation1"];
+            t2.Rotation = (TileRotation)TestContext.DataRow["Rotation2"];
+            t1.X = (int)TestContext.DataRow["P1X"];
+            t1.Y = (int)TestContext.DataRow["P1Y"];
+            t2.X = (int)TestContext.DataRow["P2X"];
+            t2.Y = (int)TestContext.DataRow["P2Y"];
+
+            Assert.AreEqual(bool.Parse((string)TestContext.DataRow["Expected"]), t1.IsValidAdjacent(t2));
+
         }
         /// <summary>
         /// Teszteli az irány indexert.
@@ -109,14 +59,25 @@ namespace CarcassonneUnitTest
             @"TestIndexer#csv", DataAccessMethod.Sequential)]
         public void TestIndexer()
         {
-            Tile t = ReadTestIndexerData(TestContext.DataRow);
+            TileTypeEnum tileType = (TileTypeEnum)TestContext.DataRow["Type"];
+            TileRotation tileRotation = (TileRotation)TestContext.DataRow["Rotation"];
+            Direction direction = (Direction)TestContext.DataRow["Direction"];
 
-            Direction from = ReadEnum<Direction>(TestContext.DataRow, "Direction");
-            AreaType expectedAreaType = ReadEnum<AreaType>(TestContext.DataRow, "Expected");
+            Tile tile = tiles[tileType]();
+            tile.Rotation = tileRotation;
 
-            AreaType actualAreaType = t[from].AreaType;
+            AreaType expected = (AreaType)TestContext.DataRow["Expected"];
+            Assert.AreEqual(expected, tile[direction].AreaType);
+        }
 
-            Assert.AreEqual(expectedAreaType, actualAreaType);
+        private Dictionary<TileTypeEnum, Func<Tile>> tiles = new Dictionary<TileTypeEnum, Func<Tile>>()
+        {
+            { TileTypeEnum.Crossroads, Activator.CreateInstance<CrossRoads> }
+        };
+
+        enum TileTypeEnum
+        {
+            Crossroads = 18,
         }
     }
 }

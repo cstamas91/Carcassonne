@@ -150,7 +150,7 @@ namespace CarcassonneServer.Model.Representation
     /// <summary>
     /// A terület típusokat definiáló felsorolás.
     /// </summary>
-    public enum AreaType : short
+    public enum AreaType
     {
         Field = 0,
         Road = 1,

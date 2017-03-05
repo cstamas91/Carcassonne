@@ -2,6 +2,7 @@
 using CarcassonneServer.Model.Representation.Area;
 using System.Linq;
 using CarcassonneServer.Model.Representation.SubAreas;
+using System;
 
 namespace CarcassonneServer.Model.Representation.GameItems
 {
@@ -66,18 +67,19 @@ namespace CarcassonneServer.Model.Representation.GameItems
 
         private void InitializeTable()
         {
-            xDimension = 21;
-            yDimension = 19;
-            areas = new List<IBaseArea>();
-            SetTile(new Tile(
-                new List<ISubArea>()
-                {
-                    BaseSubArea.Get(new List<Direction>() {Direction.UpLeft, Direction.UpRight, Direction.Up }, AreaType.Castle),
-                    BaseSubArea.Get(new List<Direction>() {Direction.RightUp, Direction.LeftUp }, AreaType.Field),
-                    BaseSubArea.Get(new List<Direction>() {Direction.Right, Direction.Left }, AreaType.Road),
-                    BaseSubArea.Get(new List<Direction>() {Direction.RightDown, Direction.DownRight, Direction.Down, Direction.DownLeft, Direction.LeftDown }, AreaType.Field)
-                }, 
-                new Position((xDimension / 2), (yDimension / 2))));
+            //xDimension = 21;
+            //yDimension = 19;
+            //areas = new List<IBaseArea>();
+            //SetTile(new Tile(
+            //    new List<ISubArea>()
+            //    {
+            //        BaseSubArea.Get(new List<Direction>() {Direction.UpLeft, Direction.UpRight, Direction.Up }, AreaType.Castle),
+            //        BaseSubArea.Get(new List<Direction>() {Direction.RightUp, Direction.LeftUp }, AreaType.Field),
+            //        BaseSubArea.Get(new List<Direction>() {Direction.Right, Direction.Left }, AreaType.Road),
+            //        BaseSubArea.Get(new List<Direction>() {Direction.RightDown, Direction.DownRight, Direction.Down, Direction.DownLeft, Direction.LeftDown }, AreaType.Field)
+            //    }, 
+            //    new Position((xDimension / 2), (yDimension / 2))));
+            throw new NotImplementedException();
         }
         #endregion Private helpers
     }
